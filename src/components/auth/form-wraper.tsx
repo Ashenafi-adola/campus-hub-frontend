@@ -1,3 +1,6 @@
+"use client"
+
+import { usePathname } from 'next/navigation';
 import React from 'react'
 
 type Props = {
@@ -5,23 +8,23 @@ type Props = {
 }
 
 function AuthFormWrapper({ children }: Props) {
+    const pathname = usePathname();
+
     return (
         <div className="w-full max-w-sm border border-gray-300 p-5 rounded-2xl shadow">
-            <h2 className="text-2xl font-extrabold text-neutral-900">
-                Create your account
+            <h2 className="text-2xl text-center font-extrabold text-neutral-900">
+                {pathname === "/signup" ? "Create your account" : "Welcome Back"}
             </h2>
-            <p className="mt-1 text-sm text-neutral-500">
-                Join thousands of students and start learning together
+            <p className="mt-1 text-sm text-center text-neutral-500">
+                {
+                    pathname === "/signup" ?
+                    "Join thousands of students and start learning together"
+                    : "Log in to your account to continue collaborating."
+                }
             </p>
 
             {children}
 
-            <p className="mt-6 text-center text-sm text-neutral-500">
-                Already have an account?{" "}
-                <a href="#" className="font-semibold text-indigo-600 hover:underline">
-                    Log in
-                </a>
-            </p>
         </div>
     )
 }
