@@ -4,10 +4,11 @@ import { LucideIcon } from 'lucide-react'
 type Props = {
     label?: string
     type?: string
-    value: string
+    value?: string
     onChange: (event: React.ChangeEvent<HTMLInputElement>) => void
     placeholder?: string
     Icon?: LucideIcon
+    error?: string
 }
 
 function Input({
@@ -17,6 +18,7 @@ function Input({
     onChange,
     placeholder = '',
     Icon,
+    error,
 }: Props) {
     return (
         <div>
@@ -34,9 +36,10 @@ function Input({
                     value={value}
                     onChange={onChange}
                     placeholder={placeholder}
-                    className={`w-full rounded-xl border border-neutral-200 py-2.5 ${ Icon ? "pl-10": "pl-5"} pr-3.5 text-sm text-neutral-800 placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/30 focus:border-indigo-500`}
+                    className={`w-full rounded-xl border py-2.5 ${ Icon ? "pl-10": "pl-5"} pr-3.5 text-sm text-neutral-800 placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/30 ${error ? "border-red-300 focus:border-red-500 focus:ring-red-500/20" : "border-neutral-200 focus:border-indigo-500"}`}
                 />
             </div>
+            {error && <p className="mt-1 text-xs text-red-600">{error}</p>}
         </div>
     )
 }

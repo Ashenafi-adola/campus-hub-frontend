@@ -1,13 +1,14 @@
-"use client"
 import React from "react";
 import SignUpForm from "@/components/auth/signup/signup-form";
 import AuthFormWrapper from "@/components/auth/form-wraper";
 
 export default function SignUpPage() {
-
     return (
-        <AuthFormWrapper>
-            <SignUpForm/>
+        <AuthFormWrapper
+            title="Create your account"
+            description="Join thousands of students and start learning together"
+        >
+            <SignUpForm />
         </AuthFormWrapper>
     );
 }
