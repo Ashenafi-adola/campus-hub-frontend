@@ -44,7 +44,7 @@ function AuthLayout({children}: Props) {
                         Your questions answered.
                     </h1>
                     <p className="mt-4 max-w-sm text-sm leading-relaxed text-indigo-100">
-                        Become part of your university&appos;s digital campus. Collaborate in
+                        Become part of your university&apos;s digital campus. Collaborate in
                         real-time, get verified tutoring, and stay updated on important
                         academic events.
                     </p>

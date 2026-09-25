@@ -1,3 +1,4 @@
+import { error } from "console";
 import { health, UserRegistrationData } from "./types"
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL
@@ -82,5 +83,30 @@ export async function postRegistrationData(payload: UserRegistrationData): Promi
         throw new ApiError(extractApiError(payload), res.status, fieldErrors);
     }
 
+    return res.json()
+}
+
+export async function verifyEmail(payload : {email: string, action: string, code?: string}) {
+    const formData = new FormData();
+    formData.append("action", payload.action);
+    if(payload.code) formData.append("code", payload.code);
+    formData.append("email", payload.email);
+
+    const res = await fetch(`${API_URL}/auth/verify/`, {
+        method: "POST",
+        body: formData
+    })
+
+    if (!res.ok){
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        let payload: any = {};
+        try {
+            payload = await res.json();
+        } catch {
+            payload = {};
+        }
+        console.log(payload)
+        throw new ApiError(extractApiError(payload), res.status, payload);
+    }
     return res.json()
 }

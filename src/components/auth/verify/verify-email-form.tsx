@@ -2,12 +2,14 @@
 
 import React, { useRef, useState, useEffect } from "react";
 import { Mail, RotateCw } from "lucide-react";
+import { ApiError, verifyEmail } from "@/libs/api";
 
 const CODE_LENGTH = 6;
 const RESEND_SECONDS = 45;
 
 export default function VerifyEmailForm({email}:{email: string}) {
   const [code, setCode] = useState<string[]>(Array(CODE_LENGTH).fill(""));
+  const [error, setError] = useState<Record<string, string[]>>({})
   const [cooldown, setCooldown] = useState(RESEND_SECONDS);
   const inputsRef = useRef<(HTMLInputElement | null)[]>([]);
 
@@ -54,6 +56,19 @@ export default function VerifyEmailForm({email}:{email: string}) {
 
   const complete = code.every((d) => d !== "");
 
+  const verify = () => {
+    verifyEmail({ email: email, code: code.join(""), action: "verify" })
+      .catch(error => {
+        if (error instanceof ApiError) {
+          setError(error.fieldErrors);
+          // setGeneralError(error.message);
+          return;
+        }
+
+        console.error({error: "verification faild"});
+      })
+  }
+
   return (
     <div className="flex flex-1 items-center justify-center bg-white px-6 py-10">
       <div className="w-full max-w-sm text-center">
@@ -71,7 +86,11 @@ export default function VerifyEmailForm({email}:{email: string}) {
           </span>
           . Enter it below to confirm your account.
         </p>
-
+        {error?.error && (
+          <div className="rounded-xl border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
+            {error.error}
+          </div>
+        )}
         <div className="mt-7 flex justify-center gap-2.5">
           {code.map((digit, i) => (
             <input
@@ -93,6 +112,7 @@ export default function VerifyEmailForm({email}:{email: string}) {
 
         <button
           disabled={!complete}
+          onClick={verify}
           className="mt-7 w-full rounded-xl bg-indigo-600 py-3 text-sm font-semibold text-white transition-colors hover:bg-indigo-700 disabled:cursor-not-allowed disabled:bg-neutral-200 disabled:text-neutral-400"
         >
           Verify Account

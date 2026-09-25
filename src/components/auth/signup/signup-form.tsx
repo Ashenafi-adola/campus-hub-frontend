@@ -1,6 +1,6 @@
 "use client"
 
-import { BookOpen, Check, Mail, User, Lock } from 'lucide-react';
+import { Check, Mail, Lock } from 'lucide-react';
 import React, { FormEvent, useState } from 'react'
 import { PasswordStrengthBar } from './password-strength';
 import { UserRegistrationData } from '@/libs/types';
@@ -12,6 +12,7 @@ import { useRouter } from 'next/navigation';
 function SignUpForm() {
     const router = useRouter();
     const [confirmPassword, setConfirmPassword] = useState("");
+    const [loading, setLoading] = useState<boolean>(false);
     const [agreed, setAgreed] = useState(true);
     const [generalError, setGeneralError] = useState("");
     const [fieldErrors, setFieldErrors] = useState<Record<string, string[]>>({});
@@ -44,10 +45,12 @@ function SignUpForm() {
         }
 
         try {
+            setLoading(true);
             await postRegistrationData(formData);
             document.cookie = `signup_redirect=${encodeURIComponent(formData.email)}; path=/verify; max-age=30; secure; samesite=lax`;
             router.push('/verify');
         } catch (error) {
+            setLoading(false)
             if (error instanceof ApiError) {
                 setFieldErrors(error.fieldErrors);
                 // setGeneralError(error.message);
@@ -146,10 +149,10 @@ function SignUpForm() {
 
             <button
                 type="submit"
-                disabled={!agreed}
+                disabled={!agreed || loading}
                 className={`w-full rounded-xl py-3 text-sm font-semibold text-white transition-colors ${!agreed ?"bg-indigo-400 disabled:*":"bg-indigo-600 hover:bg-indigo-700"}`}
             >
-                Create Account
+                { loading ? "Creating Account..." :"Create Account"}
             </button>
             <p className="mt-6 text-center text-sm text-neutral-500">
                 Already have an account?{" "}
