@@ -40,14 +40,6 @@ function extractApiError(data: any): string {
     return "Validation failed. Please check your inputs.";
 }
 
-export async function getHelath(): Promise<health>{
-    const res = await fetch(`${API_URL}/health`)
-    if (!res.ok){
-        throw new Error(`faild health chek ${res.status}`)
-    }
-    return res.json()
-}
-
 export async function postRegistrationData(payload: UserRegistrationData): Promise<UserRegistrationData> {
     const formData = new FormData()
     formData.append("first_name", payload.first_name);
