@@ -3,6 +3,7 @@
 import React, { useRef, useState, useEffect } from "react";
 import { Mail, RotateCw } from "lucide-react";
 import { ApiError, verifyEmail } from "@/libs/api";
+import { redirect } from "next/navigation";
 
 const CODE_LENGTH = 6;
 const RESEND_SECONDS = 45;
@@ -58,6 +59,7 @@ export default function VerifyEmailForm({email}:{email: string}) {
 
   const verify = () => {
     verifyEmail({ email: email, code: code.join(""), action: "verify" })
+    .then(()=>redirect("/signin"))
       .catch(error => {
         if (error instanceof ApiError) {
           setError(error.fieldErrors);

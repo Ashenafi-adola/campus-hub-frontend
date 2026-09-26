@@ -2,14 +2,17 @@
 import React, { useState } from "react";
 import { Mail, ArrowLeft, CheckCircle2 } from "lucide-react";
 import Link from "next/link";
+import { forgotPasswordRequest } from "@/libs/api";
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState("");
   const [sent, setSent] = useState(false);
+ 
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email) return;
+    await forgotPasswordRequest({email: email})
     setSent(true);
   };
 

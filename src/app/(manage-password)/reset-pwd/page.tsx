@@ -1,6 +1,8 @@
 "use client"
 import React, { useState } from "react";
 import { Lock, CheckCircle2 } from "lucide-react";
+import { redirect, useSearchParams } from "next/navigation";
+import { resetPasswordRequest } from "@/libs/api";
 
 function PasswordStrengthBar({ password }: { password: string }) {
   const score = Math.min(
@@ -44,13 +46,19 @@ export default function ResetPasswordPage() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [done, setDone] = useState(false);
 
-  const mismatch =
-    confirmPassword.length > 0 && password !== confirmPassword;
+  const params = useSearchParams();
+  
+  const token = params.get("token");
+  if (!token) redirect("/signin");
+
+
+  const mismatch = confirmPassword.length > 0 && password !== confirmPassword;
   const canSubmit = password.length >= 8 && password === confirmPassword;
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!canSubmit) return;
+    await resetPasswordRequest({password: password, token: token})
     setDone(true);
   };
 

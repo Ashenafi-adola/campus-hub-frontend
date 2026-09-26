@@ -101,3 +101,47 @@ export async function verifyEmail(payload : {email: string, action: string, code
     }
     return res.json()
 }
+
+export async function forgotPasswordRequest(payload:Record<string, string>) {
+    const formData = new FormData();
+    formData.append("email", payload.email);
+    const res = await fetch(`${API_URL}/auth/password-reset/`, {
+        method: "POST",
+        body: formData
+    });
+    if (!res.ok){
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        let payload: any = {};
+        try {
+            payload = await res.json();
+        } catch {
+            payload = {};
+        }
+        console.log(payload)
+        throw new ApiError(extractApiError(payload), res.status, payload);
+    }
+    return res.json()
+}
+
+export async function resetPasswordRequest(payload:Record<string, string>) {
+    const formData = new FormData();
+    formData.append("new_password", payload.password);
+    formData.append("token", payload.token);
+    const res = await fetch(`${API_URL}/auth/password-reset/confirm/`, {
+        method: "POST",
+        body: formData
+    })
+
+    if (!res.ok){
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        let payload: any = {};
+        try {
+            payload = await res.json();
+        } catch {
+            payload = {};
+        }
+        console.log(payload)
+        throw new ApiError(extractApiError(payload), res.status, payload);
+    }
+    return res.json()
+}
