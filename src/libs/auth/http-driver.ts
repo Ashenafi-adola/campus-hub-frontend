@@ -1,7 +1,6 @@
 import { headers } from "next/headers";
 import { AuthTokens, AuthUser, LoginInfo, Session } from "./types";
 import { AuthApiError } from "../types";
-import { AwardIcon } from "lucide-react";
 
 
 const API_URL =
