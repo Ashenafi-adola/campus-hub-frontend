@@ -7,12 +7,14 @@ import { forgotPasswordRequest } from "@/libs/api";
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState("");
   const [sent, setSent] = useState(false);
- 
+  const [sending, setSending] = useState<boolean>(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email) return;
-    await forgotPasswordRequest({email: email})
+    setSending(true);
+    await forgotPasswordRequest({email: email});
+    setSending(false);
     setSent(true);
   };
 
@@ -116,9 +118,10 @@ export default function ForgotPasswordPage() {
 
                 <button
                   type="submit"
+                  disabled={sending}
                   className="w-full rounded-xl bg-indigo-600 py-3 text-sm font-semibold text-white transition-colors hover:bg-indigo-700"
                 >
-                  Send reset link
+                  { sending ? "Sending..." : "Send reset link"}
                 </button>
               </form>
 

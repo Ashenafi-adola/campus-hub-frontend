@@ -1,56 +1,31 @@
 "use client"
-import React, { useState } from "react";
+
+import React, { Suspense, useEffect, useState } from "react";
 import { Lock, CheckCircle2 } from "lucide-react";
-import { redirect, useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { resetPasswordRequest } from "@/libs/api";
+import { PasswordStrengthBar } from "@/components/auth/signup/password-strength";
+import AuthFormWrapper from "@/components/auth/form-wraper";
 
-function PasswordStrengthBar({ password }: { password: string }) {
-  const score = Math.min(
-    3,
-    Math.floor(password.length / 4) + (/[A-Z]/.test(password) ? 1 : 0)
-  );
-  const labels = ["Weak", "Medium", "Strong"];
-  const colors = ["bg-red-500", "bg-emerald-500", "bg-emerald-600"];
-
-  if (!password) return null;
-
-  return (
-    <div className="mt-2">
-      <div className="flex gap-1.5">
-        {[0, 1, 2].map((i) => (
-          <div
-            key={i}
-            className={`h-1.5 flex-1 rounded-full ${
-              i <= score ? colors[score] : "bg-neutral-200"
-            }`}
-          />
-        ))}
-      </div>
-      <p
-        className={`mt-1 text-xs font-medium ${
-          score === 0
-            ? "text-red-500"
-            : score === 1
-            ? "text-emerald-600"
-            : "text-emerald-700"
-        }`}
-      >
-        {labels[score]} password strength
-      </p>
-    </div>
-  );
-}
-
-export default function ResetPasswordPage() {
+function ResetPasswordContent() {
+  const router = useRouter();
+  const params = useSearchParams();
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [done, setDone] = useState(false);
+  const [updating, setUpdating] = useState(false);
 
-  const params = useSearchParams();
-  
   const token = params.get("token");
-  if (!token) redirect("/signin");
 
+  useEffect(() => {
+    if (!token) {
+      router.replace("/signin");
+    }
+  }, [token, router]);
+
+  if (!token) {
+    return null;
+  }
 
   const mismatch = confirmPassword.length > 0 && password !== confirmPassword;
   const canSubmit = password.length >= 8 && password === confirmPassword;
@@ -58,7 +33,9 @@ export default function ResetPasswordPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!canSubmit) return;
-    await resetPasswordRequest({password: password, token: token})
+    setUpdating(true);
+    await resetPasswordRequest({ password, token });
+    setUpdating(false);
     setDone(true);
   };
 
@@ -124,91 +101,100 @@ export default function ResetPasswordPage() {
       {/* Right panel */}
       <div className="flex flex-1 items-center justify-center bg-white px-6 py-10">
         <div className="w-full max-w-sm">
-          {!done ? (
-            <>
-              <h2 className="text-2xl font-extrabold text-neutral-900">
-                Set a new password
-              </h2>
-              <p className="mt-1 text-sm text-neutral-500">
-                Almost there — choose a new password for your account.
-              </p>
-
-              <form className="mt-6 space-y-4" onSubmit={handleSubmit}>
-                <div>
-                  <label className="mb-1.5 block text-sm font-semibold text-neutral-800">
-                    New password
-                  </label>
-                  <div className="relative">
-                    <Lock className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-neutral-400" />
-                    <input
-                      type="password"
-                      required
-                      minLength={8}
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      placeholder="••••••••••••"
-                      className="w-full rounded-xl border border-neutral-200 py-2.5 pl-10 pr-3.5 text-sm text-neutral-800 placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/30 focus:border-indigo-500"
-                    />
+          <AuthFormWrapper title={"Set a new password"} description={"Almost there — choose a new password for your account."}>
+            {!done ? (
+              <>
+                <form className="mt-6 space-y-4" onSubmit={handleSubmit}>
+                  <div>
+                    <label className="mb-1.5 block text-sm font-semibold text-neutral-800">
+                      New password
+                    </label>
+                    <div className="relative">
+                      <Lock className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-neutral-400" />
+                      <input
+                        type="password"
+                        required
+                        minLength={8}
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        placeholder="••••••••••••"
+                        className="w-full rounded-xl border border-neutral-200 py-2.5 pl-10 pr-3.5 text-sm text-neutral-800 placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/30 focus:border-indigo-500"
+                      />
+                    </div>
+                    <PasswordStrengthBar password={password} />
                   </div>
-                  <PasswordStrengthBar password={password} />
+
+                  <div>
+                    <label className="mb-1.5 block text-sm font-semibold text-neutral-800">
+                      Confirm new password
+                    </label>
+                    <div className="relative">
+                      <Lock className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-neutral-400" />
+                      <input
+                        type="password"
+                        required
+                        value={confirmPassword}
+                        onChange={(e) => setConfirmPassword(e.target.value)}
+                        placeholder="••••••••••••"
+                        className={`w-full rounded-xl border py-2.5 pl-10 pr-3.5 text-sm text-neutral-800 placeholder:text-neutral-400 focus:outline-none focus:ring-2 ${
+                          mismatch
+                            ? "border-red-300 focus:ring-red-500/20 focus:border-red-400"
+                            : "border-neutral-200 focus:ring-indigo-500/30 focus:border-indigo-500"
+                        }`}
+                      />
+                    </div>
+                    {mismatch && (
+                      <p className="mt-1.5 text-xs font-medium text-red-500">
+                        Passwords don&apos;t match
+                      </p>
+                    )}
+                  </div>
+
+                  <button
+                    type="submit"
+                    disabled={!canSubmit}
+                    className="w-full rounded-xl bg-indigo-600 py-3 text-sm font-semibold text-white transition-colors hover:bg-indigo-700 disabled:cursor-not-allowed disabled:bg-neutral-200 disabled:text-neutral-400"
+                  >
+                    {updating ? "Updating..." : "Reset password"}
+                  </button>
+                </form>
+              </>
+            ) : (
+              <div className="text-center">
+                <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-emerald-50">
+                  <CheckCircle2 className="h-6 w-6 text-emerald-600" />
                 </div>
 
-                <div>
-                  <label className="mb-1.5 block text-sm font-semibold text-neutral-800">
-                    Confirm new password
-                  </label>
-                  <div className="relative">
-                    <Lock className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-neutral-400" />
-                    <input
-                      type="password"
-                      required
-                      value={confirmPassword}
-                      onChange={(e) => setConfirmPassword(e.target.value)}
-                      placeholder="••••••••••••"
-                      className={`w-full rounded-xl border py-2.5 pl-10 pr-3.5 text-sm text-neutral-800 placeholder:text-neutral-400 focus:outline-none focus:ring-2 ${
-                        mismatch
-                          ? "border-red-300 focus:ring-red-500/20 focus:border-red-400"
-                          : "border-neutral-200 focus:ring-indigo-500/30 focus:border-indigo-500"
-                      }`}
-                    />
-                  </div>
-                  {mismatch && (
-                    <p className="mt-1.5 text-xs font-medium text-red-500">
-                      Passwords don&apos;t match
-                    </p>
-                  )}
-                </div>
+                <h2 className="mt-5 text-2xl font-extrabold text-neutral-900">
+                  Password updated
+                </h2>
+                <p className="mt-2 text-sm leading-relaxed text-neutral-500">
+                  Your password has been reset. You can now log in with your
+                  new password.
+                </p>
 
-                <button
-                  type="submit"
-                  disabled={!canSubmit}
-                  className="w-full rounded-xl bg-indigo-600 py-3 text-sm font-semibold text-white transition-colors hover:bg-indigo-700 disabled:cursor-not-allowed disabled:bg-neutral-200 disabled:text-neutral-400"
-                >
-                  Reset password
+                <button className="mt-7 w-full rounded-xl bg-indigo-600 py-3 text-sm font-semibold text-white hover:bg-indigo-700">
+                  Back to login
                 </button>
-              </form>
-            </>
-          ) : (
-            <div className="text-center">
-              <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-emerald-50">
-                <CheckCircle2 className="h-6 w-6 text-emerald-600" />
               </div>
-
-              <h2 className="mt-5 text-2xl font-extrabold text-neutral-900">
-                Password updated
-              </h2>
-              <p className="mt-2 text-sm leading-relaxed text-neutral-500">
-                Your password has been reset. You can now log in with your
-                new password.
-              </p>
-
-              <button className="mt-7 w-full rounded-xl bg-indigo-600 py-3 text-sm font-semibold text-white hover:bg-indigo-700">
-                Back to login
-              </button>
-            </div>
-          )}
+            )}
+          </AuthFormWrapper>
         </div>
       </div>
     </div>
+  );
+}
+
+export default function ResetPasswordPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="flex min-h-screen items-center justify-center bg-white text-sm font-medium text-neutral-600">
+          Loading...
+        </div>
+      }
+    >
+      <ResetPasswordContent />
+    </Suspense>
   );
 }
