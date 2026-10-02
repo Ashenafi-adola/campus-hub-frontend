@@ -41,6 +41,8 @@ function TopBar() {
                     <Image
                         src="https://images.unsplash.com/photo-1517841905240-472988babdf9?w=64&h=64&fit=crop&crop=faces"
                         alt="Profile"
+                        width={32}
+                        height={32}
                         className="h-8 w-8 rounded-full object-cover"
                     />
                     <ChevronDown className="h-4 w-4 text-neutral-400" />
