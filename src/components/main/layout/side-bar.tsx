@@ -1,6 +1,6 @@
 "use client"
 
-import { Bookmark, Clock, HelpCircle, Home, TrendingUp, Users } from 'lucide-react';
+import { Bookmark, Clock, HelpCircle, Home, Plus, TrendingUp, Users } from 'lucide-react';
 import Link from 'next/link';
 import React, { useState } from 'react'
 
@@ -24,6 +24,7 @@ const NAV_ITEMS: NavItem[] = [
   { id: "communities", label: "Communities", icon: Users, href:"/communities" },
   { id: "saved", label: "Saved", icon: Bookmark ,href:"/bookmarks"},
   { id: "activity", label: "My Activity", icon: Clock ,href:"/myactivities"},
+  { id: "new community", label: "New Community", icon: Plus, href:"/communities/create"}
 ];
 
 const MY_COMMUNITIES: Community[] = [
@@ -36,7 +37,7 @@ const MY_COMMUNITIES: Community[] = [
 function SideBar() {
     const [active, setActive] = useState<string>("home");
     return (
-        <aside className="w-56 h-screen shrink-0 space-y-6  fixed border-r border-gray-300 hidden md:block">
+        <aside className="sticky top-16 z-0 h-[calc(100dvh-4rem)] w-56 shrink-0 self-start space-y-6 overflow-y-auto border-r border-gray-300 transition-all hidden md:block">
             <nav className="space-y-1">
                 {NAV_ITEMS.map(({ id, label, icon: Icon, href }) => {
                     const isActive = active === id;

@@ -35,3 +35,28 @@ export class AuthApiError extends Error {
     }
 }
 
+export type CategoryId = "all" | "academic" | "campus-life" | "career";
+
+export interface Community {
+  id: string;
+  name: string;
+  members: string;
+  description: string;
+  category: CategoryId;
+  icon: React.ComponentType<{ className?: string }>;
+}
+
+export interface Question {
+  id: string;
+  author: string;
+  authorAvatar: string;
+  affiliation: string;
+  community: string;
+  postedAt: string;
+  title: string;
+  body: string;
+  tags: string[];
+  upvotes: number;
+  answers: number;
+  unanswered?: boolean;
+}

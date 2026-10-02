@@ -14,6 +14,7 @@ function Layout({ children }: Props) {
                 <SideBar/>
                 {children}
             </div>
+            
         </div>
     )
 }

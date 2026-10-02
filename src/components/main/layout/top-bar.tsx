@@ -1,5 +1,6 @@
 import React from 'react'
 import { Bell, ChevronDown, Plus, Search } from 'lucide-react'
+import Image from 'next/image'
 
 
 function TopBar() {
@@ -37,7 +38,7 @@ function TopBar() {
                     <Bell className="h-5 w-5" />
                 </button>
                 <button className="flex items-center gap-1">
-                    <img
+                    <Image
                         src="https://images.unsplash.com/photo-1517841905240-472988babdf9?w=64&h=64&fit=crop&crop=faces"
                         alt="Profile"
                         className="h-8 w-8 rounded-full object-cover"

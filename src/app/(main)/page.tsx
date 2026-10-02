@@ -1,33 +1,13 @@
-"use client"
 
-import React, { useState } from "react";
+import QuestionCard from "@/components/main/question-card";
+import { Question } from "@/libs/types";
 import {
-  ChevronDown,
-  Bookmark,
   Image as ImageIcon,
-  ChevronUp,
-  MessageSquare,
-  Share2,
-  MoreHorizontal,
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
 
-interface Question {
-  id: string;
-  author: string;
-  authorAvatar: string;
-  affiliation: string;
-  community: string;
-  postedAt: string;
-  title: string;
-  body: string;
-  tags: string[];
-  upvotes: number;
-  answers: number;
-  unanswered?: boolean;
-}
 
 interface TrendingCommunity {
   id: string;
@@ -51,12 +31,14 @@ const UNANSWERED_QUESTIONS = [
   { id: "2", title: "How to setup React with Tailwind?", posted: "5h ago" },
 ];
 
-const QUESTIONS: Question[] = [
+const USER_AVATAR = "https://images.unsplash.com/photo-1517841905240-472988babdf9?w=120&h=120&fit=crop&crop=faces";
+
+export const QUESTIONS: Question[] = [
   {
     id: "1",
     author: "Sophia Martinez",
     authorAvatar:
-      "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=64&h=64&fit=crop&crop=faces",
+      "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=120&h=120&fit=crop&crop=faces",
     affiliation: "Stanford University",
     community: "r/ComputerScience",
     postedAt: "2 hours ago",
@@ -71,7 +53,7 @@ const QUESTIONS: Question[] = [
     id: "2",
     author: "Ethan Wright",
     authorAvatar:
-      "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=64&h=64&fit=crop&crop=faces",
+      "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=120&h=120&fit=crop&crop=faces",
     affiliation: "MIT",
     community: "r/Mathematics",
     postedAt: "4 hours ago",
@@ -85,7 +67,7 @@ const QUESTIONS: Question[] = [
     id: "3",
     author: "Lily Chen",
     authorAvatar:
-      "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=64&h=64&fit=crop&crop=faces",
+      "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=120&h=120&fit=crop&crop=faces",
     affiliation: "UC Berkeley",
     community: "r/StudyTips",
     postedAt: "1 day ago",
@@ -97,109 +79,20 @@ const QUESTIONS: Question[] = [
   },
 ];
 
-function QuestionCard({ question }: { question: Question }) {
-  const [votes, setVotes] = useState(question.upvotes);
-  const [voted, setVoted] = useState(false);
 
-  const toggleVote = () => {
-    setVoted((v) => !v);
-    setVotes((v) => (voted ? v - 1 : v + 1));
-  };
-
-  return (
-    <div className="rounded-2xl border border-neutral-200 bg-white p-5">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2.5">
-          <img
-            src={question.authorAvatar}
-            alt={question.author}
-            className="h-9 w-9 rounded-full object-cover"
-          />
-          <div className="text-sm">
-            <span className="font-semibold text-neutral-900">
-              {question.author}
-            </span>
-            <span className="text-neutral-400"> · {question.affiliation}</span>{" "}
-            <span className="text-neutral-400">in</span>{" "}
-            <a href="#" className="font-medium text-indigo-600 hover:underline">
-              {question.community}
-            </a>
-            <div className="text-xs text-neutral-400">{question.postedAt}</div>
-          </div>
-        </div>
-        {question.unanswered && (
-          <span className="shrink-0 rounded-full bg-orange-50 px-3 py-1 text-xs font-semibold text-orange-600">
-            Unanswered
-          </span>
-        )}
-      </div>
-
-      <h3 className="mt-3 text-lg font-bold text-neutral-900">
-        {question.title}
-      </h3>
-      <p className="mt-1.5 text-sm leading-relaxed text-neutral-500">
-        {question.body}
-      </p>
-
-      <div className="mt-3 flex flex-wrap gap-2">
-        {question.tags.map((tag) => (
-          <span
-            key={tag}
-            className="rounded-md bg-neutral-100 px-2.5 py-1 text-xs font-medium text-neutral-600"
-          >
-            {tag}
-          </span>
-        ))}
-      </div>
-
-      <div className="mt-4 flex items-center justify-between border-t border-neutral-100 pt-3.5">
-        <div className="flex items-center gap-1">
-          <button
-            onClick={toggleVote}
-            className={`flex items-center gap-1 rounded-full px-2.5 py-1.5 text-sm font-semibold ${voted ? "bg-indigo-50 text-indigo-600" : "text-neutral-500 hover:bg-neutral-50"
-              }`}
-          >
-            <ChevronUp className="h-4 w-4" />
-            {votes}
-          </button>
-          <button className="rounded-full p-1.5 text-neutral-400 hover:bg-neutral-50">
-            <ChevronDown className="h-4 w-4 rotate-180" />
-          </button>
-        </div>
-
-        <div className="flex items-center gap-4 text-sm text-neutral-500">
-          <span className="flex items-center gap-1.5">
-            <MessageSquare className="h-4 w-4" />
-            {question.answers} answers
-          </span>
-          <button className="flex items-center gap-1.5 hover:text-neutral-800">
-            <Share2 className="h-4 w-4" />
-            Share
-          </button>
-          <button className="hover:text-neutral-800">
-            <Bookmark className="h-4 w-4" />
-          </button>
-          <button className="hover:text-neutral-800">
-            <MoreHorizontal className="h-4 w-4" />
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-}
 
 export default function CampusHubFeed() {
 
   return (
     <>
       {/* Main feed */}
-      <main className="min-w-0 flex-1 md:ml-60 space-y-4">
+      <main className="min-w-0 flex-1 space-y-4">
         {/* Ask question composer */}
-        <div className="flex items-center gap-3 rounded-2xl border border-neutral-200 bg-white p-3">
+        <div className="flex items-center gap-3 rounded-2xl border border-neutral-200 bg-white p-3 sticky top-16">
           <Image
             width={40}
             height={40}
-            src=""
+            src={USER_AVATAR}
             alt="You"
             className="h-9 w-9 shrink-0 rounded-full object-cover"
           />
@@ -223,7 +116,7 @@ export default function CampusHubFeed() {
       </main>
 
       {/* Right sidebar */}
-      <aside className="w-72 shrink-0 hidden lg:block space-y-4 sticky">
+      <aside className="w-72 shrink-0 hidden lg:block space-y-4 sticky top-15">
         <div className="rounded-2xl border border-neutral-200 bg-white p-5">
           <h3 className="font-semibold text-neutral-900">
             Trending Communities
