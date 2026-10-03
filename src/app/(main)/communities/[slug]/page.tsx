@@ -1,11 +1,15 @@
 "use client"
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Check,
 } from "lucide-react";
 import QuestionCard from "@/components/main/question-card";
-import { QUESTIONS } from "../../page";
+import { usePosts } from "@/hooks/use-posts";
+import { useParams } from "next/navigation";
+import { Community } from "@/libs/types";
+import { getCommunity } from "@/libs/api";
+import { PostFeedSkeleton } from "@/components/main/laoding-skeletons";
 
 type TabId = "posts" | "questions" | "about" | "members";
 
@@ -41,10 +45,26 @@ function SideCard({
 
 export default function CommunityDetailPage() {
   const [tab, setTab] = useState<TabId>("posts");
+  const params = useParams();
+  const slug = String(params.slug);
   const [joined, setJoined] = useState(true);
+  const { posts } = usePosts()
+  const [community, setCommunity] = useState<Community | null>(null);
+
+  useEffect(() => {
+    const controller = new AbortController();
+
+    getCommunity(slug, controller.signal)
+      .then(setCommunity)
+      .catch((error: unknown) => {
+        if (!controller.signal.aborted) console.error(error);
+      });
+
+    return () => controller.abort();
+  }, [slug]);
 
   return (
-    <div className="min-h-screen bg-[#f4f6f9]">      
+    <div className="min-h-screen bg-[#f4f6f9] w-full">      
       <div className="mx-auto flex max-w-full gap-6 px-1 py-6">        
         {/* Main content */}
         <main className="min-w- flex-1 space-y-5">
@@ -54,20 +74,20 @@ export default function CommunityDetailPage() {
               className="relative h-44 bg-neutral-900"
               style={{
                 backgroundImage:
-                  "linear-gradient(120deg, rgba(79,70,229,0.5), rgba(236,72,153,0.4)), repeating-linear-gradient(45deg, rgba(255,255,255,0.06) 0 2px, transparent 2px 40px)",
+                  "linear-gradient(120deg, rgba(79,70,229,0.5), rgba(36,72,153,0.4)), repeating-linear-gradient(45deg, rgba(255,255,255,0.06) 0 2px, transparent 2px 40px)",
               }}
             />
 
             <div className="px-6 pb-5">
               <div className="flex flex-wrap items-end justify-between gap-4">
                 <div className="flex items-end gap-4">
-                  <div className="-mt-12 h-24 w-24 shrink-0 rounded-full z-10 border-4 border-white bg-indigo-600 shadow-lg shadow-gray-400 flex items-center justify-center text-white font-bold text-5xl" >CS</div>
+                  <div className="-mt-12 h-24 w-24 shrink-0 rounded-full z-10 border-4 border-white bg-indigo-600 shadow-lg shadow-gray-400 flex items-center justify-center text-white font-bold text-5xl" >{community?.name.slice(0,2).toUpperCase()}</div>
                   <div className="pb-1">
                     <h1 className="text-2xl font-bold text-neutral-900">
-                      c/ComputerScience
+                      c/{community?.name.replaceAll(" ", "")}
                     </h1>
                     <p className="text-sm text-neutral-400">
-                      12,450 students enrolled
+                      {community?.member_count} students enrolled
                     </p>
                   </div>
                 </div>
@@ -115,7 +135,10 @@ export default function CommunityDetailPage() {
 
           {/* Posts */}
           {tab === "posts" &&
-            QUESTIONS.map((p) => <QuestionCard key={p.id} question={p} />)}
+          posts.length > 0 ? posts.map((p) => (
+            <QuestionCard key={p.id} post={p} />
+          )) : <PostFeedSkeleton />
+        }
 
           {tab !== "posts" && (
             <div className="rounded-2xl border border-neutral-200 bg-white p-8 text-center text-sm text-neutral-400">
@@ -125,7 +148,7 @@ export default function CommunityDetailPage() {
         </main>
 
         {/* Right sidebar */}
-        <aside className="hidden w-72 shrink-0 space-y-4 xl:block sticky top-50">
+        <aside className="hidden w-72 shrink-0 self-start space-y-4 xl:sticky xl:top-16 xl:block">
           <SideCard title="About Community">
             <p className="text-sm leading-relaxed text-neutral-600">
               Computer Science, engineering, mathematics, and programming

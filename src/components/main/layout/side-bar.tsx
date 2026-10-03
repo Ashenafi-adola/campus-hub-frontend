@@ -20,7 +20,7 @@ interface Community {
 const NAV_ITEMS: NavItem[] = [
   { id: "home", label: "Home", icon: Home , href:"/"},
   { id: "popular", label: "Popular", icon: TrendingUp , href:"/popular"},
-  { id: "questions", label: "Questions", icon: HelpCircle ,href:"/questions"},
+  { id: "posts", label: "Posts", icon: HelpCircle ,href:"/posts"},
   { id: "communities", label: "Communities", icon: Users, href:"/communities" },
   { id: "saved", label: "Saved", icon: Bookmark ,href:"/bookmarks"},
   { id: "activity", label: "My Activity", icon: Clock ,href:"/myactivities"},

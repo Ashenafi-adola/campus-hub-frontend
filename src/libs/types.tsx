@@ -38,12 +38,22 @@ export class AuthApiError extends Error {
 export type CategoryId = "all" | "academic" | "campus-life" | "career";
 
 export interface Community {
-  id: string;
+  id: number;
   name: string;
-  members: string;
+  slug: string;
   description: string;
-  category: CategoryId;
-  icon: React.ComponentType<{ className?: string }>;
+  icon: string | null;
+  banner: string | null;
+  creator: User;
+  created_at: string;
+  updated_at: string;
+  is_private: boolean;
+  is_active: boolean;
+  is_featured: boolean;
+  member_limit: number | null;
+  member_count: number;
+  is_member: boolean;
+  can_manage: boolean;
 }
 
 export interface Question {
@@ -59,4 +69,30 @@ export interface Question {
   upvotes: number;
   answers: number;
   unanswered?: boolean;
+}
+
+export interface User {
+    id: number;
+    username: string;
+    email: string;
+    first_name: string;
+    last_name: string;
+    is_verified: boolean;
+    avatar?: string | null;
+}
+
+export interface Post {
+    id: number;
+    author: User;
+    content: string;
+    title: string;
+    slug: string;
+    post_type: string;
+    community: Community;
+    image?: File | string | null;
+    score: number;
+    upvote: number;
+    downvote: number;
+    created_at: string;
+    status: string;
 }

@@ -1,5 +1,8 @@
+"use client";
 
+import { PostFeedSkeleton } from "@/components/main/laoding-skeletons";
 import QuestionCard from "@/components/main/question-card";
+import { usePosts } from "@/hooks/use-posts";
 import { Question } from "@/libs/types";
 import {
   Image as ImageIcon,
@@ -83,6 +86,7 @@ export const QUESTIONS: Question[] = [
 
 export default function CampusHubFeed() {
 
+  const { posts } = usePosts();
   return (
     <>
       {/* Main feed */}
@@ -110,13 +114,15 @@ export default function CampusHubFeed() {
         </div>
 
         {/* Question list */}
-        {QUESTIONS.map((q) => (
-          <QuestionCard key={q.id} question={q} />
-        ))}
+        {
+          posts.length > 0 ? posts.map((p) => (
+            <QuestionCard key={p.id} post={p} />
+          )) : <PostFeedSkeleton />
+        }
       </main>
 
       {/* Right sidebar */}
-      <aside className="w-72 shrink-0 hidden lg:block space-y-4 sticky top-15">
+      <aside className="hidden w-72 shrink-0 self-start space-y-4 xl:sticky xl:top-16 xl:block">
         <div className="rounded-2xl border border-neutral-200 bg-white p-5">
           <h3 className="font-semibold text-neutral-900">
             Trending Communities

@@ -1,4 +1,4 @@
-import { UserRegistrationData } from "./types"
+import { Community, Post, UserRegistrationData } from "./types"
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL
 
@@ -145,3 +145,31 @@ export async function resetPasswordRequest(payload:Record<string, string>) {
     }
     return res.json()
 }
+
+export async function getPosts(signal?: AbortSignal): Promise<Post[]> {
+    const res = await fetch(`${API_URL}/posts/`, { signal })
+
+    if (!res.ok){
+        throw new Error(`Faild to load posts ${res.status}`);
+    }
+    return res.json();
+}
+
+export async function getCommunities(signal?: AbortSignal): Promise<Community[]> {
+    const res = await fetch(`${API_URL}/communities/`, { signal })
+
+    if (!res.ok){
+        throw new Error(`Faild to load communities ${res.status}`);
+    }
+    return res.json();
+}
+
+export async function getCommunity(slug: string | undefined, signal?: AbortSignal): Promise<Community> {
+    const res = await fetch(`${API_URL}/communities/${slug}`, { signal })
+
+    if (!res.ok){
+        throw new Error(`Faild to load community ${res.status}`);
+    }
+    return res.json();
+}
+

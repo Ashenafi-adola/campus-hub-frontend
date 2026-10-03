@@ -1,7 +1,7 @@
 "use client"
 
 import { CategoryId, Community } from '@/libs/types';
-import { ArrowUpRight, Check, Users } from 'lucide-react';
+import { ArrowUpRight, Check, Sigma, Users } from 'lucide-react';
 import Link from 'next/link';
 import React, { useState } from 'react'
 
@@ -44,15 +44,17 @@ const CATEGORY_META: Record<
     iconColor: ""
   }
 };
+
+const cats:CategoryId[] = ["all" , "academic" , "campus-life" , "career"]
  
 
 function CommunityCard({ community }: { community: Community }) {
   const [joined, setJoined] = useState(false);
-  const meta = CATEGORY_META[community.category];
-  const Icon = community.icon;
+  const meta = CATEGORY_META[cats[2]];
+  const Icon = Sigma;
  
   return (
-    <Link href={`/communities/${community.name}`} className="group flex flex-col overflow-hidden rounded-2xl border border-neutral-200 bg-white transition-shadow hover:shadow-xl hover:shadow-gray-300 hover:scale-101">
+    <Link href={`/communities/${community.slug}`} className="group flex flex-col overflow-hidden rounded-2xl border border-neutral-200 bg-white transition-shadow hover:shadow-xl hover:shadow-gray-300 hover:scale-101">
       {/* Banner */}
       <div
         className={`relative h-20 bg-linear-to-br ${meta.banner}`}
@@ -85,7 +87,7 @@ function CommunityCard({ community }: { community: Community }) {
         </h3>
         <p className="mt-0.5 flex items-center gap-1 text-xs text-neutral-400">
           <Users className="h-3 w-3" />
-          {community.members}
+          {community.member_count}
         </p>
  
         <p className="mt-2.5 line-clamp-2 flex-1 text-sm leading-relaxed text-neutral-500">
@@ -94,7 +96,7 @@ function CommunityCard({ community }: { community: Community }) {
  
         <div className="mt-4 flex items-center gap-2 border-t border-neutral-100 pt-4">
           <button
-            onClick={() => setJoined((v) => !v)}
+            onClick={(e) => {setJoined((v) => !v); e.stopPropagation()}}
             className={`flex-1 rounded-lg px-3.5 py-2 text-sm font-semibold transition-colors ${
               joined
                 ? "bg-neutral-900 text-white hover:bg-neutral-800"
