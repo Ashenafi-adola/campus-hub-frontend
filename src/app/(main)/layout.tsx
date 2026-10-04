@@ -1,12 +1,18 @@
 import SideBar from '@/components/main/layout/side-bar'
 import TopBar from '@/components/main/layout/top-bar'
+import { httpDriver } from '@/libs/auth/http-driver'
+import { readSession } from '@/libs/auth/session'
+import { redirect } from 'next/navigation'
 import React from 'react'
 
 type Props = {
     children: React.ReactNode
 }
 
-function Layout({ children }: Props) {
+async function Layout({ children }: Props) {
+    const { access } = await readSession();
+    if (access) console.log(httpDriver.me(access))
+    if (!access) redirect("/signin")
     return (
         <div className="min-h-screen bg-[#f7f6f2]">
             <TopBar/>

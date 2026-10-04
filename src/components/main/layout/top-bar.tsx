@@ -1,9 +1,10 @@
 import React from 'react'
-import { Bell, ChevronDown, Plus, Search } from 'lucide-react'
-import Image from 'next/image'
+import { Bell, Plus, Search } from 'lucide-react'
+import ProfileDropdown from './profile-dropdown'
 
 
 function TopBar() {
+    
     return (
         <header className="sticky top-0 z-10 flex items-center gap-6 border-b border-neutral-200 bg-white px-6 py-3">
             <div className="flex items-center gap-2">
@@ -37,16 +38,7 @@ function TopBar() {
                 <button className="text-neutral-500 hover:text-neutral-800">
                     <Bell className="h-5 w-5" />
                 </button>
-                <button className="flex items-center gap-1">
-                    <Image
-                        src="https://images.unsplash.com/photo-1517841905240-472988babdf9?w=64&h=64&fit=crop&crop=faces"
-                        alt="Profile"
-                        width={32}
-                        height={32}
-                        className="h-8 w-8 rounded-full object-cover"
-                    />
-                    <ChevronDown className="h-4 w-4 text-neutral-400" />
-                </button>
+                <ProfileDropdown />
             </div>
         </header>
     )

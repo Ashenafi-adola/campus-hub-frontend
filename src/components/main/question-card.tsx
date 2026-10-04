@@ -3,11 +3,13 @@ import React, { useState } from 'react';
 import Image from "next/image";
 import { Post } from '@/libs/types';
 import { Bookmark, ChevronDown, ChevronUp, MessageSquare, MoreHorizontal, Share2 } from 'lucide-react';
+import { getTimeSince } from '@/libs/formatters';
 
 
 function QuestionCard({ post }: { post: Post }) {
   const [votes, setVotes] = useState(()=>post.score);
   const [voted, setVoted] = useState(false);
+  console.log(post.author)
 
   const toggleVote = () => {
     setVoted((v) => !v);
@@ -34,7 +36,7 @@ function QuestionCard({ post }: { post: Post }) {
             <a href="#" className="font-medium text-indigo-600 hover:underline">
               {post?.community.name}
             </a>
-            <div className="text-xs text-neutral-400">{post?.created_at}</div>
+            <div className="text-xs text-neutral-400">{getTimeSince(post?.created_at)}</div>
           </div>
         </div>
         {post?.status && (

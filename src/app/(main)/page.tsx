@@ -92,7 +92,7 @@ export default function CampusHubFeed() {
       {/* Main feed */}
       <main className="min-w-0 flex-1 space-y-4">
         {/* Ask question composer */}
-        <div className="flex items-center gap-3 rounded-2xl border border-neutral-200 bg-white p-3 sticky top-16">
+        <div className="flex items-center gap-3 rounded-2xl border border-neutral-200 bg-white p-3 sticky top-16 z-50">
           <Image
             width={40}
             height={40}

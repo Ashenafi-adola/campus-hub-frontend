@@ -1,5 +1,8 @@
 import { NextResponse } from "next/server";
-import { AuthTokens } from "./types";
+import { AuthTokens, AuthUser } from "./types";
+import { cookies } from "next/headers";
+import { httpDriver } from "./http-driver";
+import { cache } from "react";
 
 const SECURE_COOKIES = process.env.NODE_ENV === "production";
 const PREFIX = SECURE_COOKIES ? "__Host-" : "";
@@ -21,3 +24,17 @@ export function setSessionCookies(res: NextResponse, tokens: AuthTokens): void {
     res.cookies.set(ACCESS_COOKIES, tokens.access, options(15 * 60));
     res.cookies.set(REFRESH_COOKIES, tokens.refresh, options(14 * 24 * 60 * 60));
 }
+
+export async function readSession(): Promise<{access?: string, refresh?: string}> {
+    const jar = await cookies();
+    return {
+        access: jar.get(ACCESS_COOKIES)?.value,
+        refresh: jar.get(REFRESH_COOKIES)?.value,
+    }
+}
+
+export const getCurrentUser = cache(async (): Promise<AuthUser | null> => {
+    const {access} = await readSession();
+    if (!access) return null;
+    return httpDriver.me(access).catch(()=>null);
+})
