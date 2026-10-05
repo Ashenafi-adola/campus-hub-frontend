@@ -1,7 +1,8 @@
 "use client"
+import { AuthUser } from "@/libs/auth/types";
 import { Bookmark, ChevronDown, Clock, HelpCircle, LogOut, Moon, Settings, User } from "lucide-react";
 import Image from "next/image";
-import { useEffect, useRef, useState } from "react";
+import { use, useEffect, useRef, useState } from "react";
 
 
 interface MenuItem {
@@ -23,7 +24,7 @@ const AVATAR =
   "https://images.unsplash.com/photo-1517841905240-472988babdf9?w=64&h=64&fit=crop&crop=faces";
 
 
-function ProfileDropdown() {
+function ProfileDropdown({user}:{user:AuthUser}) {
   const [open, setOpen] = useState(false);
   const [darkMode, setDarkMode] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
@@ -54,8 +55,9 @@ function ProfileDropdown() {
         <Image
           width={32}
           height={32}
-          src={AVATAR}
-          alt="Sophia Martinez"
+          src={user.avatar || AVATAR}
+          alt={user.username}
+          unoptimized
           className="h-8 w-8 rounded-full object-cover"
         />
         <ChevronDown
@@ -68,19 +70,20 @@ function ProfileDropdown() {
         <div className="absolute right-0 top-full z-20 mt-2 w-64 overflow-hidden rounded-2xl border border-neutral-200 bg-white shadow-gray-700 shadow-2xl">
           {/* Identity header */}
           <div className="flex items-center gap-3 border-b border-neutral-100 px-4 py-3.5">
-            <Image
+            {user.avatar ? <Image
               width={32}
               height={32}
-              src={AVATAR}
-              alt="Sophia Martinez"
+              src={user.avatar || AVATAR}
+              alt={user.username}
+              unoptimized
               className="h-10 w-10 shrink-0 rounded-full object-cover"
-            />
+            /> : <div>{user.first_name.slice(0,1)}</div>}
             <div className="min-w-0">
               <div className="truncate text-sm font-semibold text-neutral-900">
-                {"user.first_name" + " " + "user.last_name"}
+                {user.first_name + " " + user.last_name}
               </div>
               <div className="truncate text-xs text-neutral-400">
-                {"user.email"}
+                {user.email}
               </div>
             </div>
           </div>

@@ -11,16 +11,15 @@ type Props = {
 
 async function Layout({ children }: Props) {
     const { access } = await readSession();
-    if (access) console.log(httpDriver.me(access))
-    if (!access) redirect("/signin")
+    if (!access) redirect("/signin");
+    const user = await httpDriver.me(access);
     return (
         <div className="min-h-screen bg-[#f7f6f2]">
-            <TopBar/>
+            <TopBar user={user}/>
             <div className="mx-auto flex max-w-full gap-6 px-6 py-6">
                 <SideBar/>
                 {children}
             </div>
-            
         </div>
     )
 }

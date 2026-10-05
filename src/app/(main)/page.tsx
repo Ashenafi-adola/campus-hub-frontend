@@ -98,6 +98,7 @@ export default function CampusHubFeed() {
             height={40}
             src={USER_AVATAR}
             alt="You"
+            unoptimized
             className="h-9 w-9 shrink-0 rounded-full object-cover"
           />
           <input

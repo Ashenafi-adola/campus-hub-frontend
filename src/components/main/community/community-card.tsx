@@ -1,8 +1,9 @@
 "use client"
 
 import { CategoryId, Community } from '@/libs/types';
-import { ArrowUpRight, Check, Sigma, Users } from 'lucide-react';
+import { ArrowUpRight, Check, Users } from 'lucide-react';
 import Link from 'next/link';
+import Image from "next/image";
 import React, { useState } from 'react'
 
 const CATEGORY_META: Record<
@@ -51,37 +52,45 @@ const cats:CategoryId[] = ["all" , "academic" , "campus-life" , "career"]
 function CommunityCard({ community }: { community: Community }) {
   const [joined, setJoined] = useState(false);
   const meta = CATEGORY_META[cats[2]];
-  const Icon = Sigma;
  
   return (
     <Link href={`/communities/${community.slug}`} className="group flex flex-col overflow-hidden rounded-2xl border border-neutral-200 bg-white transition-shadow hover:shadow-xl hover:shadow-gray-300 hover:scale-101">
       {/* Banner */}
-      <div
-        className={`relative h-20 bg-linear-to-br ${meta.banner}`}
-      >
+      {community.banner ? (
+        <div className="relative h-20 w-full">
+          <Image
+            fill
+            src={community.banner}
+            alt={community.name}
+            unoptimized
+            className="object-cover"
+          />
+        </div>
+      ) : (
         <div
-          className="absolute inset-0 opacity-25"
+          className="relative h-20 bg-neutral-900"
           style={{
             backgroundImage:
-              "radial-gradient(circle, white 1px, transparent 1px)",
-            backgroundSize: "16px 16px",
+              "linear-gradient(120deg, rgba(79,70,229,0.5), rgba(236,72,153,0.4)), repeating-linear-gradient(45deg, rgba(255,255,255,0.06) 0 2px, transparent 2px 40px)",
           }}
         />
-        <span
-          className={`absolute right-3 top-3 rounded-full px-2.5 py-1 text-[11px] font-semibold backdrop-blur-sm ${meta.badge}`}
-        >
-          {meta.label}
-        </span>
-      </div>
- 
+      )}
+
       <div className="flex flex-1 flex-col px-5 pb-5">
-        {/* Icon overlapping the banner */}
+        { }
         <div
           className={`-mt-7 flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl border-4 border-white shadow-sm ${meta.iconBg}`}
         >
-          <Icon className={`h-6 w-6 ${meta.iconColor}`} />
+          {community.icon ? <Image
+            width={32}
+            height={32}
+            src={community.icon}
+            alt={community.name}
+            unoptimized
+            className="h-10 w-10 shrink-0 rounded-full object-cover"
+          /> : <span className='font-bold text-black text-2xl'>{community.name.slice(0,2).toUpperCase()}</span>}
         </div>
- 
+
         <h3 className="mt-3 font-semibold text-neutral-900">
           {community.name}
         </h3>

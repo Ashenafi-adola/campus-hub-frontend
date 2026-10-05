@@ -1,10 +1,14 @@
+import { getCurrentUser } from '@/libs/auth/session';
+import { redirect } from 'next/navigation';
 import React from 'react'
 
 type Props = {
     children: React.ReactNode;
 }
 
-function AuthLayout({children}: Props) {
+async function AuthLayout({children}: Props) {
+    const user = await getCurrentUser()
+    if (user) redirect("/");
   return (
     <div className="flex min-h-screen">
             {/* Left brand panel */}

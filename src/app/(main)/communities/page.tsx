@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import CommunityCard from "@/components/main/community-card";
+import CommunityCard from "@/components/main/community/community-card";
 import { useCommunities } from "@/hooks/use-communities";
 import { CategoryId } from "@/libs/types";
 import Link from "next/link";
