@@ -5,12 +5,10 @@ import {
   Check,
 } from "lucide-react";
 import Image from "next/image"
-import QuestionCard from "@/components/main/question-card";
 import { usePosts } from "@/hooks/use-posts";
 import { useParams } from "next/navigation";
 import { Community } from "@/libs/types";
 import { getCommunity } from "@/libs/api";
-import { PostFeedSkeleton } from "@/components/main/laoding-skeletons";
 import { AboutTab, MembersTab, PostsTab } from "@/components/main/community/community-tabs";
 
 type TabId = "posts" | "questions" | "about" | "members";

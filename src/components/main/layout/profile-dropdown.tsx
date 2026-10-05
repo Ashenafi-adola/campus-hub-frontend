@@ -2,7 +2,7 @@
 import { AuthUser } from "@/libs/auth/types";
 import { Bookmark, ChevronDown, Clock, HelpCircle, LogOut, Moon, Settings, User } from "lucide-react";
 import Image from "next/image";
-import { use, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 
 interface MenuItem {
