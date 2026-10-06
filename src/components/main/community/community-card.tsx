@@ -103,7 +103,9 @@ function CommunityCard({ community }: { community: Community }) {
           {community.description}
         </p>
  
-        <div className="mt-4 flex items-center gap-2 border-t border-neutral-100 pt-4">
+        <div 
+        onClick={(e) => {e.stopPropagation()}}
+        className="mt-4 flex items-center gap-2 border-t border-neutral-100 pt-4">
           <button
             onClick={(e) => {setJoined((v) => !v); e.stopPropagation()}}
             className={`flex-1 rounded-lg px-3.5 py-2 text-sm font-semibold transition-colors ${

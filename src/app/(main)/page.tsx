@@ -3,7 +3,6 @@
 import { PostFeedSkeleton } from "@/components/main/laoding-skeletons";
 import QuestionCard from "@/components/main/question-card";
 import { usePosts } from "@/hooks/use-posts";
-import { Question } from "@/libs/types";
 import {
   Image as ImageIcon,
 } from "lucide-react";
@@ -35,53 +34,6 @@ const UNANSWERED_QUESTIONS = [
 ];
 
 const USER_AVATAR = "https://images.unsplash.com/photo-1517841905240-472988babdf9?w=120&h=120&fit=crop&crop=faces";
-
-export const QUESTIONS: Question[] = [
-  {
-    id: "1",
-    author: "Sophia Martinez",
-    authorAvatar:
-      "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=120&h=120&fit=crop&crop=faces",
-    affiliation: "Stanford University",
-    community: "r/ComputerScience",
-    postedAt: "2 hours ago",
-    title: "How can I understand recursion in Python?",
-    body: "I've been trying to wrap my head around call stacks and base cases. Every time I write a recursive function, I end up with a stack overflow error or returning None. Are there any mental models or drawings that help?",
-    tags: ["Python", "Recursion", "Beginner"],
-    upvotes: 42,
-    answers: 8,
-    unanswered: true,
-  },
-  {
-    id: "2",
-    author: "Ethan Wright",
-    authorAvatar:
-      "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=120&h=120&fit=crop&crop=faces",
-    affiliation: "MIT",
-    community: "r/Mathematics",
-    postedAt: "4 hours ago",
-    title: "Best resources for linear algebra?",
-    body: "My professor is moving extremely fast and the textbook is super abstract. Are there any online series, visual guides, or supplementary problem sheets you'd highly recommend for someone who needs geometric intuitio...",
-    tags: ["LinearAlgebra", "StudyResources", "MIT"],
-    upvotes: 89,
-    answers: 15,
-  },
-  {
-    id: "3",
-    author: "Lily Chen",
-    authorAvatar:
-      "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=120&h=120&fit=crop&crop=faces",
-    affiliation: "UC Berkeley",
-    community: "r/StudyTips",
-    postedAt: "1 day ago",
-    title: "Tips for surviving finals week?",
-    body: "Facing three back-to-back exams next week and the stress is setting in. How do you guys block out your study days, organize summaries, and keep your sanity without burning out entirely by Wednesday?",
-    tags: ["Finals", "Productivity", "MentalHealth"],
-    upvotes: 112,
-    answers: 24,
-  },
-];
-
 
 
 export default function CampusHubFeed() {

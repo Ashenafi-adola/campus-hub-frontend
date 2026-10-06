@@ -146,8 +146,14 @@ export async function resetPasswordRequest(payload:Record<string, string>) {
     return res.json()
 }
 
-export async function getPosts(signal?: AbortSignal): Promise<Post[]> {
-    const res = await fetch(`${API_URL}/posts/`, { signal })
+export async function getPosts(signal?: AbortSignal, access?: string): Promise<Post[]> {
+    const res = await fetch(`${API_URL}/posts/`, { 
+        signal,
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${access}`
+        }
+     })
 
     if (!res.ok){
         throw new Error(`Faild to load posts ${res.status}`);
@@ -156,7 +162,9 @@ export async function getPosts(signal?: AbortSignal): Promise<Post[]> {
 }
 
 export async function getCommunities(signal?: AbortSignal): Promise<Community[]> {
-    const res = await fetch(`${API_URL}/communities/`, { signal })
+    const res = await fetch(`${API_URL}/communities/`, { 
+        signal
+     })
 
     if (!res.ok){
         throw new Error(`Faild to load communities ${res.status}`);
@@ -173,3 +181,32 @@ export async function getCommunity(slug: string | undefined, signal?: AbortSigna
     return res.json();
 }
 
+
+export async function upvotePost(slug:string, access: string) {
+    const res = await fetch(`${API_URL}/posts/${slug}/upvote/`, {
+        method:"POST",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${access}`
+        },
+        body: JSON.stringify({})
+    })
+    if(!res.ok){
+        throw new Error(`Couldn't upvote the post ${res.status}`)
+    }
+    return res.json();
+}
+export async function downvotePost(slug:string, access: string) {
+    const res = await fetch(`${API_URL}/posts/${slug}/downvote/`, {
+        method:"POST",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${access}`
+        },
+        body: JSON.stringify({})
+    })
+    if(!res.ok){
+        throw new Error(`Couldn't downvote the post ${res.status}`)
+    }
+    return res.json();
+}

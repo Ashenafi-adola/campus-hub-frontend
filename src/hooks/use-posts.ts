@@ -1,3 +1,4 @@
+import { getAccessToken } from "@/app/actions/post-votes";
 import { getPosts } from "@/libs/api";
 import { Post } from "@/libs/types";
 import { useEffect, useState } from "react";
@@ -14,11 +15,10 @@ export function usePosts(){
         const loadPosts = async () => {
             setLoading(true);
             setError(null);
-
             try {
-                const data = await getPosts(controller.signal);
+                const data = await getPosts(controller.signal, await getAccessToken());
                 if (controller.signal.aborted) return;
-                setPosts(data);
+                setPosts(data.sort((a, b) => b.score - a.score));
             } catch {
                 if (controller.signal.aborted) return;
                 setError("Couldn't load posts. Check your connection and try again.");

@@ -95,4 +95,6 @@ export interface Post {
     downvote: number;
     created_at: string;
     status: string;
+    upvoted: boolean;
+    downvoted: boolean;
 }
