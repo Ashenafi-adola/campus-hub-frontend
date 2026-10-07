@@ -47,9 +47,11 @@ function ProfileDropdown({user}:{user:AuthUser}) {
   }, []);
 
   return (
-    <div className="relative" ref={ref}>
+    <div
+      onMouseEnter={() => setOpen(true)}
+      onMouseLeave={() => setOpen(false)}
+      className="relative" ref={ref}>
       <button
-        onClick={() => setOpen((v) => !v)}
         className="flex items-center gap-1.5 rounded-full py-1 pl-1 pr-2 hover:bg-neutral-100"
       >
         <Image

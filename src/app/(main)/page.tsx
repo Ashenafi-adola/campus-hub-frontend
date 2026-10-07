@@ -10,7 +10,6 @@ import Image from "next/image";
 import Link from "next/link";
 
 
-
 interface TrendingCommunity {
   id: string;
   name: string;
@@ -18,9 +17,9 @@ interface TrendingCommunity {
 }
 
 const TRENDING: TrendingCommunity[] = [
-  { id: "cs", name: "r/ComputerScience", members: "12.4k students" },
-  { id: "study", name: "r/StudyTips", members: "8.9k students" },
-  { id: "scholarships", name: "r/Scholarships", members: "6.2k students" },
+  { id: "cs", name: "c/ComputerScience", members: "12.4k students" },
+  { id: "study", name: "c/StudyTips", members: "8.9k students" },
+  { id: "scholarships", name: "c/Scholarships", members: "6.2k students" },
 ];
 
 const POPULAR_QUESTIONS = [
@@ -61,7 +60,7 @@ export default function CampusHubFeed() {
           <button className="shrink-0 rounded-full p-2.5 text-neutral-400 hover:bg-neutral-100">
             <ImageIcon className="h-5 w-5" />
           </button>
-          <button className="shrink-0 rounded-full bg-indigo-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-indigo-700">
+          <button className="shrink-0 rounded-full bg-indigo-600 px-5 py-2.5 hidden lg:block text-sm font-semibold text-white hover:bg-indigo-700">
             Ask Question
           </button>
         </div>

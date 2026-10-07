@@ -10,8 +10,14 @@ import { downvotePostForCurrentUser, upvotePostForCurrentUser } from '@/app/acti
 function QuestionCard({ post }: { post: Post }) {
   const [votes, setVotes] = useState(post.score);
   const [currentPost, setCurrentPost] = useState<Post>(post);
+  const [content, setContent] = useState<string>(post.excerpt);
   
   if (!post?.author || !post?.community) return null;
+
+  const changeContent = () => {
+    if (content.endsWith("...")) setContent(post.content);
+    else setContent(post.excerpt);
+  }
 
   const upVote = async () => {
       const res = await upvotePostForCurrentUser(post.slug);
@@ -61,8 +67,12 @@ function QuestionCard({ post }: { post: Post }) {
         {currentPost.title}
       </h3>
       <p className="mt-1.5 text-sm leading-relaxed text-neutral-500">
-        {currentPost.content}
+        {content}
       </p>
+      {
+        post.content.length > 120 && <span onClick={changeContent} className="text-gray-500 hover:text-gray-800 hover:cursor-pointer">{content.endsWith("...") ? "read more" : "read less"}</span>
+      }
+      
 
       <div className="mt-3 flex flex-wrap gap-2">
         {/* {currentPost.tags.map((tag) => (
@@ -97,7 +107,7 @@ function QuestionCard({ post }: { post: Post }) {
         <div className="flex items-center gap-4 text-sm text-neutral-500">
           <button className="flex items-center gap-1.5 hover:text-neutral-800">
             <MessageSquare className="h-4 w-4" />
-            {12} answers
+            {post.comment_count} answers
           </button>
           <button className="flex items-center gap-1.5 hover:text-neutral-800">
             <Share2 className="h-4 w-4" />

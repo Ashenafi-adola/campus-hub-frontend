@@ -97,4 +97,6 @@ export interface Post {
     status: string;
     upvoted: boolean;
     downvoted: boolean;
+    excerpt: string;
+    comment_count: number;
 }

@@ -32,7 +32,7 @@ function TopBar({user}:{user:AuthUser}) {
             </div>
 
             <div className="flex shrink-0 items-center gap-4">
-                <button className="flex items-center gap-1.5 rounded-full bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-700">
+                <button className="md:flex items-center gap-1.5 rounded-full bg-indigo-600 px-4 hidden py-2 text-sm font-semibold text-white hover:bg-indigo-700">
                     <Plus className="h-4 w-4" />
                     Ask Question
                 </button>
