@@ -75,7 +75,7 @@ export default function CreateCommunityPage() {
         createCommunity({
             name: name,
             description: description,
-            is_private: false,
+            is_private: isPrivate,
             banner: banner,
             icon: icon,
         }, token)

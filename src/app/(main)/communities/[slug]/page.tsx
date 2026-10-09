@@ -5,9 +5,8 @@ import {
   Check,
 } from "lucide-react";
 import Image from "next/image"
-import { usePosts } from "@/hooks/use-posts";
 import { useParams } from "next/navigation";
-import { Community } from "@/libs/types";
+import { Community, Post } from "@/libs/types";
 import { getCommunity } from "@/libs/api";
 import { AboutTab, MembersTab, PostsTab } from "@/components/main/community/community-tabs";
 
@@ -48,13 +47,13 @@ export default function CommunityDetailPage() {
   const params = useParams();
   const slug = String(params.slug);
   const [joined, setJoined] = useState(true);
-  const { posts } = usePosts()
+  const [posts, setPosts] = useState<Post[]>([]);
   const [community, setCommunity] = useState<Community | null>(null);
   useEffect(() => {
     const controller = new AbortController();
 
     getCommunity(slug, controller.signal)
-      .then(setCommunity)
+      .then(res=>{setCommunity(res.community); setPosts(res.posts)})
       .catch((error: unknown) => {
         if (!controller.signal.aborted) console.error(error);
       });
@@ -74,7 +73,7 @@ export default function CommunityDetailPage() {
               <div className="relative h-44 w-full">
                 <Image
                   fill
-                  src={community.banner}
+                  src={typeof(community.banner) === "object" ? community.banner.name : community.banner}
                   alt={community.name}
                   unoptimized
                   className="object-cover"
@@ -97,7 +96,7 @@ export default function CommunityDetailPage() {
                     {community?.icon ? (
                       <Image
                         fill
-                        src={community.icon}
+                        src={typeof(community.icon) === "object" ? community.icon.name :community.icon}
                         alt={community.name}
                         unoptimized
                         className="object-cover"
@@ -188,7 +187,7 @@ export default function CommunityDetailPage() {
               <p className="text-xs font-semibold uppercase tracking-wide text-neutral-400">
                 Created
               </p>
-              <p className="mt-1 text-sm text-neutral-700">{new Date(community.created_at).toDateString().slice(3,)}</p>
+              <p className="mt-1 text-sm text-neutral-700">{ community.created_at && new Date(community.created_at).toDateString().slice(3,)}</p>
             </div>
           </SideCard>
 

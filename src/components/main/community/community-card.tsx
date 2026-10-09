@@ -60,7 +60,7 @@ function CommunityCard({ community }: { community: Community }) {
         <div className="relative h-20 w-full">
           <Image
             fill
-            src={community.banner}
+            src={typeof(community.banner) === "object" ? community.banner.name : community.banner}
             alt={community.name}
             unoptimized
             className="object-cover"
@@ -84,7 +84,7 @@ function CommunityCard({ community }: { community: Community }) {
           {community.icon ? <Image
             width={32}
             height={32}
-            src={community.icon}
+            src={typeof(community.icon) === "object" ? community.icon.name : community.icon}
             alt={community.name}
             unoptimized
             className="h-10 w-10 shrink-0 rounded-full object-cover"

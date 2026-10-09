@@ -38,22 +38,22 @@ export class AuthApiError extends Error {
 export type CategoryId = "all" | "academic" | "campus-life" | "career";
 
 export interface Community {
-  id: number;
+  id?: number;
   name: string;
-  slug: string;
+  slug?: string;
   description: string;
-  icon: string | null;
-  banner: string | null;
-  creator: User;
-  created_at: string;
-  updated_at: string;
+  icon: string | null | File;
+  banner: string | null | File;
+  creator?: User;
+  created_at?: string;
+  updated_at?: string;
   is_private: boolean;
-  is_active: boolean;
-  is_featured: boolean;
-  member_limit: number | null;
-  member_count: number;
-  is_member: boolean;
-  can_manage: boolean;
+  is_active?: boolean;
+  is_featured?: boolean;
+  member_limit?: number | null;
+  member_count?: number;
+  is_member?: boolean;
+  can_manage?: boolean;
 }
 
 export interface Question {
@@ -99,4 +99,9 @@ export interface Post {
     downvoted: boolean;
     excerpt: string;
     comment_count: number;
+}
+
+export interface CommunityDetail {
+    community: Community;
+    posts: Post[];
 }
