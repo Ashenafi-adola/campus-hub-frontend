@@ -2,15 +2,18 @@
 import React, { useState } from 'react';
 import Image from "next/image";
 import { Post } from '@/libs/types';
-import { ArrowDown, ArrowUp, Bookmark, MessageSquare, MoreHorizontal, Share2 } from 'lucide-react';
+import { ArrowDown, ArrowUp, Bookmark, MessageSquare, Share2 } from 'lucide-react';
 import { getTimeSince } from '@/libs/format';
 import { downvotePostForCurrentUser, upvotePostForCurrentUser } from '@/app/actions/post-votes';
+import { PostActionsMenu } from './post-actions';
+import Link from 'next/link';
 
 
 function QuestionCard({ post }: { post: Post }) {
   const [votes, setVotes] = useState(post.score);
   const [currentPost, setCurrentPost] = useState<Post>(post);
   const [content, setContent] = useState<string>(post.excerpt);
+  const [saved, setSaved] = useState<boolean>(false);
   
   if (!post?.author || !post?.community) return null;
 
@@ -50,9 +53,9 @@ function QuestionCard({ post }: { post: Post }) {
             </span>
             <span className="text-neutral-400"> · {currentPost.post_type}</span>{" "}
             <span className="text-neutral-400">in</span>{" "}
-            <a href="#" className="font-medium text-indigo-600 hover:underline">
+            <Link href={`/communities/${currentPost.community.slug}`} className="font-medium text-indigo-600 hover:underline">
               {currentPost.community.name}
-            </a>
+            </Link>
             <div className="text-xs text-neutral-400">{getTimeSince(currentPost.created_at)}</div>
           </div>
         </div>
@@ -113,12 +116,10 @@ function QuestionCard({ post }: { post: Post }) {
             <Share2 className="h-4 w-4" />
             Share
           </button>
-          <button className="hover:text-neutral-800">
-            <Bookmark className="h-4 w-4" />
+          <button onClick={() => setSaved((v) => !v)} className="hover:text-neutral-800">
+            <Bookmark className={`h-4 w-4 ${saved ? "fill-neutral-900 text-neutral-900" : ""}`} />
           </button>
-          <button className="hover:text-neutral-800">
-            <MoreHorizontal className="h-4 w-4" />
-          </button>
+          <PostActionsMenu isOwner={false}/>
         </div>
       </div>
     </div>
