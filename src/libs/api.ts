@@ -1,4 +1,4 @@
-import { Community, Post, UserRegistrationData } from "./types"
+import { Community, CommunityDetail, Post, UserRegistrationData } from "./types"
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL
 
@@ -172,7 +172,7 @@ export async function getCommunities(signal?: AbortSignal): Promise<Community[]>
     return res.json();
 }
 
-export async function getCommunity(slug: string | undefined, signal?: AbortSignal): Promise<Community> {
+export async function getCommunity(slug: string | undefined, signal?: AbortSignal): Promise<CommunityDetail> {
     const res = await fetch(`${API_URL}/communities/${slug}`, { signal })
 
     if (!res.ok){
@@ -207,6 +207,28 @@ export async function downvotePost(slug:string, access: string) {
     })
     if(!res.ok){
         throw new Error(`Couldn't downvote the post ${res.status}`)
+    }
+    return res.json();
+}
+
+export async function createCommunity(payload: Community, token: string): Promise<Community> {
+    const formData = new FormData();
+    formData.append("name", payload.name);
+    formData.append("description", payload.description);
+    if (payload.icon !== null) formData.append("icon", payload.icon);
+    if (payload.banner !== null) formData.append("banner", payload.banner);
+    formData.append("is_private", String(payload.is_private));
+    
+    const res = await fetch(`${API_URL}/communities/`, {
+        method: "POST",
+        headers: {
+            "Authorization": `Bearer ${token}`
+        },
+        body: formData,
+    })
+
+    if (!res.ok){
+        throw new Error(`Couldn't create a community ${res.status}`)
     }
     return res.json();
 }

@@ -9,9 +9,10 @@ import {
     Lock,
     ShieldCheck,
 } from "lucide-react";
+import { createCommunity } from "@/libs/api";
+import { getAccessToken } from "@/app/actions/post-votes";
 
 type CategoryId = "academic" | "campus-life" | "career";
-type Visibility = "public" | "restricted" | "private";
 
 const CATEGORIES: { id: CategoryId; label: string }[] = [
     { id: "academic", label: "Academic" },
@@ -19,8 +20,8 @@ const CATEGORIES: { id: CategoryId; label: string }[] = [
     { id: "career", label: "Career" },
 ];
 
-const VISIBILITY_OPTIONS: {
-    id: Visibility;
+const isPrivate_OPTIONS: {
+    id: string;
     label: string;
     description: string;
     icon: React.ComponentType<{ className?: string }>;
@@ -52,10 +53,11 @@ export default function CreateCommunityPage() {
     const [name, setName] = useState("");
     const [description, setDescription] = useState("");
     const [category, setCategory] = useState<CategoryId | null>(null);
-    const [visibility, setVisibility] = useState<Visibility>("public");
+    const [isPrivate, setIsPrivate] = useState<boolean>(false);
+    const [visiblity, setVisiblity] = useState<string>("public")
     const [rules, setRules] = useState<string[]>([""]);
-    const [bannerFileName, setBannerFileName] = useState("");
-    const [iconFileName, setIconFileName] = useState("");
+    const [banner, setBanner] = useState<File | null>(null);
+    const [icon, setIcon] = useState<File | null>(null);
 
     const updateRule = (index: number, value: string) => {
         setRules((prev) => prev.map((r, i) => (i === index ? value : r)));
@@ -67,6 +69,19 @@ export default function CreateCommunityPage() {
         setRules((prev) => prev.filter((_, i) => i !== index));
 
     const canSubmit = name.trim().length >= 3 && category !== null;
+
+    const submit = async () => {
+        const token = await getAccessToken();
+        createCommunity({
+            name: name,
+            description: description,
+            is_private: false,
+            banner: banner,
+            icon: icon,
+        }, token)
+        .then(res=>console.log(res))
+        .catch(error=>console.log(error));
+    }
 
     return (
         <main className="mx-auto min-w-0 max-w-5xl flex-1 space-y-5">
@@ -192,13 +207,13 @@ export default function CreateCommunityPage() {
                                 id="banner-image"
                                 type="file"
                                 accept="image/*"
-                                onChange={(event) => setBannerFileName(event.target.files?.[0]?.name ?? "")}
+                                onChange={(event) => setBanner(event.target.files?.[0] ?? null)}
                                 className="peer absolute inset-0 z-10 h-full w-full cursor-pointer opacity-0"
                             />
                             <div className="flex h-24 flex-col items-center justify-center gap-1.5 rounded-xl border border-dashed border-neutral-300 bg-neutral-50/70 transition-colors peer-hover:border-indigo-400 peer-hover:bg-indigo-50/50 peer-focus-visible:border-indigo-500 peer-focus-visible:ring-2 peer-focus-visible:ring-indigo-500/30">
                                 <ImageIcon className="h-5 w-5 text-neutral-400" />
                                 <span className="max-w-[90%] truncate text-xs font-medium text-neutral-500">
-                                    {bannerFileName || "Choose a banner image"}
+                                    {banner?.name || "Choose a banner image"}
                                 </span>
                             </div>
                         </div>
@@ -212,33 +227,33 @@ export default function CreateCommunityPage() {
                                 id="community-icon"
                                 type="file"
                                 accept="image/*"
-                                onChange={(event) => setIconFileName(event.target.files?.[0]?.name ?? "")}
+                                onChange={(event) => setIcon(event.target.files?.[0] ?? null)}
                                 className="peer absolute inset-0 z-10 h-full w-full cursor-pointer opacity-0"
                             />
                             <div className="flex h-24 flex-col items-center justify-center gap-1.5 rounded-xl border border-dashed border-neutral-300 bg-neutral-50/70 transition-colors peer-hover:border-indigo-400 peer-hover:bg-indigo-50/50 peer-focus-visible:border-indigo-500 peer-focus-visible:ring-2 peer-focus-visible:ring-indigo-500/30">
                                 <ImageIcon className="h-5 w-5 text-neutral-400" />
                                 <span className="max-w-[90%] truncate text-xs font-medium text-neutral-500">
-                                    {iconFileName || "Choose an icon image"}
+                                    {icon?.name || "Choose an icon image"}
                                 </span>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                {/* Visibility */}
+                {/* isPrivate */}
                 <div>
                     <label className="mb-2 block text-sm font-semibold text-neutral-800">
-                        Visibility
+                        isPrivate
                     </label>
                     <div className="space-y-2">
-                        {VISIBILITY_OPTIONS.map((v) => {
-                            const active = visibility === v.id;
+                        {isPrivate_OPTIONS.map((v) => {
+                            const active = visiblity === v.id;
                             const Icon = v.icon;
                             return (
                                 <button
                                     key={v.id}
                                     type="button"
-                                    onClick={() => setVisibility(v.id)}
+                                    onClick={() => {setIsPrivate(v.id === "private"); setVisiblity(v.id)}}
                                     className={`flex w-full items-start gap-3 rounded-xl border p-3.5 text-left transition-colors ${active
                                             ? "border-indigo-600 bg-indigo-50/60"
                                             : "border-neutral-200 hover:bg-neutral-50"
@@ -322,6 +337,7 @@ export default function CreateCommunityPage() {
                 <button
                     type="button"
                     disabled={!canSubmit}
+                    onClick={submit}
                     className="rounded-xl bg-indigo-600 px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-indigo-700 disabled:cursor-not-allowed disabled:bg-neutral-200 disabled:text-neutral-400"
                 >
                     Create Community
