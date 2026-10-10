@@ -53,7 +53,7 @@ export default function CommunityDetailPage() {
     const controller = new AbortController();
 
     getCommunity(slug, controller.signal)
-      .then(res=>{setCommunity(res.community); setPosts(res.posts)})
+      .then(res=>{setCommunity(res.community); setPosts(res.posts);})
       .catch((error: unknown) => {
         if (!controller.signal.aborted) console.error(error);
       });

@@ -7,7 +7,7 @@ type Props = {
 }
 
 async function AuthLayout({children}: Props) {
-    const user = await getCurrentUser()
+    const user = await getCurrentUser();
     if (user) redirect("/");
   return (
     <div className="flex min-h-screen">
