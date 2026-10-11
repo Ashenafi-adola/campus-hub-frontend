@@ -1,5 +1,5 @@
 import { headers } from "next/headers";
-import { AuthTokens, AuthUser, LoginInfo, Session } from "./types";
+import { AuthDriver, AuthTokens, AuthUser, LoginInfo, Session } from "./types";
 import { AuthApiError } from "../types";
 
 
@@ -10,7 +10,7 @@ const API_URL =
 
 const AUTH = `${API_URL}/auth`;
 
-export const httpDriver = {
+export const httpDriver: AuthDriver = {
     async login(input: LoginInfo): Promise<Session> {
         const tokens = await post<AuthTokens>("/token/", input);
         const user = await httpDriver.me(tokens.access);
@@ -37,6 +37,21 @@ export const httpDriver = {
             body = { detail: `Request faild with ${res.status}`}
         }
         throw new AuthApiError(res.status, body)
+    },
+
+    async logout(access: string, refresh: string): Promise<void> {
+        const forwarded = await getForwardedHeaders();
+        await fetch(`${AUTH}/logout/`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${access}`,
+                ...forwarded,
+            },
+            body: JSON.stringify({ refresh: refresh }),
+            cache: "no-cache",
+            signal: AbortSignal.timeout(10000)
+        })
     }
 }
 

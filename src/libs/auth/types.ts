@@ -21,3 +21,20 @@ export type AuthUser = {
     is_verified: string;
     avatar?: string;
 }
+
+export type LoginInput = {
+    email: string;
+    password: string;
+}
+
+export type RefreshResult = {
+    access: string;
+    refresh?: string;
+}
+
+
+export type AuthDriver = {
+    login(input: LoginInput): Promise<Session>;
+    logout(accessToken: string, refreshToken: string): Promise<void>;
+    me(accessToken: string): Promise<AuthUser>
+}

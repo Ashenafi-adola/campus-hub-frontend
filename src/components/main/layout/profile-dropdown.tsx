@@ -2,6 +2,7 @@
 import { AuthUser } from "@/libs/auth/types";
 import { Bookmark, ChevronDown, Clock, HelpCircle, LogOut, Moon, Settings, User } from "lucide-react";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
 
@@ -28,6 +29,7 @@ function ProfileDropdown({user}:{user:AuthUser}) {
   const [open, setOpen] = useState(false);
   const [darkMode, setDarkMode] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
+  const router = useRouter()
 
   useEffect(() => {
     function handleClickOutside(e: MouseEvent) {
@@ -45,6 +47,12 @@ function ProfileDropdown({user}:{user:AuthUser}) {
       document.removeEventListener("keydown", handleEscape);
     };
   }, []);
+
+  const handleLogout = async () => {
+    await fetch("/api/auth/logout", { method: "POST" });
+    router.replace("/signin");
+    router.refresh();
+  }
 
   return (
     <div
@@ -129,7 +137,7 @@ function ProfileDropdown({user}:{user:AuthUser}) {
           {/* Log out */}
           <div className="border-t border-neutral-100 py-1.5">
             <button
-              onClick={() => setOpen(false)}
+              onClick={handleLogout}
               className="flex w-full items-center gap-3 px-4 py-2.5 text-left text-sm font-medium text-red-600 hover:bg-red-50"
             >
               <LogOut className="h-4 w-4" />

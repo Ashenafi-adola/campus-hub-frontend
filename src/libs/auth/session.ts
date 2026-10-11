@@ -25,6 +25,12 @@ export function setSessionCookies(res: NextResponse, tokens: AuthTokens): void {
     res.cookies.set(REFRESH_COOKIES, tokens.refresh, options(14 * 24 * 60 * 60));
 }
 
+
+export function clearSessionCookies(res: NextResponse): void {
+    res.cookies.set(ACCESS_COOKIES, "", options(0));
+    res.cookies.set(REFRESH_COOKIES, "", options(0));
+}
+
 export async function readSession(): Promise<{access?: string, refresh?: string}> {
     const jar = await cookies();
     return {
