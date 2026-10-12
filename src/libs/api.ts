@@ -1,4 +1,4 @@
-import { Community, CommunityDetail, Post, UserRegistrationData } from "./types"
+import { Comment, Community, CommunityDetail, NewComment, Post, UserRegistrationData } from "./types"
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL
 
@@ -229,6 +229,59 @@ export async function createCommunity(payload: Community, token: string): Promis
 
     if (!res.ok){
         throw new Error(`Couldn't create a community ${res.status}`)
+    }
+    return res.json();
+}
+
+export async function getComments(post_slug: string): Promise<Comment[]> {
+    const res = await fetch(`${API_URL}/comments/?post_slug=${post_slug}`);
+    if (!res.ok){
+        throw new Error(`Couldn't fetch comments${res.status}`);
+    }
+    return res.json();
+}
+
+export async function postComment(comment: NewComment, token: string): Promise<Comment> {
+    const res = await fetch(`${API_URL}/comments/`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify(comment)
+    });
+    if(!res.ok){
+        throw new Error(`Couldn't post the comment ${res.status}`);
+    }
+    return res.json();
+}
+
+
+export async function upvoteComment(id:number, access: string) {
+    const res = await fetch(`${API_URL}/comments/${id}/upvote/`, {
+        method:"POST",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${access}`
+        },
+        body: JSON.stringify({})
+    })
+    if(!res.ok){
+        throw new Error(`Couldn't upvote the comment ${res.status}`)
+    }
+    return res.json();
+}
+export async function downvoteComment(id:number, access: string) {
+    const res = await fetch(`${API_URL}/comments/${id}/downvote/`, {
+        method:"POST",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${access}`
+        },
+        body: JSON.stringify({})
+    })
+    if(!res.ok){
+        throw new Error(`Couldn't downvote the comment ${res.status}`)
     }
     return res.json();
 }

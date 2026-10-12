@@ -20,7 +20,7 @@ interface Community {
 const NAV_ITEMS: NavItem[] = [
   { id: "home", label: "Home", icon: Home , href:"/"},
   { id: "popular", label: "Popular", icon: TrendingUp , href:"/popular"},
-  { id: "posts", label: "Posts", icon: HelpCircle ,href:"/posts"},
+  { id: "questions", label: "Questions", icon: HelpCircle ,href:"/questions"},
   { id: "communities", label: "Communities", icon: Users, href:"/communities" },
   { id: "saved", label: "Saved", icon: Bookmark ,href:"/bookmarks"},
   { id: "activity", label: "My Activity", icon: Clock ,href:"/myactivities"},
@@ -28,9 +28,9 @@ const NAV_ITEMS: NavItem[] = [
 ];
 
 const MY_COMMUNITIES: Community[] = [
-  { id: "cs", name: "r/ComputerScience", color: "bg-indigo-600" },
-  { id: "study", name: "r/StudyTips", color: "bg-emerald-500" },
-  { id: "life", name: "r/CampusLife", color: "bg-amber-500" },
+  { id: "cs", name: "c/ComputerScience", color: "bg-indigo-600" },
+  { id: "study", name: "c/StudyTips", color: "bg-emerald-500" },
+  { id: "life", name: "c/CampusLife", color: "bg-amber-500" },
 ];
 
 

@@ -16,10 +16,21 @@ export const getTimeSince = (item: string|undefined): string => {
     }else if (days > 0) {
         return days === 1 ? `${days} day ago` : `${days} days ago`;
     } else if (hours > 0) {
-        return `${hours} hour ago`;
+        return hours === 1 ? `${hours} hour ago` : `${hours} hours ago`;
     } else if (minutes > 0) {
         return `${minutes} minute ago`;
     }
 
     return "just now";
 };
+
+export function getInitials(name: string) {
+  return name
+    .replace(/^Dr\.\s*/i, "")
+    .trim()
+    .split(/\s+/)
+    .map((p) => p[0])
+    .slice(0, 2)
+    .join("")
+    .toUpperCase();
+}

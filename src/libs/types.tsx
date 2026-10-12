@@ -105,3 +105,27 @@ export interface CommunityDetail {
     community: Community;
     posts: Post[];
 }
+
+export interface NewComment {
+    post: number;
+    content: string;
+    parent?: number;
+}
+
+export interface Comment {
+  id: number;
+  author: User;
+  created_at: string;
+  content: string;
+  score: number;
+  upvote?: number;
+  downvote?: number;
+  upvoted: number;
+  downvoted: number;
+  parent?: number;
+  post: number;
+  isOP?: boolean;
+  isModerator?: boolean;
+  isAccepted?: boolean;
+  replies: Comment[];
+}
