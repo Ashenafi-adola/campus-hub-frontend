@@ -80,7 +80,7 @@ function CommunityCard({ community }: { community: Community }) {
       <div className="flex flex-1 flex-col px-5 pb-5">
         { }
         <div
-          className={`-mt-7 flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl border-4 border-white shadow-sm ${meta.iconBg}`}
+          className={`-mt-7 flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl z-5 border-4 border-white bg-amber-200 shadow-lg shadow-gray-700 ${meta.iconBg}`}
         >
           {community.icon ? <Image
             width={32}
@@ -107,10 +107,10 @@ function CommunityCard({ community }: { community: Community }) {
         <div
           className="mt-4 flex items-center gap-2 border-t border-neutral-100 pt-4">
           <button
-            onClick={async () => {const res = await joinLeaveCommunity(joined, community.slug); setJoined(res.is_member);}}
+            onClick={async () => { const res = await joinLeaveCommunity(joined, community.slug); setJoined(res.is_member); }}
             className={`flex-1 rounded-lg px-3.5 py-2 text-sm font-semibold transition-colors ${joined
-                ? "bg-neutral-900 text-white hover:bg-neutral-800"
-                : "bg-indigo-50 text-indigo-600 hover:bg-indigo-100"
+              ? "bg-neutral-900 text-white hover:bg-neutral-800"
+              : "bg-indigo-50 text-indigo-600 hover:bg-indigo-100"
               }`}
           >
             {joined ? (

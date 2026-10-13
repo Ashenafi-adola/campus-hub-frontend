@@ -25,7 +25,7 @@ const AVATAR =
   "https://images.unsplash.com/photo-1517841905240-472988babdf9?w=64&h=64&fit=crop&crop=faces";
 
 
-function ProfileDropdown({user}:{user:AuthUser}) {
+function ProfileDropdown({ user }: { user: AuthUser }) {
   const [open, setOpen] = useState(false);
   const [darkMode, setDarkMode] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
@@ -56,8 +56,7 @@ function ProfileDropdown({user}:{user:AuthUser}) {
 
   return (
     <div
-      onMouseEnter={() => setOpen(true)}
-      onMouseLeave={() => setOpen(false)}
+      onClick={() => setOpen(!open)}
       className="relative" ref={ref}>
       <button
         className="flex items-center gap-1.5 rounded-full py-1 pl-1 pr-2 hover:bg-neutral-100"
@@ -87,7 +86,7 @@ function ProfileDropdown({user}:{user:AuthUser}) {
               alt={user.username}
               unoptimized
               className="h-10 w-10 shrink-0 rounded-full object-cover"
-            /> : <div>{user.first_name.slice(0,1)}</div>}
+            /> : <div>{user.first_name.slice(0, 1)}</div>}
             <div className="min-w-0">
               <div className="truncate text-sm font-semibold text-neutral-900">
                 {user.first_name + " " + user.last_name}

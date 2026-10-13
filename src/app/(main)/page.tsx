@@ -1,39 +1,35 @@
 "use client";
 
 import { PostFeedSkeleton } from "@/components/main/laoding-skeletons";
+import RightSideBar from "@/components/main/layout/right-side-bar";
 import QuestionCard from "@/components/main/question-card";
 import { usePosts } from "@/hooks/use-posts";
-import { getCommunities, joinLeaveCommunity } from "@/libs/api";
+import { getCommunities } from "@/libs/api";
 import { Community } from "@/libs/types";
 import {
   Image as ImageIcon,
 } from "lucide-react";
 import Image from "next/image";
-import Link from "next/link";
 import { useEffect, useState } from "react";
 
 
-const UNANSWERED_QUESTIONS = [
-  { id: "1", title: "Need help with NP-Completeness proof", posted: "2h ago" },
-  { id: "2", title: "How to setup React with Tailwind?", posted: "5h ago" },
-];
 
 const USER_AVATAR = "https://images.unsplash.com/photo-1517841905240-472988babdf9?w=120&h=120&fit=crop&crop=faces";
 
 
 export default function CampusHubFeed() {
-  const [trending, setTrending] = useState<Community[]>([])
-  useEffect(()=>{
+  const [trending, setTrending] = useState<Community[]>([]);
+  useEffect(() => {
     getCommunities()
-      .then(res=>setTrending(res.length > 4?res.sort((a,b)=>b.member_count-a.member_count).slice(0,4): res.sort((a,b)=>b.member_count-a.member_count)))
-  },[])
+      .then(res => setTrending(res.length > 4 ? res.sort((a, b) => b.member_count - a.member_count).slice(0, 4) : res.sort((a, b) => b.member_count - a.member_count)))
+  }, [])
   const { posts } = usePosts();
   return (
     <>
       {/* Main feed */}
       <main className="min-w-0 flex-1 space-y-4">
         {/* Ask question composer */}
-        <div className="flex items-center gap-3 rounded-2xl border border-neutral-200 bg-white p-3 sticky top-16 z-50">
+        <div className="flex items-center gap-3 rounded-2xl border border-neutral-200 bg-white p-3 sticky top-16 z-20">
           <Image
             width={40}
             height={40}
@@ -64,82 +60,7 @@ export default function CampusHubFeed() {
       </main>
 
       {/* Right sidebar */}
-      <aside className="hidden w-72 shrink-0 self-start space-y-4 xl:sticky xl:top-16 xl:block">
-        <div className="rounded-2xl border border-neutral-200 bg-white p-5">
-          <h3 className="font-semibold text-neutral-900">
-            Trending Communities
-          </h3>
-          <div className="mt-3 space-y-3">
-            {trending.map((c) => (
-              <div key={c.id} className="flex items-center justify-between">
-                <div>
-                  <Link href={`/communities/${c.slug}`} className="text-sm font-semibold text-indigo-600 w-40 block truncate">
-                    c/{c.name}
-                  </Link>
-                  <div className="text-xs text-neutral-400">{c.member_count} students</div>
-                </div>
-                <button
-                  onClick={async () => { await joinLeaveCommunity(Boolean(c.is_member), c.slug); }}
-                  className={`flex-1 rounded-lg px-3.5 py-2 text-sm font-semibold transition-colors ${c.is_member
-                    ? "bg-red-100 text-black hover:bg-red-200"
-                    : "bg-indigo-50 text-indigo-600 hover:bg-indigo-100"
-                    }`}
-                >
-                  {c.is_member ? (
-                    <span className="flex items-center justify-center gap-1.5">
-                      leave
-                    </span>
-                  ) : (
-                    "join"
-                  )}
-                </button>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        <div className="rounded-2xl border border-neutral-200 bg-white p-5">
-          <h3 className="font-semibold text-neutral-900">
-            Popular Questions
-          </h3>
-          <div className="mt-3 space-y-3">
-            {posts.filter(p=>p.post_type=="question").sort((a,b)=>b.score - a.score).slice(0,3).map((q) => (
-              <div key={q.id}>
-                <Link
-                  href="#"
-                  className="text-sm font-semibold text-neutral-800 hover:text-indigo-600"
-                >
-                  {q.title}
-                </Link>
-                <div className="text-xs text-neutral-400">
-                  {q.comment_count} answers
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        <div className="rounded-2xl border border-neutral-200 bg-white p-5">
-          <h3 className="font-semibold text-neutral-900">
-            Unanswered Questions
-          </h3>
-          <div className="mt-3 space-y-3">
-            {UNANSWERED_QUESTIONS.map((q) => (
-              <div key={q.id}>
-                <Link
-                  href="#"
-                  className="text-sm font-semibold text-neutral-800 hover:text-indigo-600"
-                >
-                  {q.title}
-                </Link>
-                <div className="text-xs text-neutral-400">
-                  Posted {q.posted}
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </aside>
+      <RightSideBar posts={posts} trending={trending} />
     </>
   );
 }
