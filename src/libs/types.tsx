@@ -40,7 +40,7 @@ export type CategoryId = "all" | "academic" | "campus-life" | "career";
 export interface Community {
   id?: number;
   name: string;
-  slug?: string;
+  slug: string;
   description: string;
   icon: string | null | File;
   banner: string | null | File;
@@ -51,9 +51,17 @@ export interface Community {
   is_active?: boolean;
   is_featured?: boolean;
   member_limit?: number | null;
-  member_count?: number;
+  member_count: number;
   is_member?: boolean;
   can_manage?: boolean;
+}
+
+export interface NewCommunity {
+    name: string,
+    description: string,
+    is_private: boolean,
+    banner: File | null,
+    icon: File | null,
 }
 
 export interface Question {

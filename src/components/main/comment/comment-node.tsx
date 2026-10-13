@@ -4,9 +4,10 @@ import { ArrowBigDown, ArrowBigUp, CheckCircle2, ChevronDown, MessageSquare, Min
 import { Composer } from "./comment-composer";
 import { useState } from "react";
 import { getInitials, getTimeSince } from "@/libs/format";
-import { Comment } from "@/libs/types";
+import { Comment, User } from "@/libs/types";
 import { downvoteComment, upvoteComment } from "@/libs/api";
 import { getAccessToken } from "@/app/actions/post-votes";
+import Image from "next/image";
 
 
 const MAX_DEPTH = 5;
@@ -28,21 +29,33 @@ function colorFor(name: string) {
 }
 
 function Avatar({
-  name,
+  user,
   size = "h-8 w-8",
   dim = false,
 }: {
-  name: string;
+  user: User;
   size?: string;
   dim?: boolean;
 }) {
+  const full_name = user.first_name + " " + user.last_name;
   return (
     <div
       className={`flex ${size} shrink-0 items-center justify-center rounded-full text-xs font-semibold text-white transition-opacity ${colorFor(
-        name
+        full_name
       )} ${dim ? "opacity-50" : ""}`}
     >
-      {getInitials(name)}
+      {user.avatar ? <Image
+        src={user.avatar || ""}
+        alt={user.username}
+        width={40}
+        height={40}
+        unoptimized
+        className="h-8 w-9 rounded-full object-cover"
+      /> :
+        <span className="font-semibold text-white">
+          {getInitials(full_name)}
+        </span>
+      }
     </div>
   );
 }
@@ -66,24 +79,26 @@ export function CommentNode({
   const [replying, setReplying] = useState(false);
   const [vote, setVote] = useState<number>(comment.score);
   const [currentComment, setCurrentComment] = useState<Comment>(comment);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [replies, setReplies] = useState<Comment[]>(comment.replies.sort((a,b)=> a.score - b.score));
 
   const score = currentComment.score + vote;
-  const replyCount = countAll(currentComment.replies);
+  const replyCount = countAll(comment.replies);
 
 
   const upVote = async () => {
     const access = await getAccessToken()
-    if (currentComment.id){
+    if (currentComment.id) {
       const res = await upvoteComment(currentComment.id, access);
       setVote(res.score);
       setCurrentComment(res);
     }
-    
+
   }
 
   const downVote = async () => {
     const access = await getAccessToken()
-    if (currentComment.id){
+    if (currentComment.id) {
       const res = await downvoteComment(currentComment.id, access);
       setVote(res.score);
       setCurrentComment(res);
@@ -102,7 +117,7 @@ export function CommentNode({
     <div className="flex gap-3">
       {/* Left rail: avatar + clickable thread line */}
       <div className="flex w-8 shrink-0 flex-col items-center">
-        <Avatar name={currentComment.author.first_name + " " + currentComment.author.last_name} dim={collapsed} />
+        <Avatar user={currentComment.author} dim={collapsed} />
         {!collapsed && (
           <button
             onClick={() => setCollapsed(true)}
@@ -118,9 +133,8 @@ export function CommentNode({
         {/* Header */}
         <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-sm">
           <span
-            className={`font-semibold ${
-              collapsed ? "text-neutral-500" : "text-neutral-900"
-            }`}
+            className={`font-semibold ${collapsed ? "text-neutral-500" : "text-neutral-900"
+              }`}
           >
             {currentComment.author.first_name}
           </span>
@@ -174,11 +188,10 @@ export function CommentNode({
         {!collapsed && (
           <>
             <p
-              className={`mt-1.5 text-[15px] leading-relaxed text-neutral-700 ${
-                currentComment.isAccepted
-                  ? "rounded-lg border-l-2 border-emerald-500 bg-emerald-50/40 py-2 pl-3 pr-2"
-                  : ""
-              }`}
+              className={`mt-1.5 text-[15px] leading-relaxed text-neutral-700 ${currentComment.isAccepted
+                ? "rounded-lg border-l-2 border-emerald-500 bg-emerald-50/40 py-2 pl-3 pr-2"
+                : ""
+                }`}
             >
               {currentComment.content}
             </p>
@@ -188,31 +201,28 @@ export function CommentNode({
               <div className="flex items-center">
                 <button
                   onClick={upVote}
-                  className={`rounded-full p-1 hover:bg-neutral-100 ${
-                    currentComment.upvoted ? "text-indigo-600" : ""
-                  }`}
+                  className={`rounded-full p-1 hover:bg-neutral-100 ${currentComment.upvoted ? "text-indigo-600" : ""
+                    }`}
                   aria-label="Upvote"
                 >
                   <ArrowBigUp
-                    className={`h-5 w-5 ${currentComment.upvoted? "fill-indigo-600" : ""}`}
+                    className={`h-5 w-5 ${currentComment.upvoted ? "fill-indigo-600" : ""}`}
                   />
                 </button>
                 <span
-                  className={`min-w-[1.5rem] text-center text-xs font-bold ${
-                    currentComment.upvoted
-                      ? "text-indigo-600"
-                      : currentComment.downvoted
+                  className={`min-w-[1.5rem] text-center text-xs font-bold ${currentComment.upvoted
+                    ? "text-indigo-600"
+                    : currentComment.downvoted
                       ? "text-rose-500"
                       : "text-neutral-600"
-                  }`}
+                    }`}
                 >
                   {score}
                 </span>
                 <button
                   onClick={downVote}
-                  className={`rounded-full p-1 hover:bg-neutral-100 ${
-                    currentComment.downvoted ? "text-rose-500" : ""
-                  }`}
+                  className={`rounded-full p-1 hover:bg-neutral-100 ${currentComment.downvoted ? "text-rose-500" : ""
+                    }`}
                   aria-label="Downvote"
                 >
                   <ArrowBigDown
@@ -249,7 +259,7 @@ export function CommentNode({
               </div>
             )}
 
-            {currentComment.replies.length > 0 && (
+            {replies.length > 0 && (
               <div className="mt-4">
                 {depth >= MAX_DEPTH ? (
                   <button className="flex items-center gap-1 text-sm font-semibold text-indigo-600 hover:underline">
@@ -258,7 +268,7 @@ export function CommentNode({
                     {replyCount === 1 ? "reply" : "replies"})
                   </button>
                 ) : (
-                  currentComment.replies.map((reply) => (
+                  replies.map((reply) => (
                     <CommentNode
                       key={reply.id}
                       comment={reply}

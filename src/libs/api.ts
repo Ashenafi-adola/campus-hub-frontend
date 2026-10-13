@@ -1,4 +1,5 @@
-import { Comment, Community, CommunityDetail, NewComment, Post, UserRegistrationData } from "./types"
+import { Comment, Community, CommunityDetail, NewComment, NewCommunity, Post, UserRegistrationData } from "./types"
+import { getAccessToken } from "@/app/actions/post-votes";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL
 
@@ -161,19 +162,51 @@ export async function getPosts(signal?: AbortSignal, access?: string): Promise<P
     return res.json();
 }
 
-export async function getCommunities(signal?: AbortSignal): Promise<Community[]> {
-    const res = await fetch(`${API_URL}/communities/`, { 
-        signal
-     })
-
+export async function getCommunities(signal?: AbortSignal, my?: boolean): Promise<Community[]> {
+    let res;
+    const access = await getAccessToken();
+    if (my) {
+        res = await fetch(`${API_URL}/communities/?my_communities=${true}`, {
+            signal,
+            headers: {
+                Authorization: `Bearer ${access}`
+            }
+        })
+    }else{
+        res = await fetch(`${API_URL}/communities/`, {
+            signal,
+            headers: {
+                Authorization: `Bearer ${access}`
+            }
+        })
+    }
     if (!res.ok){
         throw new Error(`Faild to load communities ${res.status}`);
     }
     return res.json();
 }
 
+export async function joinLeaveCommunity(status: boolean, c_slug: string) {
+    const access = await getAccessToken();
+    const res = await fetch(`${API_URL}/communities/${c_slug}/${status?"leave":"join"}/`, {
+        method: "POST",
+        headers: {
+            Authorization: `Bearer ${access}`
+        }
+    })
+    if (!res.ok){
+        throw new Error(`Faild to ${status?"leave":"join"} the community`);
+    }
+    return res.json();
+}
+
 export async function getCommunity(slug: string | undefined, signal?: AbortSignal): Promise<CommunityDetail> {
-    const res = await fetch(`${API_URL}/communities/${slug}`, { signal })
+    const res = await fetch(`${API_URL}/communities/${slug}`, { 
+        signal,
+        headers: {
+            Authorization: `Bearer ${await getAccessToken()}`
+        }
+     })
 
     if (!res.ok){
         throw new Error(`Faild to load community ${res.status}`);
@@ -211,7 +244,7 @@ export async function downvotePost(slug:string, access: string) {
     return res.json();
 }
 
-export async function createCommunity(payload: Community, token: string): Promise<Community> {
+export async function createCommunity(payload: NewCommunity, token: string): Promise<Community> {
     const formData = new FormData();
     formData.append("name", payload.name);
     formData.append("description", payload.description);
@@ -234,7 +267,11 @@ export async function createCommunity(payload: Community, token: string): Promis
 }
 
 export async function getComments(post_slug: string): Promise<Comment[]> {
-    const res = await fetch(`${API_URL}/comments/?post_slug=${post_slug}`);
+    const res = await fetch(`${API_URL}/comments/?post_slug=${post_slug}`, {
+        headers: {
+            Authorization: `Bearer ${await getAccessToken()}`
+        }
+    });
     if (!res.ok){
         throw new Error(`Couldn't fetch comments${res.status}`);
     }

@@ -7,7 +7,7 @@ import {
 import Image from "next/image"
 import { useParams } from "next/navigation";
 import { Community, Post } from "@/libs/types";
-import { getCommunity } from "@/libs/api";
+import { getCommunity, joinLeaveCommunity } from "@/libs/api";
 import { AboutTab, MembersTab, PostsTab } from "@/components/main/community/community-tabs";
 
 type TabId = "posts" | "questions" | "about" | "members";
@@ -46,14 +46,14 @@ export default function CommunityDetailPage() {
   const [tab, setTab] = useState<TabId>("posts");
   const params = useParams();
   const slug = String(params.slug);
-  const [joined, setJoined] = useState(true);
+  const [joined, setJoined] = useState<boolean | null>(null);
   const [posts, setPosts] = useState<Post[]>([]);
   const [community, setCommunity] = useState<Community | null>(null);
   useEffect(() => {
     const controller = new AbortController();
 
     getCommunity(slug, controller.signal)
-      .then(res=>{setCommunity(res.community); setPosts(res.posts);})
+      .then(res=>{setCommunity(res.community); setPosts(res.posts); setJoined(Boolean(res.community.is_member))})
       .catch((error: unknown) => {
         if (!controller.signal.aborted) console.error(error);
       });
@@ -120,22 +120,25 @@ export default function CommunityDetailPage() {
                   </div>
                 </div>
 
-                <button
-                  onClick={() => setJoined((v) => !v)}
-                  className={`mb-1 rounded-lg px-4 py-2 text-sm font-semibold transition-colors ${joined
-                      ? "bg-indigo-50 text-indigo-600 hover:bg-indigo-100"
-                      : "bg-indigo-600 text-white hover:bg-indigo-700"
-                    }`}
-                >
-                  {joined ? (
-                    <span className="flex items-center gap-1.5">
-                      <Check className="h-3.5 w-3.5" strokeWidth={3} />
-                      Joined
-                    </span>
-                  ) : (
-                    "Join Community"
-                  )}
-                </button>
+                <div
+                  className="mt-4 flex items-center gap-2 border-t border-neutral-100 pt-4">
+                  <button
+                    onClick={async () => { const res = await joinLeaveCommunity(Boolean(joined), community.slug); setJoined(res.is_member); }}
+                    className={`flex-1 rounded-lg px-3.5 py-2 text-sm font-semibold transition-colors ${joined
+                      ? "bg-neutral-900 text-white hover:bg-neutral-800"
+                      : "bg-indigo-50 text-indigo-600 hover:bg-indigo-100"
+                      }`}
+                  >
+                    {joined ? (
+                      <span className="flex items-center justify-center gap-1.5">
+                        <Check className="h-3.5 w-3.5" strokeWidth={3} />
+                        Joined
+                      </span>
+                    ) : (
+                      "Join Community"
+                    )}
+                  </button>
+                </div>
               </div>
 
               {/* Tabs */}

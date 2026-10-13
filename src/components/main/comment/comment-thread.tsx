@@ -44,15 +44,22 @@ export function CommentThread({
   const [sortOpen, setSortOpen] = useState(false);
   const [comments, setComments] = useState<Comment[]>([]);
   const requestedSlug = useRef<string | null>(null);
+  const commentsVersion = useRef(0);
 
   useEffect(() => {
     if (!enabled) return;
     if (requestedSlug.current === post.slug) return;
     requestedSlug.current = post.slug;
+    const requestVersion = commentsVersion.current;
 
     getComments(post.slug)
       .then((res) => {
-        if (requestedSlug.current === post.slug) setComments(res);
+        if (
+          requestedSlug.current === post.slug &&
+          commentsVersion.current === requestVersion
+        ) {
+          setComments(res.sort((a, b) => a.score - b.score));
+        }
       })
       .catch((error) => {
         if (requestedSlug.current === post.slug) {
@@ -69,16 +76,18 @@ export function CommentThread({
       content: text,
     }
     const access = await getAccessToken()
-    const res = await postComment(parent?{...newComment, parent: parent}:{...newComment}, access)
+    const res = await postComment(parent ? { ...newComment, parent: parent } : { ...newComment }, access)
     return res
   };
 
-  const handleAdd = async (text: string) =>{
+  const handleAdd = async (text: string) => {
     const comment = await newComment(text)
+    commentsVersion.current += 1;
     setComments((prev) => [comment, ...prev]);
   }
-  const handleReply = async (parentId: number, text: string) =>{
+  const handleReply = async (parentId: number, text: string) => {
     const comment = await newComment(text, parentId)
+    commentsVersion.current += 1;
     setComments((prev) => addReply(prev, parentId, comment));
   }
 
@@ -122,9 +131,8 @@ export function CommentThread({
                     setSort(s.id);
                     setSortOpen(false);
                   }}
-                  className={`block w-full px-3.5 py-2 text-left text-sm font-medium hover:bg-neutral-50 ${
-                    sort === s.id ? "text-indigo-600" : "text-neutral-700"
-                  }`}
+                  className={`block w-full px-3.5 py-2 text-left text-sm font-medium hover:bg-neutral-50 ${sort === s.id ? "text-indigo-600" : "text-neutral-700"
+                    }`}
                 >
                   {s.label}
                 </button>

@@ -1,41 +1,45 @@
 "use client"
 
+import { getCommunities } from '@/libs/api';
+import { Community } from '@/libs/types';
 import { Bookmark, Clock, HelpCircle, Home, Plus, TrendingUp, Users } from 'lucide-react';
 import Link from 'next/link';
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 
 interface NavItem {
-  id: string;
-  label: string;
-  icon: React.ComponentType<{ className?: string }>;
-  href: string;
+    id: string;
+    label: string;
+    icon: React.ComponentType<{ className?: string }>;
+    href: string;
 }
 
-interface Community {
-  id: string;
-  name: string;
-  color: string;
-}
 
 const NAV_ITEMS: NavItem[] = [
-  { id: "home", label: "Home", icon: Home , href:"/"},
-  { id: "popular", label: "Popular", icon: TrendingUp , href:"/popular"},
-  { id: "questions", label: "Questions", icon: HelpCircle ,href:"/questions"},
-  { id: "communities", label: "Communities", icon: Users, href:"/communities" },
-  { id: "saved", label: "Saved", icon: Bookmark ,href:"/bookmarks"},
-  { id: "activity", label: "My Activity", icon: Clock ,href:"/myactivities"},
-  { id: "new community", label: "New Community", icon: Plus, href:"/communities/create"}
+    { id: "home", label: "Home", icon: Home, href: "/" },
+    { id: "popular", label: "Popular", icon: TrendingUp, href: "/popular" },
+    { id: "questions", label: "Questions", icon: HelpCircle, href: "/questions" },
+    { id: "communities", label: "Communities", icon: Users, href: "/communities" },
+    { id: "saved", label: "Saved", icon: Bookmark, href: "/bookmarks" },
+    { id: "activity", label: "My Activity", icon: Clock, href: "/myactivities" },
+    { id: "new community", label: "New Community", icon: Plus, href: "/communities/create" }
 ];
 
-const MY_COMMUNITIES: Community[] = [
-  { id: "cs", name: "c/ComputerScience", color: "bg-indigo-600" },
-  { id: "study", name: "c/StudyTips", color: "bg-emerald-500" },
-  { id: "life", name: "c/CampusLife", color: "bg-amber-500" },
+const communityColors = [
+  "bg-emerald-500",
+  "bg-sky-500",
+  "bg-rose-500",
+  "bg-amber-500",
 ];
-
 
 function SideBar() {
     const [active, setActive] = useState<string>("home");
+    const [myCommunities, setMyCommunities] = useState<Community[]>([]);
+
+    useEffect(() => {
+        getCommunities(undefined, true)
+            .then(res => setMyCommunities(res))
+            .catch(error => console.log(error))
+    }, [])
     return (
         <aside className="sticky top-16 z-0 h-[calc(100dvh-4rem)] w-56 shrink-0 self-start space-y-6 overflow-y-auto border-r border-gray-300 transition-all hidden md:block">
             <nav className="space-y-1">
@@ -47,8 +51,8 @@ function SideBar() {
                             key={id}
                             onClick={() => setActive(id)}
                             className={`flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-colors ${isActive
-                                    ? "bg-indigo-50 text-indigo-700"
-                                    : "text-neutral-600 hover:bg-neutral-100"
+                                ? "bg-indigo-50 text-indigo-700"
+                                : "text-neutral-600 hover:bg-neutral-100"
                                 }`}
                         >
                             <Icon className="h-4 w-4" />
@@ -63,14 +67,15 @@ function SideBar() {
                     My Communities
                 </p>
                 <div className="mt-2 space-y-1">
-                    {MY_COMMUNITIES.map((c) => (
-                        <button
+                    {myCommunities.map((c,i) => (
+                        <Link
+                            href={`/communities/${c.slug}`}
                             key={c.id}
-                            className="flex w-full items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium text-neutral-700 hover:bg-neutral-100"
+                            className="flex w-full items-center gap-3 justify-start rounded-xl px-3 py-2 text-sm font-medium text-neutral-700 hover:bg-neutral-100"
                         >
-                            <span className={`h-2.5 w-2.5 rounded-full ${c.color}`} />
-                            {c.name}
-                        </button>
+                            <span className={`h-2.5 w-2.5 rounded-full ${communityColors[i % communityColors.length]}`} />
+                            <span className='w-50 truncate text-start'>c/{c.name.replace(" ", "")}</span>
+                        </Link>
                     ))}
                 </div>
             </div>
