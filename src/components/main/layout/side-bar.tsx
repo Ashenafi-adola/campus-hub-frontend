@@ -16,7 +16,7 @@ interface NavItem {
 
 const NAV_ITEMS: NavItem[] = [
     { id: "home", label: "Home", icon: Home, href: "/" },
-    { id: "popular", label: "Popular", icon: TrendingUp, href: "/popular" },
+    { id: "popular", label: "Popular", icon: TrendingUp, href: "/populars" },
     { id: "questions", label: "Questions", icon: HelpCircle, href: "/questions" },
     { id: "communities", label: "Communities", icon: Users, href: "/communities" },
     { id: "saved", label: "Saved", icon: Bookmark, href: "/bookmarks" },

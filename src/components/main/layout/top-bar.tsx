@@ -2,6 +2,7 @@ import React from 'react'
 import { Bell, Plus, Search } from 'lucide-react'
 import ProfileDropdown from './profile-dropdown'
 import { AuthUser } from '@/libs/auth/types'
+import Link from 'next/link'
 
 
 function TopBar({user}:{user:AuthUser}) {
@@ -32,10 +33,10 @@ function TopBar({user}:{user:AuthUser}) {
             </div>
 
             <div className="flex shrink-0 items-center gap-4">
-                <button className="md:flex items-center gap-1.5 rounded-full bg-indigo-600 px-4 hidden py-2 text-sm font-semibold text-white hover:bg-indigo-700">
+                <Link href={`/posts/new`} className="md:flex items-center gap-1.5 rounded-full bg-indigo-600 px-4 hidden py-2 text-sm font-semibold text-white hover:bg-indigo-700">
                     <Plus className="h-4 w-4" />
                     Ask Question
-                </button>
+                </Link>
                 <button className="text-neutral-500 hover:text-neutral-800">
                     <Bell className="h-5 w-5" />
                 </button>
