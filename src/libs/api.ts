@@ -147,15 +147,26 @@ export async function resetPasswordRequest(payload:Record<string, string>) {
     return res.json()
 }
 
-export async function getPosts(signal?: AbortSignal, access?: string): Promise<Post[]> {
-    const res = await fetch(`${API_URL}/posts/`, { 
-        signal,
-        headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${access}`
-        }
-     })
-
+export async function getPosts(signal?: AbortSignal, access?: string, myPosts?: false | boolean): Promise<Post[]> {
+    let res;
+    if(myPosts){
+        res = await fetch(`${API_URL}/posts/?my_posts=${true}`, { 
+            signal,
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${await getAccessToken()}`
+            }
+        })
+    } else {
+        res = await fetch(`${API_URL}/posts/`, { 
+            signal,
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${access}`
+            }
+        })
+    }
+    
     if (!res.ok){
         throw new Error(`Faild to load posts ${res.status}`);
     }

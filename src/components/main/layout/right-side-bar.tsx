@@ -26,10 +26,10 @@ function RightSideBar({ posts, trending }: Props) {
                     Trending Communities
                 </h3>
                 <div className="mt-3 space-y-3">
-                    { trending.length > 0 ?
-                    trending.map((c) => (
-                        <Trending key={c.id} community={c} />
-                    )) : <TrendingCommunitiesSkeleton count={4}/>
+                    {trending.length > 0 ?
+                        trending.map((c) => (
+                            <Trending key={c.id} community={c} />
+                        )) : <TrendingCommunitiesSkeleton count={4} />
                     }
                 </div>
             </div>
@@ -39,20 +39,20 @@ function RightSideBar({ posts, trending }: Props) {
                     Popular Questions
                 </h3>
                 <div className="mt-3 space-y-3">
-                    { posts.length > 0 ?
-                    posts.filter(p => p.post_type == "question").sort((a, b) => b.score - a.score).slice(0, 3).map((q) => (
-                        <div key={q.id}>
-                            <Link
-                                href="#"
-                                className="text-sm font-semibold text-neutral-800 hover:text-indigo-600"
-                            >
-                                {q.title}
-                            </Link>
-                            <div className="text-xs text-neutral-400">
-                                {q.comment_count} answers
+                    {posts.length > 0 ?
+                        posts.filter(p => p.post_type == "question").sort((a, b) => b.score - a.score).slice(0, 3).map((q) => (
+                            <div key={q.id}>
+                                <Link
+                                    href="#"
+                                    className="text-sm font-semibold text-neutral-800 hover:text-indigo-600"
+                                >
+                                    {q.title}
+                                </Link>
+                                <div className="text-xs text-neutral-400">
+                                    {q.comment_count} answers
+                                </div>
                             </div>
-                        </div>
-                    )) : <PopularPostsSkeleton/>
+                        )) : <PopularPostsSkeleton />
                     }
                 </div>
             </div>

@@ -20,7 +20,7 @@ const NAV_ITEMS: NavItem[] = [
     { id: "questions", label: "Questions", icon: HelpCircle, href: "/questions" },
     { id: "communities", label: "Communities", icon: Users, href: "/communities" },
     { id: "saved", label: "Saved", icon: Bookmark, href: "/bookmarks" },
-    { id: "activity", label: "My Activity", icon: Clock, href: "/myactivities" },
+    { id: "activity", label: "My Activity", icon: Clock, href: "/u/activity" },
     { id: "new community", label: "New Community", icon: Plus, href: "/communities/create" }
 ];
 
