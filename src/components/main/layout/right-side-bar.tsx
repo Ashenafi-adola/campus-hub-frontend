@@ -4,6 +4,7 @@ import React, { useState } from 'react'
 import { joinLeaveCommunity } from '@/libs/api';
 import { Community, Post } from '@/libs/types'
 import Link from 'next/link';
+import { PopularPostsSkeleton, TrendingCommunitiesSkeleton } from '../laoding-skeletons';
 
 
 
@@ -25,9 +26,11 @@ function RightSideBar({ posts, trending }: Props) {
                     Trending Communities
                 </h3>
                 <div className="mt-3 space-y-3">
-                    {trending.map((c) => (
+                    { trending.length > 0 ?
+                    trending.map((c) => (
                         <Trending key={c.id} community={c} />
-                    ))}
+                    )) : <TrendingCommunitiesSkeleton count={4}/>
+                    }
                 </div>
             </div>
 
@@ -36,7 +39,8 @@ function RightSideBar({ posts, trending }: Props) {
                     Popular Questions
                 </h3>
                 <div className="mt-3 space-y-3">
-                    {posts.filter(p => p.post_type == "question").sort((a, b) => b.score - a.score).slice(0, 3).map((q) => (
+                    { posts.length > 0 ?
+                    posts.filter(p => p.post_type == "question").sort((a, b) => b.score - a.score).slice(0, 3).map((q) => (
                         <div key={q.id}>
                             <Link
                                 href="#"
@@ -48,7 +52,8 @@ function RightSideBar({ posts, trending }: Props) {
                                 {q.comment_count} answers
                             </div>
                         </div>
-                    ))}
+                    )) : <PopularPostsSkeleton/>
+                    }
                 </div>
             </div>
 

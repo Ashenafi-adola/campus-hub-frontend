@@ -94,3 +94,38 @@ export function PostFeedSkeleton({ count = 3 }: { count?: number }) {
     </div>
   );
 }
+
+export function PopularPostsSkeleton({ count = 3 }: { count?: number }) {
+
+  return (
+    <>
+      {Array.from({ length: count }).map((_, i) => (
+        <div key={i} className="flex-col gap-2">
+          <Bone className="h-3.5 my-1 w-full" />
+          <Bone className="h-3.5 w-2/4" />
+          <div className="mt-2.5 space-y-1.5">
+            <Bone className="h-3.5 w-1/4" />
+          </div>
+        </div>
+      ))}
+    </>
+  )
+}
+export function TrendingCommunitiesSkeleton({ count = 3 }: { count?: number }) {
+
+  return (
+    <>
+      {Array.from({ length: count }).map((_, i) => (
+        <div key={i} className="grid grid-cols-3 gap-2">
+          <div className="col-span-2">
+            <Bone className="h-3.5 my-1 w-full" />
+            <Bone className="h-3.5 w-1/3" />
+          </div>
+          <div className="mt-2.5 space-y-1.5">
+            <Bone className="p-4 w-full" />
+          </div>
+        </div>
+      ))}
+    </>
+  )
+}
