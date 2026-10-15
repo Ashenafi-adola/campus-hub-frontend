@@ -41,7 +41,7 @@ function QuestionCard({ post }: { post: Post }) {
 
 
   return (
-    <div className="rounded-2xl border border-neutral-200 bg-white p-5">
+    <div className="rounded-2xl border border-neutral-200 bg-white p-5 dark:border-neutral-800 dark:bg-neutral-900">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2.5">
           {currentPost.author.avatar ?
@@ -60,33 +60,33 @@ function QuestionCard({ post }: { post: Post }) {
             </div>
           }
           <div className="text-sm">
-            <span className="font-semibold text-neutral-900">
+            <span className="font-semibold text-neutral-900 dark:text-neutral-100">
               {currentPost.author.first_name}
             </span>
-            <span className="text-neutral-400"> · {currentPost.post_type}</span>{" "}
-            <span className="text-neutral-400">in</span>{" "}
+            <span className="text-neutral-400 dark:text-neutral-500"> · {currentPost.post_type}</span>{" "}
+            <span className="text-neutral-400 dark:text-neutral-500">in</span>{" "}
             <Link href={`/communities/${currentPost.community.slug}`} className="font-medium text-indigo-600 hover:underline">
               {currentPost.community.name}
             </Link>
-            <div className="text-xs text-neutral-400">{getTimeSince(currentPost.created_at)}</div>
+            <div className="text-xs text-neutral-400 dark:text-neutral-500">{getTimeSince(currentPost.created_at)}</div>
           </div>
         </div>
         {currentPost.status && (
-          <span className="shrink-0 rounded-full bg-orange-50 px-3 py-1 text-xs font-semibold text-orange-600">
+          <span className="shrink-0 rounded-full bg-orange-50 px-3 py-1 text-xs font-semibold text-orange-600 dark:bg-orange-950/50 dark:text-orange-300">
             Unanswered
           </span>
         )}
       </div>
 
-      <h3 className="mt-3 text-lg font-bold text-neutral-900">
+      <h3 className="mt-3 text-lg font-bold text-neutral-900 dark:text-neutral-100">
         {currentPost.title}
       </h3>
       <p
         onClick={() => { if (!content.endsWith("...")) changeContent() }}
-        className="mt-1.5 text-sm leading-relaxed text-neutral-500">
+        className="mt-1.5 text-sm leading-relaxed text-neutral-500 dark:text-neutral-400">
         {content}
         {
-          content.endsWith("...") && <span onClick={changeContent} className="text-indigo-500 text-sm hover:text-gray-800 hover:cursor-pointer">read more</span>
+          content.endsWith("...") && <span onClick={changeContent} className="cursor-pointer text-sm text-indigo-500 hover:text-gray-800 dark:hover:text-neutral-100">read more</span>
         }
       </p>
 
@@ -102,11 +102,11 @@ function QuestionCard({ post }: { post: Post }) {
         ))} */}
       </div>
 
-      <div className="mt-4 flex items-center justify-between border-t border-neutral-100 pt-3.5">
-        <div className="flex items-center gap-1 bg-gray-100 rounded-2xl">
+      <div className="mt-4 flex items-center justify-between border-t border-neutral-100 pt-3.5 dark:border-neutral-800">
+        <div className="flex items-center gap-1 rounded-2xl bg-gray-100 dark:bg-neutral-800">
           <button
                   onClick={upVote}
-                  className={`rounded-full p-1 hover:bg-neutral-100 ${
+                  className={`rounded-full p-1 hover:bg-neutral-100 dark:hover:bg-neutral-700 ${
                     currentPost.upvoted ? "text-indigo-600" : ""
                   }`}
                   aria-label="Upvote"
@@ -121,14 +121,14 @@ function QuestionCard({ post }: { post: Post }) {
                       ? "text-indigo-600"
                       : currentPost.downvoted
                       ? "text-rose-500"
-                      : "text-neutral-600"
+                      : "text-neutral-600 dark:text-neutral-300"
                   }`}
                 >
                   {votes}
                 </span>
                 <button
                   onClick={downVote}
-                  className={`rounded-full p-1 hover:bg-neutral-100 ${
+                  className={`rounded-full p-1 hover:bg-neutral-100 dark:hover:bg-neutral-700 ${
                     currentPost.downvoted ? "text-rose-500" : ""
                   }`}
                   aria-label="Downvote"
@@ -139,22 +139,22 @@ function QuestionCard({ post }: { post: Post }) {
                 </button>
         </div>
 
-        <div className="flex items-center gap-4 text-sm text-neutral-500">
+        <div className="flex items-center gap-4 text-sm text-neutral-500 dark:text-neutral-400">
           <button
             onClick={() => {
               setOpen((wasOpen) => !wasOpen);
               setHasOpenedComments(true);
             }}
-            className="flex items-center gap-1.5 hover:text-neutral-800">
+            className="flex items-center gap-1.5 hover:text-neutral-800 dark:hover:text-neutral-100">
             <MessageSquare className="h-4 w-4" />
             {post.comment_count} answers
           </button>
-          <button className="flex items-center gap-1.5 hover:text-neutral-800">
+          <button className="flex items-center gap-1.5 hover:text-neutral-800 dark:hover:text-neutral-100">
             <Share2 className="h-4 w-4" />
             Share
           </button>
-          <button onClick={() => setSaved((v) => !v)} className="hover:text-neutral-800">
-            <Bookmark className={`h-4 w-4 ${saved ? "fill-neutral-900 text-neutral-900" : ""}`} />
+          <button onClick={() => setSaved((v) => !v)} className="hover:text-neutral-800 dark:hover:text-neutral-100">
+            <Bookmark className={`h-4 w-4 ${saved ? "fill-neutral-900 text-neutral-900 dark:fill-neutral-100 dark:text-neutral-100" : ""}`} />
           </button>
           <PostActionsMenu isOwner={false} />
         </div>
@@ -168,7 +168,7 @@ function QuestionCard({ post }: { post: Post }) {
       >
         {hasOpenedComments &&
           <div className="min-h-0 overflow-hidden">
-            <div className="border-t border-neutral-100 bg-neutral-50/40">
+            <div className="border-t border-neutral-100 bg-neutral-50/40 dark:border-neutral-800 dark:bg-neutral-950/40">
               <CommentThread
                 post={post}
                 total={post.comment_count}

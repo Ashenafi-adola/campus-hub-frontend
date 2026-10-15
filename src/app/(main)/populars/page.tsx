@@ -43,7 +43,7 @@ export default function PopularPage() {
             </Chip>
           ))}
         </div>
-        <span className="text-sm text-neutral-400">
+        <span className="text-sm text-neutral-400 dark:text-neutral-500">
           {plural(ranked.length, "post", "posts")}
         </span>
       </PageHeader>

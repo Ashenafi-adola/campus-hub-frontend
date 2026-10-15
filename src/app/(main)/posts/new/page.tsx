@@ -29,25 +29,25 @@ const TYPE_META: Record<
   question: {
     label: "Question",
     description: "Get answers from your peers",
-    chip: "bg-indigo-50 text-indigo-600",
+    chip: "bg-indigo-50 text-indigo-600 dark:bg-indigo-950 dark:text-indigo-300",
     icon: HelpCircle,
   },
   discussion: {
     label: "Discussion",
     description: "Start an open conversation",
-    chip: "bg-emerald-50 text-emerald-600",
+    chip: "bg-emerald-50 text-emerald-600 dark:bg-emerald-950 dark:text-emerald-300",
     icon: MessageSquare,
   },
   image: {
     label: "Image",
     description: "Share photos with the community",
-    chip: "bg-amber-50 text-amber-600",
+    chip: "bg-amber-50 text-amber-600 dark:bg-amber-950 dark:text-amber-300",
     icon: ImageIcon,
   },
   poll: {
     label: "Poll",
     description: "Let the community vote",
-    chip: "bg-violet-50 text-violet-600",
+    chip: "bg-violet-50 text-violet-600 dark:bg-violet-950 dark:text-violet-300",
     icon: BarChart3,
   },
 };
@@ -101,7 +101,7 @@ function Switch({
       aria-checked={checked}
       onClick={() => onChange(!checked)}
       className={`relative h-6 w-11 shrink-0 rounded-full transition-colors ${
-        checked ? "bg-indigo-600" : "bg-neutral-200"
+        checked ? "bg-indigo-600" : "bg-neutral-200 dark:bg-neutral-700"
       }`}
     >
       <span
@@ -217,13 +217,13 @@ export default function CreatePostPage() {
       : "Add any context for your poll...";
 
   const inputBase =
-    "w-full rounded-xl border border-neutral-200 bg-white px-3.5 py-2.5 text-sm text-neutral-800 placeholder:text-neutral-400 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/20";
+    "w-full rounded-xl border border-neutral-200 bg-white px-3.5 py-2.5 text-sm text-neutral-800 placeholder:text-neutral-400 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100 dark:placeholder:text-neutral-500";
 
   return (
     <div className="space-y-4 w-full">
       <div>
-        <h1 className="text-2xl font-bold text-neutral-900">Create a post</h1>
-        <p className="mt-1 text-sm text-neutral-500">
+        <h1 className="text-2xl font-bold text-neutral-900 dark:text-neutral-100">Create a post</h1>
+        <p className="mt-1 text-sm text-neutral-500 dark:text-neutral-400">
           Pick a post type, choose where it goes, and share it with the
           community.
         </p>
@@ -233,8 +233,8 @@ export default function CreatePostPage() {
         {/* ---------------- Form ---------------- */}
         <div className="space-y-4">
           {/* Post type selection */}
-          <div className="rounded-2xl border border-neutral-200 bg-white p-5">
-            <label className="mb-3 block text-sm font-semibold text-neutral-800">
+          <div className="rounded-2xl border border-neutral-200 bg-white p-5 dark:border-neutral-800 dark:bg-neutral-900">
+            <label className="mb-3 block text-sm font-semibold text-neutral-800 dark:text-neutral-200">
               Post type
             </label>
             <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
@@ -250,8 +250,8 @@ export default function CreatePostPage() {
                     aria-pressed={active}
                     className={`relative flex flex-col items-start gap-2 rounded-xl border p-3.5 text-left transition-colors ${
                       active
-                        ? "border-indigo-600 bg-indigo-50/60"
-                        : "border-neutral-200 hover:bg-neutral-50"
+                        ? "border-indigo-600 bg-indigo-50/60 dark:bg-indigo-950/40"
+                        : "border-neutral-200 hover:bg-neutral-50 dark:border-neutral-700 dark:hover:bg-neutral-800"
                     }`}
                   >
                     {active && (
@@ -267,10 +267,10 @@ export default function CreatePostPage() {
                       <Icon className="h-4 w-4" />
                     </span>
                     <span>
-                      <span className="block text-sm font-semibold text-neutral-900">
+                      <span className="block text-sm font-semibold text-neutral-900 dark:text-neutral-100">
                         {meta.label}
                       </span>
-                      <span className="block text-xs leading-snug text-neutral-500">
+                      <span className="block text-xs leading-snug text-neutral-500 dark:text-neutral-400">
                         {meta.description}
                       </span>
                     </span>
@@ -281,28 +281,28 @@ export default function CreatePostPage() {
           </div>
 
           {/* Main fields */}
-          <div className="space-y-5 rounded-2xl border border-neutral-200 bg-white p-5">
+          <div className="space-y-5 rounded-2xl border border-neutral-200 bg-white p-5 dark:border-neutral-800 dark:bg-neutral-900">
             {/* Community */}
             <div>
-              <label className="mb-1.5 block text-sm font-semibold text-neutral-800">
+              <label className="mb-1.5 block text-sm font-semibold text-neutral-800 dark:text-neutral-200">
                 Community
               </label>
               <div className="relative">
                 <button
                   type="button"
                   onClick={() => setCommOpen((v) => !v)}
-                  className="flex w-full items-center justify-between rounded-xl border border-neutral-200 bg-white px-3.5 py-2.5 text-sm hover:bg-neutral-50"
+                  className="flex w-full items-center justify-between rounded-xl border border-neutral-200 bg-white px-3.5 py-2.5 text-sm hover:bg-neutral-50 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-200 dark:hover:bg-neutral-700"
                 >
                   {community ? (
-                    <span className="flex items-center gap-2 font-medium text-neutral-800">
+                    <span className="flex items-center gap-2 font-medium text-neutral-800 dark:text-neutral-200">
                       <span className={`h-3 w-3 rounded ${community.color}`} />
                       {community.name}
                     </span>
                   ) : (
-                    <span className="text-neutral-400">Choose a community</span>
+                    <span className="text-neutral-400 dark:text-neutral-500">Choose a community</span>
                   )}
                   <ChevronDown
-                    className={`h-4 w-4 text-neutral-400 transition-transform ${
+                    className={`h-4 w-4 text-neutral-400 transition-transform dark:text-neutral-500 ${
                       commOpen ? "rotate-180" : ""
                     }`}
                   />
@@ -313,7 +313,7 @@ export default function CreatePostPage() {
                       className="fixed inset-0 z-10"
                       onClick={() => setCommOpen(false)}
                     />
-                    <div className="absolute left-0 right-0 top-full z-20 mt-1 overflow-hidden rounded-xl border border-neutral-200 bg-white py-1 shadow-lg">
+                    <div className="absolute left-0 right-0 top-full z-20 mt-1 overflow-hidden rounded-xl border border-neutral-200 bg-white py-1 shadow-lg dark:border-neutral-700 dark:bg-neutral-900">
                       {COMMUNITIES.map((c) => (
                         <button
                           key={c.id}
@@ -322,13 +322,13 @@ export default function CreatePostPage() {
                             setCommunityId(c.id);
                             setCommOpen(false);
                           }}
-                          className="flex w-full items-center justify-between px-3.5 py-2.5 text-left text-sm font-medium text-neutral-700 hover:bg-neutral-50"
+                          className="flex w-full items-center justify-between px-3.5 py-2.5 text-left text-sm font-medium text-neutral-700 hover:bg-neutral-50 dark:text-neutral-200 dark:hover:bg-neutral-800"
                         >
                           <span className="flex items-center gap-2">
                             <span className={`h-3 w-3 rounded ${c.color}`} />
                             {c.name}
                             {c.mine && (
-                              <span className="text-xs font-normal text-neutral-400">
+                              <span className="text-xs font-normal text-neutral-400 dark:text-neutral-500">
                                 joined
                               </span>
                             )}
@@ -350,10 +350,10 @@ export default function CreatePostPage() {
             {/* Title */}
             <div>
               <div className="mb-1.5 flex items-center justify-between">
-                <label className="text-sm font-semibold text-neutral-800">
+                <label className="text-sm font-semibold text-neutral-800 dark:text-neutral-200">
                   Title
                 </label>
-                <span className="text-xs text-neutral-400">
+                <span className="text-xs text-neutral-400 dark:text-neutral-500">
                   {title.length}/{MAX_TITLE}
                 </span>
               </div>
@@ -377,10 +377,10 @@ export default function CreatePostPage() {
             {type === "image" && (
               <div>
                 <div className="mb-1.5 flex items-center justify-between">
-                  <label className="text-sm font-semibold text-neutral-800">
+                  <label className="text-sm font-semibold text-neutral-800 dark:text-neutral-200">
                     Images
                   </label>
-                  <span className="text-xs text-neutral-400">
+                  <span className="text-xs text-neutral-400 dark:text-neutral-500">
                     {images.length}/{MAX_IMAGES}
                   </span>
                 </div>
@@ -390,7 +390,7 @@ export default function CreatePostPage() {
                     {images.map((img) => (
                       <div
                         key={img.id}
-                        className="group relative aspect-square overflow-hidden rounded-xl border border-neutral-200"
+                        className="group relative aspect-square overflow-hidden rounded-xl border border-neutral-200 dark:border-neutral-700"
                       >
                         <Image
                           src={img.url}
@@ -424,8 +424,8 @@ export default function CreatePostPage() {
                     }}
                     className={`flex cursor-pointer flex-col items-center justify-center gap-1.5 rounded-xl border border-dashed py-8 text-center transition-colors ${
                       dragging
-                        ? "border-indigo-500 bg-indigo-50/60"
-                        : "border-neutral-300 bg-neutral-50/70 hover:bg-neutral-50"
+                        ? "border-indigo-500 bg-indigo-50/60 dark:bg-indigo-950/40"
+                        : "border-neutral-300 bg-neutral-50/70 hover:bg-neutral-50 dark:border-neutral-700 dark:bg-neutral-800/70 dark:hover:bg-neutral-800"
                     }`}
                   >
                     <input
@@ -438,11 +438,11 @@ export default function CreatePostPage() {
                         e.target.value = "";
                       }}
                     />
-                    <ImageIcon className="h-6 w-6 text-neutral-400" />
-                    <span className="text-sm font-semibold text-neutral-700">
+                    <ImageIcon className="h-6 w-6 text-neutral-400 dark:text-neutral-500" />
+                    <span className="text-sm font-semibold text-neutral-700 dark:text-neutral-200">
                       Drag and drop, or click to upload
                     </span>
-                    <span className="text-xs text-neutral-400">
+                    <span className="text-xs text-neutral-400 dark:text-neutral-500">
                       Up to {MAX_IMAGES} images
                     </span>
                   </label>
@@ -453,13 +453,13 @@ export default function CreatePostPage() {
             {/* Type specific: poll options */}
             {type === "poll" && (
               <div>
-                <label className="mb-1.5 block text-sm font-semibold text-neutral-800">
+                <label className="mb-1.5 block text-sm font-semibold text-neutral-800 dark:text-neutral-200">
                   Poll options
                 </label>
                 <div className="space-y-2">
                   {pollOptions.map((opt, i) => (
                     <div key={i} className="flex items-center gap-2">
-                      <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-neutral-100 text-xs font-bold text-neutral-500">
+                      <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-neutral-100 text-xs font-bold text-neutral-500 dark:bg-neutral-800 dark:text-neutral-400">
                         {i + 1}
                       </span>
                       <input
@@ -479,7 +479,7 @@ export default function CreatePostPage() {
                               prev.filter((_, idx) => idx !== i)
                             )
                           }
-                          className="shrink-0 rounded-lg p-2 text-neutral-400 hover:bg-neutral-100 hover:text-neutral-600"
+                          className="shrink-0 rounded-lg p-2 text-neutral-400 hover:bg-neutral-100 hover:text-neutral-600 dark:text-neutral-500 dark:hover:bg-neutral-800 dark:hover:text-neutral-200"
                         >
                           <X className="h-4 w-4" />
                         </button>
@@ -499,7 +499,7 @@ export default function CreatePostPage() {
                 )}
 
                 <div className="mt-4 flex flex-wrap items-center gap-3">
-                  <span className="text-sm font-semibold text-neutral-800">
+                  <span className="text-sm font-semibold text-neutral-800 dark:text-neutral-200">
                     Poll length
                   </span>
                   <div className="flex gap-2">
@@ -519,7 +519,7 @@ export default function CreatePostPage() {
 
             {/* Body */}
             <div>
-              <label className="mb-1.5 block text-sm font-semibold text-neutral-800">
+              <label className="mb-1.5 block text-sm font-semibold text-neutral-800 dark:text-neutral-200">
                 {bodyLabel}
               </label>
               <textarea
@@ -534,21 +534,21 @@ export default function CreatePostPage() {
             {/* Tags */}
             <div>
               <div className="mb-1.5 flex items-center justify-between">
-                <label className="text-sm font-semibold text-neutral-800">
+                <label className="text-sm font-semibold text-neutral-800 dark:text-neutral-200">
                   Tags{" "}
-                  <span className="font-normal text-neutral-400">
+                  <span className="font-normal text-neutral-400 dark:text-neutral-500">
                     (optional)
                   </span>
                 </label>
-                <span className="text-xs text-neutral-400">
+                <span className="text-xs text-neutral-400 dark:text-neutral-500">
                   {tags.length}/{MAX_TAGS}
                 </span>
               </div>
-              <div className="flex flex-wrap items-center gap-2 rounded-xl border border-neutral-200 px-3 py-2 focus-within:border-indigo-500 focus-within:ring-2 focus-within:ring-indigo-500/20">
+              <div className="flex flex-wrap items-center gap-2 rounded-xl border border-neutral-200 px-3 py-2 focus-within:border-indigo-500 focus-within:ring-2 focus-within:ring-indigo-500/20 dark:border-neutral-700">
                 {tags.map((t) => (
                   <span
                     key={t}
-                    className="flex items-center gap-1 rounded-md bg-neutral-100 py-1 pl-2.5 pr-1.5 text-xs font-medium text-neutral-700"
+                    className="flex items-center gap-1 rounded-md bg-neutral-100 py-1 pl-2.5 pr-1.5 text-xs font-medium text-neutral-700 dark:bg-neutral-800 dark:text-neutral-200"
                   >
                     {t}
                     <button
@@ -557,7 +557,7 @@ export default function CreatePostPage() {
                       onClick={() =>
                         setTags((prev) => prev.filter((x) => x !== t))
                       }
-                      className="rounded p-0.5 text-neutral-400 hover:text-neutral-700"
+                      className="rounded p-0.5 text-neutral-400 hover:text-neutral-700 dark:text-neutral-500 dark:hover:text-neutral-200"
                     >
                       <X className="h-3 w-3" />
                     </button>
@@ -581,7 +581,7 @@ export default function CreatePostPage() {
                     placeholder={
                       tags.length ? "Add another..." : "Type a tag and press Enter"
                     }
-                    className="min-w-[10rem] flex-1 bg-transparent py-1 text-sm text-neutral-800 placeholder:text-neutral-400 focus:outline-none"
+                    className="min-w-40 flex-1 bg-transparent py-1 text-sm text-neutral-800 placeholder:text-neutral-400 focus:outline-none dark:text-neutral-100 dark:placeholder:text-neutral-500"
                   />
                 )}
               </div>
@@ -589,12 +589,12 @@ export default function CreatePostPage() {
 
             {/* Question only: notifications */}
             {type === "question" && (
-              <div className="flex items-center justify-between gap-4 rounded-xl bg-neutral-50 px-4 py-3">
+              <div className="flex items-center justify-between gap-4 rounded-xl bg-neutral-50 px-4 py-3 dark:bg-neutral-800">
                 <div>
-                  <div className="text-sm font-semibold text-neutral-800">
+                  <div className="text-sm font-semibold text-neutral-800 dark:text-neutral-200">
                     Notify me about answers
                   </div>
-                  <div className="text-xs text-neutral-500">
+                  <div className="text-xs text-neutral-500 dark:text-neutral-400">
                     Get a notification when someone answers this question
                   </div>
                 </div>
@@ -605,19 +605,19 @@ export default function CreatePostPage() {
 
           {/* Actions */}
           <div className="flex flex-wrap items-center justify-between gap-3 pb-4">
-            <p className="text-xs text-neutral-400">
+            <p className="text-xs text-neutral-400 dark:text-neutral-500">
               {canPost ? "Ready to post" : missing[0]}
             </p>
             <div className="flex items-center gap-3">
               <button
                 type="button"
-                className="rounded-xl px-4 py-2.5 text-sm font-semibold text-neutral-600 hover:bg-neutral-100"
+                className="rounded-xl px-4 py-2.5 text-sm font-semibold text-neutral-600 hover:bg-neutral-100 dark:text-neutral-300 dark:hover:bg-neutral-800"
               >
                 Cancel
               </button>
               <button
                 type="button"
-                className="rounded-xl border border-neutral-200 bg-white px-4 py-2.5 text-sm font-semibold text-neutral-700 hover:bg-neutral-50"
+                className="rounded-xl border border-neutral-200 bg-white px-4 py-2.5 text-sm font-semibold text-neutral-700 hover:bg-neutral-50 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-200 dark:hover:bg-neutral-800"
               >
                 Save draft
               </button>
@@ -625,7 +625,7 @@ export default function CreatePostPage() {
                 type="button"
                 onClick={submit}
                 disabled={!canPost}
-                className="rounded-xl bg-indigo-600 px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-indigo-700 disabled:cursor-not-allowed disabled:bg-neutral-200 disabled:text-neutral-400"
+                className="rounded-xl bg-indigo-600 px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-indigo-700 disabled:cursor-not-allowed disabled:bg-neutral-200 disabled:text-neutral-400 dark:disabled:bg-neutral-700 dark:disabled:text-neutral-500"
               >
                 Post
               </button>
@@ -636,10 +636,10 @@ export default function CreatePostPage() {
         {/* ---------------- Tips ---------------- */}
         <div className="space-y-4">
             <div className="sticky top-20 z-50 space-y-4">
-          <div className="rounded-2xl border border-neutral-200 bg-white p-5">
+          <div className="rounded-2xl border border-neutral-200 bg-white p-5 dark:border-neutral-800 dark:bg-neutral-900">
             <div className="flex items-center gap-2">
               <Lightbulb className="h-4 w-4 text-amber-500" />
-              <h3 className="text-sm font-semibold text-neutral-900">
+              <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">
                 Tips for a great {TYPE_META[type].label.toLowerCase()}
               </h3>
             </div>
@@ -647,7 +647,7 @@ export default function CreatePostPage() {
               {TIPS[type].map((tip) => (
                 <li
                   key={tip}
-                  className="flex gap-2 text-sm leading-snug text-neutral-600"
+                  className="flex gap-2 text-sm leading-snug text-neutral-600 dark:text-neutral-300"
                 >
                   <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-indigo-400" />
                   {tip}
@@ -656,8 +656,8 @@ export default function CreatePostPage() {
             </ul>
           </div>
 
-          <div className="rounded-2xl border border-neutral-200 bg-white p-5">
-            <h3 className="text-sm font-semibold text-neutral-900">
+          <div className="rounded-2xl border border-neutral-200 bg-white p-5 dark:border-neutral-800 dark:bg-neutral-900">
+            <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">
               Before you post
             </h3>
             <ol className="mt-3 space-y-2.5">
@@ -668,9 +668,9 @@ export default function CreatePostPage() {
               ].map((rule, i) => (
                 <li
                   key={rule}
-                  className="flex gap-2.5 text-sm leading-snug text-neutral-600"
+                  className="flex gap-2.5 text-sm leading-snug text-neutral-600 dark:text-neutral-300"
                 >
-                  <span className="font-semibold text-neutral-400">
+                  <span className="font-semibold text-neutral-400 dark:text-neutral-500">
                     {i + 1}.
                   </span>
                   {rule}

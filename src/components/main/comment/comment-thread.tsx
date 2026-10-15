@@ -106,24 +106,24 @@ export function CommentThread({
         onSubmit={handleAdd}
       />
 
-      <div className="mt-5 flex items-center justify-between border-b border-neutral-100 pb-3">
-        <h2 className="text-sm font-semibold text-neutral-900">
+      <div className="mt-5 flex items-center justify-between border-b border-neutral-100 pb-3 dark:border-neutral-800">
+        <h2 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">
           {total} {total === 1 ? "comment" : "comments"}
         </h2>
 
         <div className="relative">
           <button
             onClick={() => setSortOpen((v) => !v)}
-            className="flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-sm font-medium text-neutral-600 hover:bg-neutral-100"
+            className="flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-sm font-medium text-neutral-600 hover:bg-neutral-100 dark:text-neutral-300 dark:hover:bg-neutral-800"
           >
             Sort by:{" "}
-            <span className="font-semibold text-neutral-900">
+            <span className="font-semibold text-neutral-900 dark:text-neutral-100">
               {SORT_OPTIONS.find((s) => s.id === sort)?.label}
             </span>
-            <ChevronDown className="h-4 w-4 text-neutral-400" />
+            <ChevronDown className="h-4 w-4 text-neutral-400 dark:text-neutral-500" />
           </button>
           {sortOpen && (
-            <div className="absolute right-0 top-full z-10 mt-1 w-36 overflow-hidden rounded-xl border border-neutral-200 bg-white py-1 shadow-lg">
+            <div className="absolute right-0 top-full z-10 mt-1 w-36 overflow-hidden rounded-xl border border-neutral-200 bg-white py-1 shadow-lg dark:border-neutral-700 dark:bg-neutral-900">
               {SORT_OPTIONS.map((s) => (
                 <button
                   key={s.id}
@@ -131,7 +131,7 @@ export function CommentThread({
                     setSort(s.id);
                     setSortOpen(false);
                   }}
-                  className={`block w-full px-3.5 py-2 text-left text-sm font-medium hover:bg-neutral-50 ${sort === s.id ? "text-indigo-600" : "text-neutral-700"
+                  className={`block w-full px-3.5 py-2 text-left text-sm font-medium hover:bg-neutral-50 dark:hover:bg-neutral-800 ${sort === s.id ? "text-indigo-600" : "text-neutral-700 dark:text-neutral-200"
                     }`}
                 >
                   {s.label}
@@ -144,7 +144,7 @@ export function CommentThread({
 
       <div className="mt-5">
         {sorted.length === 0 ? (
-          <p className="py-6 text-center text-sm text-neutral-400">
+          <p className="py-6 text-center text-sm text-neutral-400 dark:text-neutral-500">
             No answers yet. Be the first to help.
           </p>
         ) : (

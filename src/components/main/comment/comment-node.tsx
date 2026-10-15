@@ -124,7 +124,7 @@ export function CommentNode({
             aria-label="Collapse thread"
             className="group mt-1 w-4 flex-1 cursor-pointer"
           >
-            <span className="mx-auto block h-full w-0.5 rounded bg-neutral-200 transition-colors group-hover:bg-indigo-500" />
+            <span className="mx-auto block h-full w-0.5 rounded bg-neutral-200 transition-colors group-hover:bg-indigo-500 dark:bg-neutral-700" />
           </button>
         )}
       </div>
@@ -133,26 +133,26 @@ export function CommentNode({
         {/* Header */}
         <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-sm">
           <span
-            className={`font-semibold ${collapsed ? "text-neutral-500" : "text-neutral-900"
+            className={`font-semibold ${collapsed ? "text-neutral-500 dark:text-neutral-400" : "text-neutral-900 dark:text-neutral-100"
               }`}
           >
             {currentComment.author.first_name}
           </span>
           {currentComment.isOP && (
-            <span className="rounded bg-indigo-50 px-1.5 py-0.5 text-[11px] font-bold text-indigo-600">
+            <span className="rounded bg-indigo-50 px-1.5 py-0.5 text-[11px] font-bold text-indigo-600 dark:bg-indigo-950 dark:text-indigo-300">
               OP
             </span>
           )}
           {currentComment.isModerator && (
-            <span className="flex items-center gap-0.5 rounded bg-emerald-50 px-1.5 py-0.5 text-[11px] font-bold text-emerald-600">
+            <span className="flex items-center gap-0.5 rounded bg-emerald-50 px-1.5 py-0.5 text-[11px] font-bold text-emerald-600 dark:bg-emerald-950 dark:text-emerald-300">
               <Shield className="h-3 w-3" />
               MOD
             </span>
           )}
           {/* <span className="text-neutral-400">· {currentComment.school}</span> */}
-          <span className="text-neutral-400">· {getTimeSince(currentComment.created_at)}</span>
+          <span className="text-neutral-400 dark:text-neutral-500">· {getTimeSince(currentComment.created_at)}</span>
           {currentComment.isAccepted && (
-            <span className="flex items-center gap-1 rounded-full bg-emerald-50 px-2 py-0.5 text-xs font-semibold text-emerald-600">
+            <span className="flex items-center gap-1 rounded-full bg-emerald-50 px-2 py-0.5 text-xs font-semibold text-emerald-600 dark:bg-emerald-950 dark:text-emerald-300">
               <CheckCircle2 className="h-3.5 w-3.5" />
               Accepted answer
             </span>
@@ -163,7 +163,7 @@ export function CommentNode({
             onClick={() => setCollapsed((v) => !v)}
             aria-expanded={!collapsed}
             aria-label={collapsed ? "Expand comment" : "Collapse comment"}
-            className="ml-auto flex items-center gap-1 rounded-full px-2 py-1 text-xs font-semibold text-neutral-400 hover:bg-neutral-100 hover:text-indigo-600"
+            className="ml-auto flex items-center gap-1 rounded-full px-2 py-1 text-xs font-semibold text-neutral-400 hover:bg-neutral-100 hover:text-indigo-600 dark:text-neutral-500 dark:hover:bg-neutral-800"
           >
             {collapsed ? (
               <>
@@ -180,7 +180,7 @@ export function CommentNode({
 
         {/* Collapsed: one-line preview */}
         {collapsed && (
-          <p className="mt-1 line-clamp-1 text-sm text-neutral-400">
+          <p className="mt-1 line-clamp-1 text-sm text-neutral-400 dark:text-neutral-500">
             {currentComment.content}
           </p>
         )}
@@ -188,8 +188,8 @@ export function CommentNode({
         {!collapsed && (
           <>
             <p
-              className={`mt-1.5 text-[15px] leading-relaxed text-neutral-700 ${currentComment.isAccepted
-                ? "rounded-lg border-l-2 border-emerald-500 bg-emerald-50/40 py-2 pl-3 pr-2"
+              className={`mt-1.5 text-[15px] leading-relaxed text-neutral-700 dark:text-neutral-300 ${currentComment.isAccepted
+                ? "rounded-lg border-l-2 border-emerald-500 bg-emerald-50/40 py-2 pl-3 pr-2 dark:bg-emerald-950/30"
                 : ""
                 }`}
             >
@@ -197,11 +197,11 @@ export function CommentNode({
             </p>
 
             {/* Actions */}
-            <div className="mt-2 flex flex-wrap items-center gap-1 text-sm text-neutral-500">
+            <div className="mt-2 flex flex-wrap items-center gap-1 text-sm text-neutral-500 dark:text-neutral-400">
               <div className="flex items-center">
                 <button
                   onClick={upVote}
-                  className={`rounded-full p-1 hover:bg-neutral-100 ${currentComment.upvoted ? "text-indigo-600" : ""
+                  className={`rounded-full p-1 hover:bg-neutral-100 dark:hover:bg-neutral-800 ${currentComment.upvoted ? "text-indigo-600" : ""
                     }`}
                   aria-label="Upvote"
                 >
@@ -214,14 +214,14 @@ export function CommentNode({
                     ? "text-indigo-600"
                     : currentComment.downvoted
                       ? "text-rose-500"
-                      : "text-neutral-600"
+                      : "text-neutral-600 dark:text-neutral-300"
                     }`}
                 >
                   {score}
                 </span>
                 <button
                   onClick={downVote}
-                  className={`rounded-full p-1 hover:bg-neutral-100 ${currentComment.downvoted ? "text-rose-500" : ""
+                  className={`rounded-full p-1 hover:bg-neutral-100 dark:hover:bg-neutral-800 ${currentComment.downvoted ? "text-rose-500" : ""
                     }`}
                   aria-label="Downvote"
                 >
@@ -233,16 +233,16 @@ export function CommentNode({
 
               <button
                 onClick={() => setReplying((v) => !v)}
-                className="flex items-center gap-1.5 rounded-full px-2.5 py-1.5 text-xs font-semibold hover:bg-neutral-100"
+                className="flex items-center gap-1.5 rounded-full px-2.5 py-1.5 text-xs font-semibold hover:bg-neutral-100 dark:hover:bg-neutral-800"
               >
                 <MessageSquare className="h-4 w-4" />
                 Reply
               </button>
-              <button className="flex items-center gap-1.5 rounded-full px-2.5 py-1.5 text-xs font-semibold hover:bg-neutral-100">
+              <button className="flex items-center gap-1.5 rounded-full px-2.5 py-1.5 text-xs font-semibold hover:bg-neutral-100 dark:hover:bg-neutral-800">
                 <Share2 className="h-4 w-4" />
                 Share
               </button>
-              <button className="rounded-full p-1.5 hover:bg-neutral-100">
+              <button className="rounded-full p-1.5 hover:bg-neutral-100 dark:hover:bg-neutral-800">
                 <MoreHorizontal className="h-4 w-4" />
               </button>
             </div>

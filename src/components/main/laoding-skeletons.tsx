@@ -1,18 +1,18 @@
 import React from "react";
 function Bone({ className = "" }: { className?: string }) {
-  return <div className={`animate-pulse rounded-md bg-neutral-200 ${className}`} />;
+  return <div className={`animate-pulse rounded-md bg-neutral-200 dark:bg-neutral-700 ${className}`} />;
 }
 
 export function CommunityCardSkeleton() {
   return (
-    <div className="flex flex-col overflow-hidden rounded-2xl border border-neutral-200 bg-white">
+    <div className="flex flex-col overflow-hidden rounded-2xl border border-neutral-200 bg-white dark:border-neutral-800 dark:bg-neutral-900">
       {/* Banner */}
-      <div className="relative h-20 animate-pulse bg-neutral-200" />
+      <div className="relative h-20 animate-pulse bg-neutral-200 dark:bg-neutral-700" />
 
       <div className="flex flex-1 flex-col px-5 pb-5">
         {/* Icon overlapping the banner */}
         <div className="-mt-7">
-          <Bone className="h-14 w-14 rounded-2xl border-4 border-white" />
+          <Bone className="h-14 w-14 rounded-2xl border-4 border-white dark:border-neutral-900" />
         </div>
 
         <Bone className="mt-3 h-4 w-2/3" />
@@ -23,7 +23,7 @@ export function CommunityCardSkeleton() {
           <Bone className="h-3 w-4/5" />
         </div>
 
-        <div className="mt-4 flex items-center gap-2 border-t border-neutral-100 pt-4">
+        <div className="mt-4 flex items-center gap-2 border-t border-neutral-100 pt-4 dark:border-neutral-800">
           <Bone className="h-9 flex-1 rounded-lg" />
           <Bone className="h-9 w-9 shrink-0 rounded-lg" />
         </div>
@@ -44,7 +44,7 @@ export function CommunityGridSkeleton({ count = 6 }: { count?: number }) {
 
 export function PostCardSkeleton() {
   return (
-    <div className="rounded-2xl border border-neutral-200 bg-white p-5">
+    <div className="rounded-2xl border border-neutral-200 bg-white p-5 dark:border-neutral-800 dark:bg-neutral-900">
       {/* Author row */}
       <div className="flex items-center gap-2.5">
         <Bone className="h-9 w-9 shrink-0 rounded-full" />
@@ -72,7 +72,7 @@ export function PostCardSkeleton() {
       </div>
 
       {/* Footer */}
-      <div className="mt-4 flex items-center justify-between border-t border-neutral-100 pt-3.5">
+      <div className="mt-4 flex items-center justify-between border-t border-neutral-100 pt-3.5 dark:border-neutral-800">
         <Bone className="h-7 w-16 rounded-full" />
         <div className="flex items-center gap-4">
           <Bone className="h-4 w-20" />

@@ -1,5 +1,5 @@
 import SideBar from '@/components/main/layout/side-bar'
-import TopBar from '@/components/main/layout/top-bar'
+import SiteHeader from '@/components/main/layout/site-header'
 import { AuthProvider } from '@/context/auth-context'
 import { httpDriver } from '@/libs/auth/http-driver'
 import { readSession } from '@/libs/auth/session'
@@ -16,8 +16,8 @@ async function Layout({ children }: Props) {
     const user = await httpDriver.me(access);
     return (
         <AuthProvider value={{ user }}>
-            <div className="min-h-screen bg-[#f7f6f2]">
-                <TopBar />
+            <div className="min-h-screen bg-[#f7f6f2] dark:bg-neutral-950">
+                <SiteHeader />
                 <div className="mx-auto flex max-w-full gap-6 md:px-6 px-2 py-6">
                     <SideBar />
                     {children}

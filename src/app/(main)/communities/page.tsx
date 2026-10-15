@@ -26,8 +26,8 @@ export default function CommunitiesPage() {
     <>
       <main className="min-w-0 flex-1 space-y-4">
         {/* Header + filter chips */}
-        <div className="rounded-2xl border border-neutral-200 bg-white p-6 sticky top-16 z-100">
-          <h1 className="text-2xl font-bold text-neutral-900">
+        <div className="sticky top-16 z-10 rounded-2xl border border-neutral-200 bg-white p-6 dark:border-neutral-800 dark:bg-neutral-900">
+          <h1 className="text-2xl font-bold text-neutral-900 dark:text-neutral-100">
             Explore Communities
           </h1>
           <div className="mt-4 flex flex-wrap gap-2">
@@ -39,7 +39,7 @@ export default function CommunitiesPage() {
                   onClick={() => setCategory(c.id)}
                   className={`rounded-full px-4 py-2 text-sm font-semibold transition-colors ${active
                     ? "bg-indigo-600 text-white"
-                    : "bg-[#eef1f6] text-neutral-600 hover:bg-neutral-200"
+                    : "bg-[#eef1f6] text-neutral-600 hover:bg-neutral-200 dark:bg-neutral-800 dark:text-neutral-300 dark:hover:bg-neutral-700"
                     }`}
                 >
                   {c.label}
@@ -52,7 +52,7 @@ export default function CommunitiesPage() {
         {/* Community grid */}
         {
           communities.length > 0 ?
-            <div className="min-h-screen bg-[#f4f6f9] p-0">
+            <div className="min-h-screen bg-[#f4f6f9] p-0 dark:bg-neutral-950">
               <div className="mx-auto grid max-w-full grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
                 {communities.map((c) => (
                   <CommunityCard key={c.id} community={c} />
@@ -68,4 +68,3 @@ export default function CommunitiesPage() {
     </>
   );
 }
-

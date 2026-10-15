@@ -84,15 +84,15 @@ export default function QuestionsPage() {
           </Chip>
         </div>
 
-        <div className="flex rounded-lg bg-neutral-100 p-1">
+        <div className="flex rounded-lg bg-neutral-100 p-1 dark:bg-neutral-800">
           {SORTS.map((s) => (
             <button
               key={s.id}
               onClick={() => setSort(s.id)}
               className={`rounded-md px-3 py-1.5 text-xs font-semibold transition-colors ${
                 sort === s.id
-                  ? "bg-white text-neutral-900 shadow-sm"
-                  : "text-neutral-500 hover:text-neutral-800"
+                  ? "bg-white text-neutral-900 shadow-sm dark:bg-neutral-700 dark:text-neutral-100"
+                  : "text-neutral-500 hover:text-neutral-800 dark:text-neutral-400 dark:hover:text-neutral-100"
               }`}
             >
               {s.label}

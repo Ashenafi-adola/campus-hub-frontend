@@ -4,10 +4,10 @@ import ProfileDropdown from './profile-dropdown'
 import Link from 'next/link'
 
 
-function TopBar() {
+function SiteHeader() {
     
     return (
-        <header className="sticky top-0 z-10 flex items-center gap-6 border-b border-neutral-200 bg-white px-6 py-3">
+        <header className="sticky top-0 z-10 flex items-center gap-6 border-b border-neutral-200 bg-white px-6 py-3 dark:border-neutral-800 dark:bg-neutral-900">
             <div className="flex items-center gap-2">
                 <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-indigo-600">
                     <svg viewBox="0 0 24 24" className="h-4 w-4 text-white" fill="none">
@@ -19,15 +19,15 @@ function TopBar() {
                         />
                     </svg>
                 </div>
-                <span className="text-lg font-bold text-neutral-900">CampusHub</span>
+                <span className="text-lg font-bold text-neutral-900 dark:text-neutral-100">CampusHub</span>
             </div>
 
             <div className="relative mx-auto w-full max-w-md">
-                <Search className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-neutral-400" />
+                <Search className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-neutral-400 dark:text-neutral-500" />
                 <input
                     type="text"
                     placeholder="Search questions, communities, study guides..."
-                    className="w-full rounded-full bg-neutral-100 py-2.5 pl-10 pr-4 text-sm text-neutral-700 placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/30"
+                    className="w-full rounded-full bg-neutral-100 py-2.5 pl-10 pr-4 text-sm text-neutral-700 placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/30 dark:bg-neutral-800 dark:text-neutral-100 dark:placeholder:text-neutral-500"
                 />
             </div>
 
@@ -36,7 +36,7 @@ function TopBar() {
                     <Plus className="h-4 w-4" />
                     Ask Question
                 </Link>
-                <button className="text-neutral-500 hover:text-neutral-800">
+                <button aria-label="Notifications" className="text-neutral-500 hover:text-neutral-800 dark:text-neutral-400 dark:hover:text-neutral-100">
                     <Bell className="h-5 w-5" />
                 </button>
                 <ProfileDropdown/>
@@ -45,4 +45,4 @@ function TopBar() {
     )
 }
 
-export default TopBar
+export default SiteHeader;

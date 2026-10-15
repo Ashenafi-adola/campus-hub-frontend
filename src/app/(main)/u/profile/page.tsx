@@ -55,9 +55,10 @@ const MAX_BIO = 200;
 /*  Shared helpers & small components                                */
 /* ================================================================= */
 
-const labelCls = "mb-1.5 block text-sm font-semibold text-neutral-800";
+const labelCls =
+  "mb-1.5 block text-sm font-semibold text-neutral-800 dark:text-neutral-200";
 const inputCls =
-  "w-full rounded-xl border border-neutral-200 bg-white px-3.5 py-2.5 text-sm text-neutral-800 placeholder:text-neutral-400 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/20";
+  "w-full rounded-xl border border-neutral-200 bg-white px-3.5 py-2.5 text-sm text-neutral-800 placeholder:text-neutral-400 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-100 dark:placeholder:text-neutral-500";
 
 function Switch({
   checked,
@@ -81,7 +82,7 @@ function Switch({
       aria-label={label}
       onClick={() => onChange(!checked)}
       className={`relative ${track} shrink-0 rounded-full transition-colors ${
-        checked ? "bg-indigo-600" : "bg-neutral-200"
+        checked ? "bg-indigo-600" : "bg-neutral-200 dark:bg-neutral-700"
       }`}
     >
       <span
@@ -103,7 +104,7 @@ function Segmented<T extends string>({
   onChange: (v: T) => void;
 }) {
   return (
-    <div className="inline-flex rounded-lg bg-neutral-100 p-1">
+    <div className="inline-flex rounded-lg bg-neutral-100 p-1 dark:bg-neutral-800">
       {options.map((o) => (
         <button
           key={o.id}
@@ -111,8 +112,8 @@ function Segmented<T extends string>({
           onClick={() => onChange(o.id)}
           className={`rounded-md px-3.5 py-1.5 text-sm font-semibold transition-colors ${
             value === o.id
-              ? "bg-white text-neutral-900 shadow-sm"
-              : "text-neutral-500 hover:text-neutral-800"
+              ? "bg-white text-neutral-900 shadow-sm dark:bg-neutral-700 dark:text-neutral-100"
+              : "text-neutral-500 hover:text-neutral-800 dark:text-neutral-400 dark:hover:text-neutral-100"
           }`}
         >
           {o.label}
@@ -144,7 +145,7 @@ function SelectField({
           </option>
         ))}
       </select>
-      <ChevronDown className="pointer-events-none absolute right-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-neutral-500" />
+      <ChevronDown className="pointer-events-none absolute right-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-neutral-500 dark:text-neutral-400" />
     </div>
   );
 }
@@ -159,11 +160,11 @@ function SettingRow({
   children: React.ReactNode;
 }) {
   return (
-    <div className="flex items-center justify-between gap-4 border-b border-neutral-100 py-3.5 last:border-0">
+    <div className="flex items-center justify-between gap-4 border-b border-neutral-100 py-3.5 last:border-0 dark:border-neutral-800">
       <div className="min-w-0">
-        <div className="text-sm font-semibold text-neutral-800">{title}</div>
+        <div className="text-sm font-semibold text-neutral-800 dark:text-neutral-200">{title}</div>
         {description && (
-          <div className="mt-0.5 text-xs leading-snug text-neutral-500">
+          <div className="mt-0.5 text-xs leading-snug text-neutral-500 dark:text-neutral-400">
             {description}
           </div>
         )}
@@ -182,9 +183,9 @@ function SectionHeading({
 }) {
   return (
     <div className="mb-2">
-      <h2 className="text-base font-bold text-neutral-900">{title}</h2>
+      <h2 className="text-base font-bold text-neutral-900 dark:text-neutral-100">{title}</h2>
       {description && (
-        <p className="mt-0.5 text-sm text-neutral-500">{description}</p>
+        <p className="mt-0.5 text-sm text-neutral-500 dark:text-neutral-400">{description}</p>
       )}
     </div>
   );
@@ -207,7 +208,7 @@ function SaveBar({
         type="button"
         onClick={onSave}
         disabled={!dirty || !valid}
-        className="rounded-lg bg-indigo-600 px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-indigo-700 disabled:cursor-not-allowed disabled:bg-neutral-200 disabled:text-neutral-400"
+        className="rounded-lg bg-indigo-600 px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-indigo-700 disabled:cursor-not-allowed disabled:bg-neutral-200 disabled:text-neutral-400 dark:disabled:bg-neutral-700 dark:disabled:text-neutral-500"
       >
         Save Changes
       </button>
@@ -216,7 +217,7 @@ function SaveBar({
           <button
             type="button"
             onClick={onDiscard}
-            className="text-sm font-semibold text-neutral-500 hover:text-neutral-800"
+            className="text-sm font-semibold text-neutral-500 hover:text-neutral-800 dark:text-neutral-400 dark:hover:text-neutral-200"
           >
             Discard
           </button>
@@ -338,7 +339,7 @@ function ProfileTab({
           />
           <div>
             <div className="flex items-center gap-4">
-              <label className="cursor-pointer rounded-lg border border-neutral-200 bg-white px-3.5 py-1.5 text-sm font-semibold text-neutral-700 hover:bg-neutral-50">
+              <label className="cursor-pointer rounded-lg border border-neutral-200 bg-white px-3.5 py-1.5 text-sm font-semibold text-neutral-700 hover:bg-neutral-50 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-200 dark:hover:bg-neutral-800">
                 Upload New
                 <input
                   type="file"
@@ -354,14 +355,14 @@ function ProfileTab({
                   setAvatarError(null);
                   update({ avatarUrl: null });
                 }}
-                className="text-sm font-semibold text-red-500 hover:underline disabled:cursor-not-allowed disabled:text-neutral-300 disabled:no-underline"
+                className="text-sm font-semibold text-red-500 hover:underline disabled:cursor-not-allowed disabled:text-neutral-300 disabled:no-underline dark:disabled:text-neutral-600"
               >
                 Remove
               </button>
             </div>
             <p
               className={`mt-1.5 text-xs ${
-                avatarError ? "text-red-500" : "text-neutral-400"
+                avatarError ? "text-red-500"                 : "text-neutral-400 dark:text-neutral-500"
               }`}
             >
               {avatarError ?? "JPG or PNG. Max size 2MB"}
@@ -399,8 +400,8 @@ function ProfileTab({
 
       <div>
         <div className="mb-1.5 flex items-center justify-between">
-          <label className="text-sm font-semibold text-neutral-800">Bio</label>
-          <span className="text-xs text-neutral-400">
+          <label className="text-sm font-semibold text-neutral-800 dark:text-neutral-200">Bio</label>
+          <span className="text-xs text-neutral-400 dark:text-neutral-500">
             {draft.bio.length}/{MAX_BIO}
           </span>
         </div>
@@ -457,25 +458,25 @@ function DeleteAccountModal({
     >
       <div
         onClick={(e) => e.stopPropagation()}
-        className="relative w-full max-w-sm rounded-3xl border border-neutral-100 bg-white p-6 shadow-xl"
+        className="relative w-full max-w-sm rounded-3xl border border-neutral-100 bg-white p-6 shadow-xl dark:border-neutral-700 dark:bg-neutral-900"
       >
         <button
           onClick={onClose}
           aria-label="Close"
-          className="absolute right-4 top-4 rounded-full p-1.5 text-neutral-400 hover:bg-neutral-100"
+          className="absolute right-4 top-4 rounded-full p-1.5 text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-800"
         >
           <X className="h-4 w-4" />
         </button>
-        <div className="flex h-12 w-12 items-center justify-center rounded-full bg-red-50">
+        <div className="flex h-12 w-12 items-center justify-center rounded-full bg-red-50 dark:bg-red-950/50">
           <AlertTriangle className="h-6 w-6 text-red-500" />
         </div>
-        <h3 className="mt-4 text-lg font-semibold text-neutral-900">
+        <h3 className="mt-4 text-lg font-semibold text-neutral-900 dark:text-neutral-100">
           Delete your account?
         </h3>
-        <p className="mt-1.5 text-sm leading-relaxed text-neutral-500">
+        <p className="mt-1.5 text-sm leading-relaxed text-neutral-500 dark:text-neutral-400">
           This permanently removes your profile, questions, answers and saved
           posts. This can&apos;t be undone. Type{" "}
-          <span className="font-bold text-neutral-800">DELETE</span> to
+          <span className="font-bold text-neutral-800 dark:text-neutral-200">DELETE</span> to
           confirm.
         </p>
         <input
@@ -488,14 +489,14 @@ function DeleteAccountModal({
         <div className="mt-5 flex gap-3">
           <button
             onClick={onClose}
-            className="flex-1 rounded-full border border-neutral-200 py-2.5 text-sm font-semibold text-neutral-700 hover:bg-neutral-50"
+            className="flex-1 rounded-full border border-neutral-200 py-2.5 text-sm font-semibold text-neutral-700 hover:bg-neutral-50 dark:border-neutral-700 dark:text-neutral-200 dark:hover:bg-neutral-800"
           >
             Cancel
           </button>
           <button
             onClick={onConfirm}
             disabled={text !== "DELETE"}
-            className="flex-1 rounded-full bg-red-600 py-2.5 text-sm font-semibold text-white hover:bg-red-700 disabled:cursor-not-allowed disabled:bg-neutral-200 disabled:text-neutral-400"
+            className="flex-1 rounded-full bg-red-600 py-2.5 text-sm font-semibold text-white hover:bg-red-700 disabled:cursor-not-allowed disabled:bg-neutral-200 disabled:text-neutral-400 dark:disabled:bg-neutral-700 dark:disabled:text-neutral-500"
           >
             Delete account
           </button>
@@ -539,7 +540,7 @@ function AccountTab({
       <div className="space-y-5">
         <div>
           <div className="mb-1.5 flex items-center justify-between">
-            <label className="text-sm font-semibold text-neutral-800">
+            <label className="text-sm font-semibold text-neutral-800 dark:text-neutral-200">
               University Email
             </label>
             <span className="flex items-center gap-1 text-xs font-semibold text-emerald-600">
@@ -548,15 +549,15 @@ function AccountTab({
             </span>
           </div>
           <div className="relative">
-            <Lock className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-neutral-400" />
+            <Lock className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-neutral-400 dark:text-neutral-500" />
             <input
               type="email"
               value={email}
               readOnly
-              className={`${inputCls} cursor-not-allowed bg-neutral-50 pl-10 text-neutral-500`}
+              className={`${inputCls} cursor-not-allowed bg-neutral-50 pl-10 text-neutral-500 dark:bg-neutral-800 dark:text-neutral-400`}
             />
           </div>
-          <p className="mt-1.5 text-xs text-neutral-400">
+          <p className="mt-1.5 text-xs text-neutral-400 dark:text-neutral-500">
             Your university email can&apos;t be changed. Contact support if you lost
             access to it.
           </p>
@@ -565,7 +566,7 @@ function AccountTab({
         <div>
           <label className={labelCls}>Username</label>
           <div className="relative">
-            <span className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-sm font-medium text-neutral-400">
+            <span className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-sm font-medium text-neutral-400 dark:text-neutral-500">
               @
             </span>
             <input
@@ -582,7 +583,7 @@ function AccountTab({
           </div>
           <p
             className={`mt-1.5 text-xs ${
-              usernameValid ? "text-neutral-400" : "font-medium text-red-500"
+              usernameValid ? "text-neutral-400 dark:text-neutral-500" : "font-medium text-red-500"
             }`}
           >
             3 to 20 characters: letters, numbers and underscores.
@@ -601,7 +602,7 @@ function AccountTab({
       </div>
 
       {/* Password */}
-      <div className="border-t border-neutral-100 pt-6">
+      <div className="border-t border-neutral-100 pt-6 dark:border-neutral-800">
         <SectionHeading
           title="Change password"
           description="Use at least 8 characters."
@@ -635,12 +636,12 @@ function AccountTab({
                           ? score >= 2
                             ? "bg-emerald-500"
                             : "bg-red-500"
-                          : "bg-neutral-200"
+                          : "bg-neutral-200 dark:bg-neutral-700"
                       }`}
                     />
                   ))}
                 </div>
-                <p className="mt-1 text-xs font-medium text-neutral-500">
+                <p className="mt-1 text-xs font-medium text-neutral-500 dark:text-neutral-400">
                   {score <= 1 ? "Weak" : score === 2 ? "Medium" : "Strong"}{" "}
                   password
                 </p>
@@ -674,7 +675,7 @@ function AccountTab({
               setConfirm("");
               notify("Password updated");
             }}
-            className="rounded-lg bg-indigo-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-indigo-700 disabled:cursor-not-allowed disabled:bg-neutral-200 disabled:text-neutral-400"
+            className="rounded-lg bg-indigo-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-indigo-700 disabled:cursor-not-allowed disabled:bg-neutral-200 disabled:text-neutral-400 dark:disabled:bg-neutral-700 dark:disabled:text-neutral-500"
           >
             Update password
           </button>
@@ -682,7 +683,7 @@ function AccountTab({
       </div>
 
       {/* Connected accounts */}
-      <div className="border-t border-neutral-100 pt-6">
+      <div className="border-t border-neutral-100 pt-6 dark:border-neutral-800">
         <SectionHeading
           title="Connected accounts"
           description="Sign in faster with a linked account."
@@ -697,7 +698,7 @@ function AccountTab({
                 setGoogle(google ? null : "alex.j@gmail.com");
                 notify(google ? "Google disconnected" : "Google connected");
               }}
-              className="shrink-0 rounded-lg border border-neutral-200 px-3.5 py-1.5 text-sm font-semibold text-neutral-700 hover:bg-neutral-50"
+              className="shrink-0 rounded-lg border border-neutral-200 px-3.5 py-1.5 text-sm font-semibold text-neutral-700 hover:bg-neutral-50 dark:border-neutral-700 dark:text-neutral-200 dark:hover:bg-neutral-800"
             >
               {google ? "Disconnect" : "Connect"}
             </button>
@@ -711,7 +712,7 @@ function AccountTab({
                 setApple(apple ? null : "alex@icloud.com");
                 notify(apple ? "Apple disconnected" : "Apple connected");
               }}
-              className="flex shrink-0 items-center gap-1.5 rounded-lg border border-neutral-200 px-3.5 py-1.5 text-sm font-semibold text-neutral-700 hover:bg-neutral-50"
+              className="flex shrink-0 items-center gap-1.5 rounded-lg border border-neutral-200 px-3.5 py-1.5 text-sm font-semibold text-neutral-700 hover:bg-neutral-50 dark:border-neutral-700 dark:text-neutral-200 dark:hover:bg-neutral-800"
             >
               <Apple className="h-3.5 w-3.5" />
               {apple ? "Disconnect" : "Connect"}
@@ -721,14 +722,14 @@ function AccountTab({
       </div>
 
       {/* Danger zone */}
-      <div className="rounded-xl border border-red-200 bg-red-50/40 p-4">
+      <div className="rounded-xl border border-red-200 bg-red-50/40 p-4 dark:border-red-900 dark:bg-red-950/30">
         <h3 className="text-sm font-bold text-red-700">Danger zone</h3>
         <div className="mt-3 flex items-center justify-between gap-4">
           <div>
-            <div className="text-sm font-semibold text-neutral-800">
+            <div className="text-sm font-semibold text-neutral-800 dark:text-neutral-200">
               Delete account
             </div>
-            <div className="text-xs text-neutral-500">
+            <div className="text-xs text-neutral-500 dark:text-neutral-400">
               Permanently remove your profile and all of your content.
             </div>
           </div>
@@ -847,7 +848,7 @@ function NotificationsTab({
           draft.paused ? "pointer-events-none opacity-50" : ""
         }`}
       >
-        <div className="grid grid-cols-[1fr_repeat(3,4.25rem)] items-center border-b border-neutral-100 pb-2 text-xs font-semibold uppercase tracking-wide text-neutral-400">
+        <div className="grid grid-cols-[1fr_repeat(3,4.25rem)] items-center border-b border-neutral-100 pb-2 text-xs font-semibold uppercase tracking-wide text-neutral-400 dark:border-neutral-800 dark:text-neutral-500">
           <span>Notify me about</span>
           {CHANNELS.map((c) => (
             <span key={c.id} className="text-center">
@@ -859,13 +860,13 @@ function NotificationsTab({
         {NOTIF_ROWS.map((row) => (
           <div
             key={row.key}
-            className="grid grid-cols-[1fr_repeat(3,4.25rem)] items-center border-b border-neutral-100 py-3.5 last:border-0"
+            className="grid grid-cols-[1fr_repeat(3,4.25rem)] items-center border-b border-neutral-100 py-3.5 last:border-0 dark:border-neutral-800"
           >
             <div className="min-w-0 pr-3">
-              <div className="text-sm font-semibold text-neutral-800">
+              <div className="text-sm font-semibold text-neutral-800 dark:text-neutral-200">
                 {row.label}
               </div>
-              <div className="mt-0.5 text-xs leading-snug text-neutral-500">
+              <div className="mt-0.5 text-xs leading-snug text-neutral-500 dark:text-neutral-400">
                 {row.description}
               </div>
             </div>
@@ -911,7 +912,7 @@ function NotificationsTab({
                   onChange={(e) => update({ quietFrom: e.target.value })}
                   className={inputCls}
                 />
-                <span className="text-sm text-neutral-400">to</span>
+                <span className="text-sm text-neutral-400 dark:text-neutral-500">to</span>
                 <input
                   type="time"
                   value={draft.quietTo}
@@ -1008,23 +1009,23 @@ function PrivacyTab({
                 onClick={() => update({ visibility: v.id })}
                 className={`flex w-full items-start gap-3 rounded-xl border p-3.5 text-left transition-colors ${
                   active
-                    ? "border-indigo-600 bg-indigo-50/60"
-                    : "border-neutral-200 hover:bg-neutral-50"
+                    ? "border-indigo-600 bg-indigo-50/60 dark:bg-indigo-950/40"
+                    : "border-neutral-200 hover:bg-neutral-50 dark:border-neutral-700 dark:hover:bg-neutral-800"
                 }`}
               >
                 <div
                   className={`mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full border-2 ${
-                    active ? "border-indigo-600 bg-indigo-600" : "border-neutral-300"
+                    active ? "border-indigo-600 bg-indigo-600" : "border-neutral-300 dark:border-neutral-600"
                   }`}
                 >
                   {active && <span className="h-1.5 w-1.5 rounded-full bg-white" />}
                 </div>
-                <Icon className="mt-0.5 h-4 w-4 shrink-0 text-neutral-400" />
+                <Icon className="mt-0.5 h-4 w-4 shrink-0 text-neutral-400 dark:text-neutral-500" />
                 <div>
-                  <div className="text-sm font-semibold text-neutral-900">
+                  <div className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">
                     {v.label}
                   </div>
-                  <div className="text-xs text-neutral-500">{v.description}</div>
+                  <div className="text-xs text-neutral-500 dark:text-neutral-400">{v.description}</div>
                 </div>
               </button>
             );
@@ -1101,13 +1102,13 @@ function PrivacyTab({
       />
 
       {/* Blocked users */}
-      <div className="border-t border-neutral-100 pt-6">
+      <div className="border-t border-neutral-100 pt-6 dark:border-neutral-800">
         <SectionHeading
           title="Blocked users"
           description="Blocked people can't message you or see your posts."
         />
         {blocked.length === 0 ? (
-          <p className="py-3 text-sm text-neutral-400">
+          <p className="py-3 text-sm text-neutral-400 dark:text-neutral-500">
             You haven&apos;t blocked anyone.
           </p>
         ) : (
@@ -1119,7 +1120,7 @@ function PrivacyTab({
                     setBlocked((prev) => prev.filter((x) => x.id !== b.id));
                     notify(`${b.name} unblocked`);
                   }}
-                  className="shrink-0 rounded-lg border border-neutral-200 px-3.5 py-1.5 text-sm font-semibold text-neutral-700 hover:bg-neutral-50"
+                  className="shrink-0 rounded-lg border border-neutral-200 px-3.5 py-1.5 text-sm font-semibold text-neutral-700 hover:bg-neutral-50 dark:border-neutral-700 dark:text-neutral-200 dark:hover:bg-neutral-800"
                 >
                   Unblock
                 </button>
@@ -1130,14 +1131,14 @@ function PrivacyTab({
       </div>
 
       {/* Data */}
-      <div className="border-t border-neutral-100 pt-6">
+      <div className="border-t border-neutral-100 pt-6 dark:border-neutral-800">
         <SettingRow
           title="Download my data"
           description="Get a copy of your posts, answers and account details"
         >
           <button
             onClick={() => notify("We'll email you a download link")}
-            className="flex shrink-0 items-center gap-1.5 rounded-lg border border-neutral-200 px-3.5 py-1.5 text-sm font-semibold text-neutral-700 hover:bg-neutral-50"
+            className="flex shrink-0 items-center gap-1.5 rounded-lg border border-neutral-200 px-3.5 py-1.5 text-sm font-semibold text-neutral-700 hover:bg-neutral-50 dark:border-neutral-700 dark:text-neutral-200 dark:hover:bg-neutral-800"
           >
             <Download className="h-3.5 w-3.5" />
             Request
@@ -1236,11 +1237,11 @@ function AppearanceTab({
                 className={`rounded-xl border p-2.5 text-left transition-colors ${
                   active
                     ? "border-indigo-600 ring-2 ring-indigo-600/20"
-                    : "border-neutral-200 hover:bg-neutral-50"
+                  : "border-neutral-200 hover:bg-neutral-50 dark:border-neutral-700 dark:hover:bg-neutral-800"
                 }`}
               >
                 <div
-                  className="space-y-1.5 rounded-lg border border-neutral-200 p-2.5"
+                className="space-y-1.5 rounded-lg border border-neutral-200 p-2.5 dark:border-neutral-700"
                   style={t.preview}
                 >
                   <div
@@ -1256,8 +1257,8 @@ function AppearanceTab({
                     style={{ background: accentHex }}
                   />
                 </div>
-                <div className="mt-2 flex items-center gap-1.5 text-sm font-semibold text-neutral-800">
-                  <Icon className="h-3.5 w-3.5 text-neutral-500" />
+                <div className="mt-2 flex items-center gap-1.5 text-sm font-semibold text-neutral-800 dark:text-neutral-200">
+                  <Icon className="h-3.5 w-3.5 text-neutral-500 dark:text-neutral-400" />
                   {t.label}
                   {active && (
                     <Check
@@ -1286,7 +1287,7 @@ function AppearanceTab({
                 aria-label={a.label}
                 aria-pressed={active}
                 className={`flex h-9 w-9 items-center justify-center rounded-full ring-offset-2 transition-shadow ${
-                  active ? "ring-2 ring-neutral-900" : "hover:ring-2 hover:ring-neutral-200"
+                  active ? "ring-2 ring-neutral-900 dark:ring-neutral-100" : "hover:ring-2 hover:ring-neutral-200 dark:hover:ring-neutral-700"
                 }`}
                 style={{ background: a.hex }}
               >
@@ -1340,7 +1341,7 @@ function AppearanceTab({
       <div>
         <label className={labelCls}>Preview</label>
         <div
-          className="rounded-xl border border-neutral-200"
+          className="rounded-xl border border-neutral-200 dark:border-neutral-700"
           style={{
             background: dark ? "#0f172a" : "#ffffff",
             color: dark ? "#f1f5f9" : "#171717",
@@ -1374,7 +1375,7 @@ function AppearanceTab({
             </button>
           </div>
         </div>
-        <p className="mt-1.5 text-xs text-neutral-400">
+        <p className="mt-1.5 text-xs text-neutral-400 dark:text-neutral-500">
           The preview shows your choices. Apply them app-wide from your theme
           provider after saving.
         </p>
@@ -1460,7 +1461,7 @@ export default function SettingsPage() {
   
 
   return (
-    <div className="min-h-screen w-full bg-[#f4f6f9]">
+    <div className="min-h-screen w-full bg-[#f4f6f9] dark:bg-neutral-950">
       
 
       <div className="mx-auto flex w-full gap-6 px-6 py-6">
@@ -1469,16 +1470,16 @@ export default function SettingsPage() {
 
         {/* Settings card */}
         <main className="min-w-0 flex-1">
-          <div className="rounded-2xl border border-neutral-200 bg-white p-4 sm:p-6">
-            <h1 className="text-2xl font-bold text-neutral-900">Settings</h1>
-            <div className="mt-4 border-t border-neutral-100 pt-5">
+          <div className="rounded-2xl border border-neutral-200 bg-white p-4 sm:p-6 dark:border-neutral-800 dark:bg-neutral-900">
+            <h1 className="text-2xl font-bold text-neutral-900 dark:text-neutral-100">Settings</h1>
+            <div className="mt-4 border-t border-neutral-100 pt-5 dark:border-neutral-800">
               <div className="flex flex-col gap-5 md:flex-row md:gap-8">
                 {/* Tab list: scrollable underline tabs on mobile, vertical list from md */}
                 <div className="relative -mx-4 sm:-mx-6 md:sticky md:top-24 md:mx-0 md:w-44 md:shrink-0 md:self-start">
                   <nav
                     ref={navRef}
                     aria-label="Settings sections"
-                    className="flex gap-1 overflow-x-auto border-b border-neutral-200 px-4 [scrollbar-width:none] sm:px-6 md:flex-col md:overflow-visible md:border-0 md:px-0 [&::-webkit-scrollbar]:hidden"
+                    className="flex gap-1 overflow-x-auto border-b border-neutral-200 px-4 scrollbar-none sm:px-6 md:flex-col md:overflow-visible md:border-0 md:px-0 dark:border-neutral-800"
                   >
                     {TABS.map((t) => {
                       const active = tab === t.id;
@@ -1496,8 +1497,8 @@ export default function SettingsPage() {
                           aria-current={active ? "page" : undefined}
                           className={`relative flex shrink-0 items-center gap-2 whitespace-nowrap px-3 py-3 text-sm transition-colors md:w-full md:justify-between md:rounded-lg md:py-2 ${
                             active
-                              ? "font-semibold text-indigo-700 md:bg-indigo-50"
-                              : "font-medium text-neutral-500 hover:text-neutral-900 md:text-neutral-600 md:hover:bg-neutral-100"
+                              ? "font-semibold text-indigo-700 md:bg-indigo-50 dark:text-indigo-300 md:dark:bg-indigo-950/50"
+                              : "font-medium text-neutral-500 hover:text-neutral-900 md:text-neutral-600 md:hover:bg-neutral-100 dark:text-neutral-400 dark:hover:text-neutral-100 md:dark:text-neutral-400 md:dark:hover:bg-neutral-800"
                           }`}
                         >
                           {t.label}
@@ -1519,13 +1520,13 @@ export default function SettingsPage() {
                   {edges.left && (
                     <div
                       aria-hidden
-                      className="pointer-events-none absolute inset-y-0 left-0 w-10 bg-gradient-to-r from-white to-transparent md:hidden"
+                      className="pointer-events-none absolute inset-y-0 left-0 w-10 bg-linear-to-r from-white to-transparent md:hidden dark:from-neutral-900"
                     />
                   )}
                   {edges.right && (
                     <div
                       aria-hidden
-                      className="pointer-events-none absolute inset-y-0 right-0 w-10 bg-gradient-to-l from-white to-transparent md:hidden"
+                      className="pointer-events-none absolute inset-y-0 right-0 w-10 bg-linear-to-l from-white to-transparent md:hidden dark:from-neutral-900"
                     />
                   )}
                 </div>
@@ -1571,8 +1572,8 @@ export default function SettingsPage() {
 
         {/* Help card */}
         <aside className="hidden w-72 shrink-0 xl:block">
-          <div className="rounded-2xl border border-neutral-200 bg-white p-5">
-            <h3 className="font-semibold text-neutral-900">Need Help?</h3>
+          <div className="rounded-2xl border border-neutral-200 bg-white p-5 dark:border-neutral-800 dark:bg-neutral-900">
+            <h3 className="font-semibold text-neutral-900 dark:text-neutral-100">Need Help?</h3>
             <div className="mt-3 space-y-2.5">
               {[
                 { label: "Community Guidelines", icon: BookOpen },

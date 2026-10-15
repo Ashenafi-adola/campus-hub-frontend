@@ -34,8 +34,8 @@ function SideCard({
   children: React.ReactNode;
 }) {
   return (
-    <div className="rounded-2xl border border-neutral-200 bg-white p-5">
-      <h3 className="font-semibold text-neutral-900">{title}</h3>
+    <div className="rounded-2xl border border-neutral-200 bg-white p-5 dark:border-neutral-800 dark:bg-neutral-900">
+      <h3 className="font-semibold text-neutral-900 dark:text-neutral-100">{title}</h3>
       <div className="mt-3 space-y-3">{children}</div>
     </div>
   );
@@ -63,12 +63,12 @@ export default function CommunityDetailPage() {
   if (!community) return null;
 
   return (
-    <div className="min-h-screen bg-[#f4f6f9] w-full">
+    <div className="min-h-screen w-full bg-[#f4f6f9] dark:bg-neutral-950">
       <div className="mx-auto flex max-w-full gap-6 px-1 py-6">
         {/* Main content */}
         <main className="min-w- flex-1 space-y-5">
           {/* Banner + header */}
-          <div className="overflow-hidden rounded-2xl border border-neutral-200 bg-white">
+          <div className="overflow-hidden rounded-2xl border border-neutral-200 bg-white dark:border-neutral-800 dark:bg-neutral-900">
             {community.banner ? (
               <div className="relative h-44 w-full">
                 <Image
@@ -92,7 +92,7 @@ export default function CommunityDetailPage() {
             <div className="px-6 pb-5">
               <div className="flex flex-wrap items-end justify-between gap-4">
                 <div className="flex items-end gap-4">
-                  <div className="relative -mt-12 h-24 w-24 shrink-0 overflow-hidden rounded-full border-4 border-white bg-indigo-600 shadow-lg shadow-neutral-400/40">
+                  <div className="relative -mt-12 h-24 w-24 shrink-0 overflow-hidden rounded-full border-4 border-white bg-indigo-600 shadow-lg shadow-neutral-400/40 dark:border-neutral-900">
                     {community?.icon ? (
                       <Image
                         fill
@@ -111,22 +111,22 @@ export default function CommunityDetailPage() {
                   </div>
 
                   <div className="pb-1">
-                    <h1 className="text-2xl font-bold text-neutral-900">
+                    <h1 className="text-2xl font-bold text-neutral-900 dark:text-neutral-100">
                       c/{community?.name.replaceAll(" ", "")}
                     </h1>
-                    <p className="text-sm text-neutral-400">
+                    <p className="text-sm text-neutral-400 dark:text-neutral-500">
                       {community?.member_count} students enrolled
                     </p>
                   </div>
                 </div>
 
                 <div
-                  className="mt-4 flex items-center gap-2 border-t border-neutral-100 pt-4">
+                  className="mt-4 flex items-center gap-2 border-t border-neutral-100 pt-4 dark:border-neutral-800">
                   <button
                     onClick={async () => { const res = await joinLeaveCommunity(Boolean(joined), community.slug); setJoined(res.is_member); }}
                     className={`flex-1 rounded-lg px-3.5 py-2 text-sm font-semibold transition-colors ${joined
-                      ? "bg-neutral-900 text-white hover:bg-neutral-800"
-                      : "bg-indigo-50 text-indigo-600 hover:bg-indigo-100"
+                      ? "bg-neutral-900 text-white hover:bg-neutral-800 dark:bg-neutral-700 dark:hover:bg-neutral-600"
+                      : "bg-indigo-50 text-indigo-600 hover:bg-indigo-100 dark:bg-indigo-950 dark:text-indigo-300 dark:hover:bg-indigo-900"
                       }`}
                   >
                     {joined ? (
@@ -142,7 +142,7 @@ export default function CommunityDetailPage() {
               </div>
 
               {/* Tabs */}
-              <div className="mt-5 flex gap-6 border-b border-neutral-100">
+              <div className="mt-5 flex gap-6 border-b border-neutral-100 dark:border-neutral-800">
                 {TABS.map((t) => {
                   const active = tab === t.id;
                   return (
@@ -151,7 +151,7 @@ export default function CommunityDetailPage() {
                       onClick={() => setTab(t.id)}
                       className={`pb-3 text-sm font-semibold transition-colors ${active
                           ? "border-b-2 border-indigo-600 text-indigo-600"
-                          : "border-b-2 border-transparent text-neutral-500 hover:text-neutral-800"
+                          : "border-b-2 border-transparent text-neutral-500 hover:text-neutral-800 dark:text-neutral-400 dark:hover:text-neutral-100"
                         }`}
                     >
                       {t.label}
@@ -170,7 +170,7 @@ export default function CommunityDetailPage() {
           }
 
           {tab === "questions" && (
-            <div className="rounded-2xl border border-neutral-200 bg-white p-8 text-center text-sm text-neutral-400">
+            <div className="rounded-2xl border border-neutral-200 bg-white p-8 text-center text-sm text-neutral-400 dark:border-neutral-800 dark:bg-neutral-900 dark:text-neutral-500">
               {TABS.find((t) => t.id === tab)?.label} content goes here.
             </div>
           )}
@@ -183,22 +183,22 @@ export default function CommunityDetailPage() {
         {/* Right sidebar */}
         <aside className="hidden w-72 shrink-0 self-start space-y-4 xl:sticky xl:top-16 xl:block">
           <SideCard title="About Community">
-            <p className="text-sm leading-relaxed text-neutral-600">
+            <p className="text-sm leading-relaxed text-neutral-600 dark:text-neutral-300">
               {community.description}
             </p>
-            <div className="border-t border-neutral-100 pt-3">
-              <p className="text-xs font-semibold uppercase tracking-wide text-neutral-400">
+            <div className="border-t border-neutral-100 pt-3 dark:border-neutral-800">
+              <p className="text-xs font-semibold uppercase tracking-wide text-neutral-400 dark:text-neutral-500">
                 Created
               </p>
-              <p className="mt-1 text-sm text-neutral-700">{ community.created_at && new Date(community.created_at).toDateString().slice(3,)}</p>
+              <p className="mt-1 text-sm text-neutral-700 dark:text-neutral-300">{ community.created_at && new Date(community.created_at).toDateString().slice(3,)}</p>
             </div>
           </SideCard>
 
           <SideCard title="Community Rules">
             <ol className="space-y-3">
               {RULES.map((rule, i) => (
-                <li key={i} className="flex gap-2.5 text-sm text-neutral-600">
-                  <span className="font-semibold text-neutral-400">
+                <li key={i} className="flex gap-2.5 text-sm text-neutral-600 dark:text-neutral-300">
+                  <span className="font-semibold text-neutral-400 dark:text-neutral-500">
                     {i + 1}.
                   </span>
                   {rule}

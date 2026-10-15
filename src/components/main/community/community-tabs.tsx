@@ -99,9 +99,9 @@ export function AboutTab() {
   return (
     <div className="space-y-4">
       {/* Description */}
-      <div className="rounded-2xl border border-neutral-200 bg-white p-6">
-        <h3 className="font-semibold text-neutral-900">About r/ComputerScience</h3>
-        <p className="mt-2 text-sm leading-relaxed text-neutral-600">
+      <div className="rounded-2xl border border-neutral-200 bg-white p-6 dark:border-neutral-800 dark:bg-neutral-900">
+        <h3 className="font-semibold text-neutral-900 dark:text-neutral-100">About r/ComputerScience</h3>
+        <p className="mt-2 text-sm leading-relaxed text-neutral-600 dark:text-neutral-300">
           A space for CS students to ask questions, share resources, and get
           unstuck together. Whether you&apos;re debugging your first recursive
           function or prepping for a systems interview, this is the place to
@@ -115,32 +115,32 @@ export function AboutTab() {
         {STATS.map(({ icon: Icon, label, value }) => (
           <div
             key={label}
-            className="rounded-2xl border border-neutral-200 bg-white p-4"
+            className="rounded-2xl border border-neutral-200 bg-white p-4 dark:border-neutral-800 dark:bg-neutral-900"
           >
             <Icon className="h-4 w-4 text-indigo-500" />
-            <div className="mt-2 text-lg font-bold text-neutral-900">
+            <div className="mt-2 text-lg font-bold text-neutral-900 dark:text-neutral-100">
               {value}
             </div>
-            <div className="text-xs text-neutral-400">{label}</div>
+            <div className="text-xs text-neutral-400 dark:text-neutral-500">{label}</div>
           </div>
         ))}
       </div>
 
       {/* Moderators */}
-      <div className="rounded-2xl border border-neutral-200 bg-white p-6">
+      <div className="rounded-2xl border border-neutral-200 bg-white p-6 dark:border-neutral-800 dark:bg-neutral-900">
         <div className="flex items-center gap-2">
           <Shield className="h-4 w-4 text-indigo-500" />
-          <h3 className="font-semibold text-neutral-900">Moderators</h3>
+          <h3 className="font-semibold text-neutral-900 dark:text-neutral-100">Moderators</h3>
         </div>
         <div className="mt-4 space-y-3">
           {MODERATORS.map((mod) => (
             <div key={mod.id} className="flex items-center gap-3">
               <Avatar name={mod.name} size="h-9 w-9" />
               <div>
-                <div className="text-sm font-semibold text-neutral-900">
+                <div className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">
                   {mod.name}
                 </div>
-                <div className="text-xs text-neutral-400">{mod.role}</div>
+                <div className="text-xs text-neutral-400 dark:text-neutral-500">{mod.role}</div>
               </div>
             </div>
           ))}
@@ -148,19 +148,19 @@ export function AboutTab() {
       </div>
 
       {/* Rules, with detail text (richer than the sidebar's short version) */}
-      <div className="rounded-2xl border border-neutral-200 bg-white p-6">
-        <h3 className="font-semibold text-neutral-900">Community Rules</h3>
+      <div className="rounded-2xl border border-neutral-200 bg-white p-6 dark:border-neutral-800 dark:bg-neutral-900">
+        <h3 className="font-semibold text-neutral-900 dark:text-neutral-100">Community Rules</h3>
         <ol className="mt-4 space-y-4">
           {RULES.map((rule, i) => (
             <li key={i} className="flex gap-3">
-              <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-indigo-50 text-xs font-bold text-indigo-600">
+              <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-indigo-50 text-xs font-bold text-indigo-600 dark:bg-indigo-950 dark:text-indigo-300">
                 {i + 1}
               </span>
               <div>
-                <div className="text-sm font-semibold text-neutral-900">
+                <div className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">
                   {rule.title}
                 </div>
-                <div className="mt-0.5 text-sm leading-relaxed text-neutral-500">
+                <div className="mt-0.5 text-sm leading-relaxed text-neutral-500 dark:text-neutral-400">
                   {rule.detail}
                 </div>
               </div>
@@ -239,14 +239,14 @@ const MEMBERS: Member[] = [
 function RoleBadge({ role }: { role: Member["role"] }) {
   if (role === "moderator") {
     return (
-      <span className="flex items-center gap-1 rounded-full bg-indigo-50 px-2.5 py-1 text-xs font-semibold text-indigo-600">
+      <span className="flex items-center gap-1 rounded-full bg-indigo-50 px-2.5 py-1 text-xs font-semibold text-indigo-600 dark:bg-indigo-950 dark:text-indigo-300">
         <Shield className="h-3 w-3" />
         Moderator
       </span>
     );
   }
   return (
-    <span className="rounded-full bg-neutral-100 px-2.5 py-1 text-xs font-medium text-neutral-500">
+    <span className="rounded-full bg-neutral-100 px-2.5 py-1 text-xs font-medium text-neutral-500 dark:bg-neutral-800 dark:text-neutral-400">
       Member
     </span>
   );
@@ -264,26 +264,26 @@ export function MembersTab() {
   return (
     <div className="space-y-4">
       {/* Search */}
-      <div className="rounded-2xl border border-neutral-200 bg-white p-4">
+      <div className="rounded-2xl border border-neutral-200 bg-white p-4 dark:border-neutral-800 dark:bg-neutral-900">
         <div className="relative">
-          <Search className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-neutral-400" />
+          <Search className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-neutral-400 dark:text-neutral-500" />
           <input
             type="text"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Search members..."
-            className="w-full rounded-xl border border-neutral-200 py-2.5 pl-10 pr-4 text-sm text-neutral-700 placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/30 focus:border-indigo-500"
+            className="w-full rounded-xl border border-neutral-200 bg-white py-2.5 pl-10 pr-4 text-sm text-neutral-700 placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/30 focus:border-indigo-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100 dark:placeholder:text-neutral-500"
           />
         </div>
       </div>
 
       {/* Moderators */}
       {moderators.length > 0 && (
-        <div className="rounded-2xl border border-neutral-200 bg-white p-2">
-          <p className="px-4 pt-3 text-xs font-semibold uppercase tracking-wide text-neutral-400">
+        <div className="rounded-2xl border border-neutral-200 bg-white p-2 dark:border-neutral-800 dark:bg-neutral-900">
+            <p className="px-4 pt-3 text-xs font-semibold uppercase tracking-wide text-neutral-400 dark:text-neutral-500">
             Moderators · {moderators.length}
           </p>
-          <div className="mt-1 divide-y divide-neutral-100">
+          <div className="mt-1 divide-y divide-neutral-100 dark:divide-neutral-800">
             {moderators.map((m) => (
               <MemberRow key={m.id} member={m} />
             ))}
@@ -292,15 +292,15 @@ export function MembersTab() {
       )}
 
       {/* Members */}
-      <div className="rounded-2xl border border-neutral-200 bg-white p-2">
-        <p className="px-4 pt-3 text-xs font-semibold uppercase tracking-wide text-neutral-400">
+      <div className="rounded-2xl border border-neutral-200 bg-white p-2 dark:border-neutral-800 dark:bg-neutral-900">
+      <p className="px-4 pt-3 text-xs font-semibold uppercase tracking-wide text-neutral-400 dark:text-neutral-500">
           Members · {members.length}
         </p>
-        <div className="mt-1 divide-y divide-neutral-100">
+        <div className="mt-1 divide-y divide-neutral-100 dark:divide-neutral-800">
           {members.length > 0 ? (
             members.map((m) => <MemberRow key={m.id} member={m} />)
           ) : (
-            <p className="px-4 py-6 text-center text-sm text-neutral-400">
+            <p className="px-4 py-6 text-center text-sm text-neutral-400 dark:text-neutral-500">
               No members match {query}
             </p>
           )}
@@ -315,15 +315,15 @@ function MemberRow({ member }: { member: Member }) {
     <div className="flex items-center gap-3 px-4 py-3">
       <Avatar name={member.name} color={member.avatarColor} />
       <div className="min-w-0 flex-1">
-        <div className="truncate text-sm font-semibold text-neutral-900">
+        <div className="truncate text-sm font-semibold text-neutral-900 dark:text-neutral-100">
           {member.name}
         </div>
-        <div className="truncate text-xs text-neutral-400">
+        <div className="truncate text-xs text-neutral-400 dark:text-neutral-500">
           {member.school} · Joined {member.joined}
         </div>
       </div>
       <RoleBadge role={member.role} />
-      <button className="shrink-0 rounded-lg p-1.5 text-neutral-300 hover:bg-neutral-50 hover:text-neutral-500">
+      <button className="shrink-0 rounded-lg p-1.5 text-neutral-300 hover:bg-neutral-50 hover:text-neutral-500 dark:text-neutral-600 dark:hover:bg-neutral-800 dark:hover:text-neutral-300">
         <MoreHorizontal className="h-4 w-4" />
       </button>
     </div>

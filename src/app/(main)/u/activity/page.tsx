@@ -41,7 +41,7 @@ const BADGES = [
     title: "First Answer",
     description: "Helped a peer for the first time",
     icon: Award,
-    bg: "bg-indigo-50",
+    bg: "bg-indigo-50 dark:bg-indigo-950",
     color: "text-indigo-600",
   },
   {
@@ -49,7 +49,7 @@ const BADGES = [
     title: "Helpful Hero",
     description: "40+ verified helpful answers",
     icon: ShieldCheck,
-    bg: "bg-emerald-50",
+    bg: "bg-emerald-50 dark:bg-emerald-950",
     color: "text-emerald-600",
   },
   {
@@ -57,7 +57,7 @@ const BADGES = [
     title: "100 Upvotes",
     description: "Earned 100+ likes on a single post",
     icon: Zap,
-    bg: "bg-orange-50",
+    bg: "bg-orange-50 dark:bg-orange-950",
     color: "text-orange-500",
   },
 ];
@@ -78,8 +78,8 @@ function SideCard({
   children: React.ReactNode;
 }) {
   return (
-    <div className="rounded-2xl border border-neutral-200 bg-white p-5">
-      <h3 className="font-semibold text-neutral-900">{title}</h3>
+    <div className="rounded-2xl border border-neutral-200 bg-white p-5 dark:border-neutral-800 dark:bg-neutral-900">
+      <h3 className="font-semibold text-neutral-900 dark:text-neutral-100">{title}</h3>
       <div className="mt-4 space-y-4">{children}</div>
     </div>
   );
@@ -88,7 +88,7 @@ function SideCard({
 
 function EmptyState({ label }: { label: string }) {
   return (
-    <div className="rounded-2xl border border-neutral-200 bg-white p-10 text-center text-sm text-neutral-400">
+    <div className="rounded-2xl border border-neutral-200 bg-white p-10 text-center text-sm text-neutral-400 dark:border-neutral-800 dark:bg-neutral-900 dark:text-neutral-500">
       No {label} to show yet.
     </div>
   );
@@ -110,12 +110,12 @@ export default function ProfilePage() {
   
 
   return (
-    <div className="min-h-screen bg-[#f4f6f9] w-full">
+    <div className="min-h-screen w-full bg-[#f4f6f9] dark:bg-neutral-950">
       <div className="mx-auto flex gap-6 px-0 py-6">
         {/* Main */}
         <main className="min-w-0 flex-1 space-y-4">
           {/* Profile card */}
-          <div className="rounded-2xl border border-neutral-200 bg-white p-6">
+          <div className="rounded-2xl border border-neutral-200 bg-white p-6 dark:border-neutral-800 dark:bg-neutral-900">
             <div className="flex items-center gap-5">
               <Avatar
                 user={user}
@@ -123,29 +123,29 @@ export default function ProfilePage() {
                 textSize="text-2xl"
               />
               <div>
-                <h1 className="text-2xl font-bold text-neutral-900">
+                <h1 className="text-2xl font-bold text-neutral-900 dark:text-neutral-100">
                   {user?.first_name + " " + user?.last_name}
                 </h1>
-                <p className="mt-0.5 text-[15px] text-neutral-600">
+                <p className="mt-0.5 text-[15px] text-neutral-600 dark:text-neutral-300">
                   Adama Science and Technology University
                 </p>
-                <p className="mt-0.5 text-sm text-neutral-400">
+                <p className="mt-0.5 text-sm text-neutral-400 dark:text-neutral-500">
                   Joined {USER.joined}
                 </p>
               </div>
             </div>
 
-            <p className="mt-4 text-sm leading-relaxed text-neutral-600">
+            <p className="mt-4 text-sm leading-relaxed text-neutral-600 dark:text-neutral-300">
               {USER.bio}
             </p>
 
-            <div className="mt-5 grid grid-cols-2 gap-4 border-t border-neutral-100 pt-5 sm:grid-cols-4">
+            <div className="mt-5 grid grid-cols-2 gap-4 border-t border-neutral-100 pt-5 sm:grid-cols-4 dark:border-neutral-800">
               {STATS.map((s) => (
                 <div key={s.label} className="text-center">
-                  <div className="text-xl font-bold text-neutral-900">
+                  <div className="text-xl font-bold text-neutral-900 dark:text-neutral-100">
                     {s.value}
                   </div>
-                  <div className="mt-0.5 text-xs text-neutral-400">
+                  <div className="mt-0.5 text-xs text-neutral-400 dark:text-neutral-500">
                     {s.label}
                   </div>
                 </div>
@@ -164,7 +164,7 @@ export default function ProfilePage() {
                   className={`border-b-2 pb-2.5 text-sm font-semibold transition-colors ${
                     active
                       ? "border-indigo-600 text-indigo-600"
-                      : "border-transparent text-neutral-500 hover:text-neutral-800"
+                      : "border-transparent text-neutral-500 hover:text-neutral-800 dark:text-neutral-400 dark:hover:text-neutral-100"
                   }`}
                 >
                   {t.label}
@@ -199,10 +199,10 @@ export default function ProfilePage() {
                   <Icon className={`h-5 w-5 ${color}`} />
                 </div>
                 <div>
-                  <div className="text-sm font-semibold text-neutral-900">
+                  <div className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">
                     {title}
                   </div>
-                  <div className="text-xs text-neutral-400">{description}</div>
+                  <div className="text-xs text-neutral-400 dark:text-neutral-500">{description}</div>
                 </div>
               </div>
             ))}
@@ -213,10 +213,10 @@ export default function ProfilePage() {
               <a key={c.id} href="#" className="flex items-center gap-3">
                 <span className={`h-6 w-6 shrink-0 rounded-md ${c.color}`} />
                 <div>
-                  <div className="text-sm font-semibold text-neutral-900">
+                  <div className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">
                     {c.name}
                   </div>
-                  <div className="text-xs text-neutral-400">{c.members}</div>
+                  <div className="text-xs text-neutral-400 dark:text-neutral-500">{c.members}</div>
                 </div>
               </a>
             ))}
