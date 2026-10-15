@@ -1,5 +1,6 @@
 import SideBar from '@/components/main/layout/side-bar'
 import TopBar from '@/components/main/layout/top-bar'
+import { AuthProvider } from '@/context/auth-context'
 import { httpDriver } from '@/libs/auth/http-driver'
 import { readSession } from '@/libs/auth/session'
 import { redirect } from 'next/navigation'
@@ -14,13 +15,15 @@ async function Layout({ children }: Props) {
     if (!access) redirect("/signin");
     const user = await httpDriver.me(access);
     return (
-        <div className="min-h-screen bg-[#f7f6f2]">
-            <TopBar user={user}/>
-            <div className="mx-auto flex max-w-full gap-6 md:px-6 py-6">
-                <SideBar/>
-                {children}
+        <AuthProvider value={{ user }}>
+            <div className="min-h-screen bg-[#f7f6f2]">
+                <TopBar />
+                <div className="mx-auto flex max-w-full gap-6 md:px-6 px-2 py-6">
+                    <SideBar />
+                    {children}
+                </div>
             </div>
-        </div>
+        </AuthProvider>
     )
 }
 
