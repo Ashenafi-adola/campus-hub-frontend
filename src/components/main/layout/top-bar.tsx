@@ -1,11 +1,10 @@
 import React from 'react'
 import { Bell, Plus, Search } from 'lucide-react'
 import ProfileDropdown from './profile-dropdown'
-import { AuthUser } from '@/libs/auth/types'
 import Link from 'next/link'
 
 
-function TopBar({user}:{user:AuthUser}) {
+function TopBar() {
     
     return (
         <header className="sticky top-0 z-10 flex items-center gap-6 border-b border-neutral-200 bg-white px-6 py-3">
@@ -40,7 +39,7 @@ function TopBar({user}:{user:AuthUser}) {
                 <button className="text-neutral-500 hover:text-neutral-800">
                     <Bell className="h-5 w-5" />
                 </button>
-                <ProfileDropdown user={user}/>
+                <ProfileDropdown/>
             </div>
         </header>
     )

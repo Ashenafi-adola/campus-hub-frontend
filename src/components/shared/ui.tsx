@@ -1,3 +1,6 @@
+import { AuthUser } from "@/libs/auth/types";
+import { colorFor, getInitials } from "@/libs/format";
+import Image from "next/image";
 
 
 export function EmptyState({
@@ -86,6 +89,40 @@ export function PageHeader({
           {children}
         </div>
       )}
+    </div>
+  );
+}
+
+
+export function Avatar({
+  user,
+  size = "h-9 w-9",
+  textSize = "text-xs",
+}: {
+  user: AuthUser | null;
+  size?: string;
+  textSize?: string;
+}) {
+  const fullName = user?.first_name + " " + user?.last_name;
+  return (
+    <div
+      className={`flex ${size} shrink-0 items-center justify-center rounded-full font-semibold text-white ${textSize} ${colorFor(
+        fullName
+      )}`}
+    >
+      {user?.avatar ? <Image
+        src={user.avatar || ""}
+        alt={user.username}
+        width={100}
+        height={100}
+        unoptimized
+        className="h-full w-full rounded-full object-cover"
+      /> :
+        <div className="h-10 w-10 rounded-full bg-blue-600 flex items-center justify-center">
+          <span className="font-semibold text-white">
+            {getInitials(fullName)}
+          </span>
+        </div>}
     </div>
   );
 }

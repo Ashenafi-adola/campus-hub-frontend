@@ -15,6 +15,7 @@ const RANGES = [
 
 export default function PopularPage() {
   const [range, setRange] = useState("week");
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const hours = RANGES.find((r) => r.id === range)!.hours;
   const { posts } = usePosts();
 

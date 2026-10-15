@@ -26,7 +26,7 @@ export default function CommunitiesPage() {
     <>
       <main className="min-w-0 flex-1 space-y-4">
         {/* Header + filter chips */}
-        <div className="rounded-2xl border border-neutral-200 bg-white p-6 sticky top-16">
+        <div className="rounded-2xl border border-neutral-200 bg-white p-6 sticky top-16 z-100">
           <h1 className="text-2xl font-bold text-neutral-900">
             Explore Communities
           </h1>

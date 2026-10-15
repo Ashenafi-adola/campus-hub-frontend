@@ -105,8 +105,8 @@ function Switch({
       }`}
     >
       <span
-        className={`absolute top-0.5 h-5 w-5 rounded-full bg-white shadow transition-transform ${
-          checked ? "translate-x-5" : "translate-x-0.5"
+        className={`absolute top-0.5 h-5 w-5 rounded-full left-0.5 bg-white shadow transition-transform ${
+          checked ? "translate-x-5" : ""
         }`}
       />
     </button>
@@ -220,7 +220,7 @@ export default function CreatePostPage() {
     "w-full rounded-xl border border-neutral-200 bg-white px-3.5 py-2.5 text-sm text-neutral-800 placeholder:text-neutral-400 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/20";
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 w-full">
       <div>
         <h1 className="text-2xl font-bold text-neutral-900">Create a post</h1>
         <p className="mt-1 text-sm text-neutral-500">
@@ -635,6 +635,7 @@ export default function CreatePostPage() {
 
         {/* ---------------- Tips ---------------- */}
         <div className="space-y-4">
+            <div className="sticky top-20 z-50 space-y-4">
           <div className="rounded-2xl border border-neutral-200 bg-white p-5">
             <div className="flex items-center gap-2">
               <Lightbulb className="h-4 w-4 text-amber-500" />
@@ -676,6 +677,7 @@ export default function CreatePostPage() {
                 </li>
               ))}
             </ol>
+          </div>
           </div>
         </div>
       </div>

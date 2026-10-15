@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Users,
   MessageSquare,
@@ -7,10 +7,12 @@ import {
   Shield,
   Search,
   MoreHorizontal,
+  PodcastIcon,
 } from "lucide-react";
 import { Post } from "@/libs/types";
 import { PostFeedSkeleton } from "../laoding-skeletons";
 import QuestionCard from "../question-card";
+import { EmptyState } from "@/components/shared/ui";
 
 /* ----------------------------------------------------------------- */
 /*  Shared initials avatar — same pattern as ProfileDropdown         */
@@ -329,17 +331,34 @@ function MemberRow({ member }: { member: Member }) {
 }
 
 export function PostsTab({ posts }: { posts: Post[] }) {
-    if (posts.length > 0) {
-        
-        return <>
-            {
-                posts.map((p) => (
-                    <QuestionCard key={p.id} post={p} />
-                ))
-            }
-        </>
-    }
-    else {
-        return <PostFeedSkeleton />
-    }
+  if (posts.length === 0) return <EmptyPostsFallback />;
+
+  return (
+    <>
+      {posts.map((post) => (
+        <QuestionCard key={post.id} post={post} />
+      ))}
+    </>
+  );
+}
+
+function EmptyPostsFallback() {
+  const [showEmptyState, setShowEmptyState] = useState(false);
+
+  useEffect(() => {
+    const timeout = window.setTimeout(() => setShowEmptyState(true), 2000);
+    return () => window.clearTimeout(timeout);
+  }, []);
+
+  if (!showEmptyState) {
+    return <PostFeedSkeleton />;
+  }
+
+  return (
+    <EmptyState
+      icon={PodcastIcon}
+      title="No posts to show"
+      text="No posts found"
+    />
+  );
 }

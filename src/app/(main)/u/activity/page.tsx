@@ -1,5 +1,5 @@
 "use client"
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
   Award,
   ShieldCheck,
@@ -7,9 +7,9 @@ import {
 } from "lucide-react";
 import QuestionCard from "@/components/main/question-card";
 import { getPosts } from "@/libs/api";
-import { Post, User } from "@/libs/types";
-import { getInitials } from "@/libs/format";
-import Image from "next/image";
+import { Post } from "@/libs/types";
+import { AuthContext } from "@/context/auth-context";
+import { Avatar } from "@/components/shared/ui";
 
 
 type TabId = "questions" | "answers" | "saved" | "activity";
@@ -70,29 +70,6 @@ const TABS: { id: TabId; label: string }[] = [
 ];
 
 
-function Avatar({
-  name,
-  image,
-  size = "h-8 w-8",
-  textSize = "text-xs",
-}: {
-  name: string | undefined;
-  image: string | undefined | null;
-  size?: string;
-  textSize?: string;
-}) {
-  return (
-    <div
-      className={`flex ${size} shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-indigo-500 to-indigo-700 font-semibold overflow-clip text-white ${textSize}`}
-    >
-        {
-            image ? <Image src={image} width={120} height={120} alt={""} unoptimized /> : name && getInitials(name)
-        }
-    </div>
-  );
-}
-
-
 function SideCard({
   title,
   children,
@@ -124,25 +101,24 @@ function EmptyState({ label }: { label: string }) {
 export default function ProfilePage() {
   const [tab, setTab] = useState<TabId>("questions");
   const [posts, setPosts] = useState<Post[]>([]);
-  const [user, setUser] = useState<User>()
+  const { user } = useContext(AuthContext);
   useEffect(()=>{
     getPosts(undefined, undefined, true)
-        .then(res=>{setPosts(res); setUser(res[0].author)})
+        .then(res=>{setPosts(res)})
         .catch(error=>console.log(error));
   },[])
   
 
   return (
     <div className="min-h-screen bg-[#f4f6f9] w-full">
-      <div className="mx-auto flex gap-6 px-6 py-6">
+      <div className="mx-auto flex gap-6 px-0 py-6">
         {/* Main */}
         <main className="min-w-0 flex-1 space-y-4">
           {/* Profile card */}
           <div className="rounded-2xl border border-neutral-200 bg-white p-6">
             <div className="flex items-center gap-5">
               <Avatar
-                name={user?.first_name + " " + user?.last_name}
-                image={user?.avatar}
+                user={user}
                 size="h-20 w-20"
                 textSize="text-2xl"
               />
@@ -151,7 +127,7 @@ export default function ProfilePage() {
                   {user?.first_name + " " + user?.last_name}
                 </h1>
                 <p className="mt-0.5 text-[15px] text-neutral-600">
-                  {USER.school}
+                  Adama Science and Technology University
                 </p>
                 <p className="mt-0.5 text-sm text-neutral-400">
                   Joined {USER.joined}
