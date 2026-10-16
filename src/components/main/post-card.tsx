@@ -92,14 +92,14 @@ function QuestionCard({ post }: { post: Post }) {
 
 
       <div className="mt-3 flex flex-wrap gap-2">
-        {/* {currentPost.tags.map((tag) => (
+        {currentPost.tags && currentPost.tags.map((tag) => (
           <span
             key={tag}
-            className="rounded-md bg-neutral-100 px-2.5 py-1 text-xs font-medium text-neutral-600"
+            className="rounded-md bg-neutral-100 px-2.5 py-1 text-xs font-medium text-neutral-600 dark:bg-neutral-800 dark:text-neutral-300"
           >
             {tag}
           </span>
-        ))} */}
+        ))}
       </div>
 
       <div className="mt-4 flex items-center justify-between border-t border-neutral-100 pt-3.5 dark:border-neutral-800">
@@ -156,7 +156,7 @@ function QuestionCard({ post }: { post: Post }) {
           <button onClick={() => setSaved((v) => !v)} className="hover:text-neutral-800 dark:hover:text-neutral-100">
             <Bookmark className={`h-4 w-4 ${saved ? "fill-neutral-900 text-neutral-900 dark:fill-neutral-100 dark:text-neutral-100" : ""}`} />
           </button>
-          <PostActionsMenu isOwner={false} />
+          <PostActionsMenu post={post} />
         </div>
       </div>
 

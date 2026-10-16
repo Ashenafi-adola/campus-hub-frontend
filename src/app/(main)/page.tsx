@@ -2,7 +2,7 @@
 
 import { PostFeedSkeleton } from "@/components/main/laoding-skeletons";
 import RightSideBar from "@/components/main/layout/right-side-bar";
-import QuestionCard from "@/components/main/question-card";
+import QuestionCard from "@/components/main/post-card";
 import { Avatar } from "@/components/shared/ui";
 import { usePosts } from "@/hooks/use-posts";
 import { getCommunities } from "@/libs/api";

@@ -1,5 +1,5 @@
 "use client"
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
     Plus,
     Users,
@@ -9,16 +9,9 @@ import {
     Lock,
     ShieldCheck,
 } from "lucide-react";
-import { createCommunity } from "@/libs/api";
+import { createCommunity, getCategories } from "@/libs/api";
 import { getAccessToken } from "@/app/actions/post-votes";
-
-type CategoryId = "academic" | "campus-life" | "career";
-
-const CATEGORIES: { id: CategoryId; label: string }[] = [
-    { id: "academic", label: "Academic" },
-    { id: "campus-life", label: "Campus Life" },
-    { id: "career", label: "Career" },
-];
+import { Category } from "@/libs/types";
 
 const isPrivate_OPTIONS: {
     id: string;
@@ -52,15 +45,23 @@ const MAX_DESCRIPTION = 200;
 export default function CreateCommunityPage() {
     const [name, setName] = useState("");
     const [description, setDescription] = useState("");
-    const [category, setCategory] = useState<CategoryId | null>(null);
+    const [category, setCategory] = useState<Category | null>(null);
+    const [categories, setCategories] = useState<Category[]>([]);
     const [isPrivate, setIsPrivate] = useState<boolean>(false);
     const [visiblity, setVisiblity] = useState<string>("public")
     const [rules, setRules] = useState<string[]>([""]);
     const [banner, setBanner] = useState<File | null>(null);
     const [icon, setIcon] = useState<File | null>(null);
 
+    useEffect(() =>{
+        getCategories()
+        .then((data) => setCategories(data))
+        .catch((error) => console.error("Error fetching categories:", error));
+    },[]);
+
     const updateRule = (index: number, value: string) => {
         setRules((prev) => prev.map((r, i) => (i === index ? value : r)));
+        console.log(rules);
     };
 
     const addRule = () => setRules((prev) => [...prev, ""]);
@@ -71,16 +72,20 @@ export default function CreateCommunityPage() {
     const canSubmit = name.trim().length >= 3 && category !== null;
 
     const submit = async () => {
-        const token = await getAccessToken();
-        createCommunity({
-            name: name,
-            description: description,
-            is_private: isPrivate,
-            banner: banner,
-            icon: icon,
-        }, token)
-        .then(res=>console.log(res))
-        .catch(error=>console.log(error));
+        if (category){
+            const token = await getAccessToken();
+            createCommunity({
+                name: name,
+                category_id: category.id,
+                description: description,
+                is_private: isPrivate,
+                banner: banner,
+                icon: icon,
+                rules: rules,
+            }, token)
+            .then(res=>console.log(res))
+            .catch(error=>console.log(error));
+        }
     }
 
     return (
@@ -112,7 +117,7 @@ export default function CreateCommunityPage() {
                         <Users className="h-10 w-10 text-indigo-600" />
                     </div>
                     <h3 className="mt-3 font-semibold text-neutral-900 dark:text-neutral-100">
-                        {name.trim() ? `r/${name.replace(/\s+/g, "")}` : "r/YourCommunity"}
+                        {name.trim() ? `r/${name.replace(/\s+/g, "")}` : "c/YourCommunity"}
                     </h3>
                     <p className="mt-0.5 text-xs text-neutral-400 dark:text-neutral-500">0 members · just now</p>
                     <p className="mt-2.5 text-sm leading-relaxed text-neutral-500 dark:text-neutral-400">
@@ -177,19 +182,19 @@ export default function CreateCommunityPage() {
                         Category
                     </label>
                     <div className="flex flex-wrap gap-2">
-                        {CATEGORIES.map((c) => {
-                            const active = category === c.id;
+                        {categories.map((c) => {
+                            const active = category === c;
                             return (
                                 <button
                                     key={c.id}
                                     type="button"
-                                    onClick={() => setCategory(c.id)}
+                                    onClick={() => setCategory(c)}
                                     className={`rounded-full border px-4 py-2 text-sm font-medium transition-colors ${active
                                             ? "border-indigo-600 bg-indigo-600 text-white"
                                             : "border-neutral-200 bg-white text-neutral-700 hover:bg-neutral-50 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-200 dark:hover:bg-neutral-700"
                                         }`}
                                 >
-                                    {c.label}
+                                    {c.name}
                                 </button>
                             );
                         })}

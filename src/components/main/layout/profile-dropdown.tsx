@@ -81,7 +81,7 @@ function ProfileDropdown() {
       </button>
 
       {open && (
-        <div className="absolute right-0 top-full z-20 mt-2 w-64 overflow-hidden rounded-2xl border border-neutral-200 bg-white shadow-2xl shadow-gray-700 dark:border-neutral-700 dark:bg-neutral-900 dark:shadow-gray-900">
+        <div className="absolute right-0 top-full z-80 mt-2 w-64 overflow-hidden rounded-2xl border border-neutral-200 bg-white shadow-2xl shadow-gray-700 dark:border-neutral-700 dark:bg-neutral-900 dark:shadow-indigo-800">
           {/* Identity header */}
           <div className="flex items-center gap-3 border-b border-neutral-100 px-4 py-3.5 dark:border-neutral-700">
             {user?.avatar ? <Image

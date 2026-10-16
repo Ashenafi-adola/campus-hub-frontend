@@ -24,13 +24,6 @@ const NAV_ITEMS: NavItem[] = [
     { id: "new community", label: "New Community", icon: Plus, href: "/communities/create" }
 ];
 
-const communityColors = [
-  "bg-emerald-500",
-  "bg-sky-500",
-  "bg-rose-500",
-  "bg-amber-500",
-];
-
 function SideBar() {
     const [active, setActive] = useState<string>("home");
     const [myCommunities, setMyCommunities] = useState<Community[]>([]);
@@ -67,16 +60,16 @@ function SideBar() {
                     My Communities
                 </p>
                 <div className="mt-2 space-y-1">
-                    {myCommunities.map((c,i) => (
-                        <Link
+                    {myCommunities.map((c) => {
+                        return <Link
                             href={`/communities/${c.slug}`}
                             key={c.id}
                             className="flex w-full items-center gap-3 justify-start rounded-xl px-3 py-2 text-sm font-medium text-neutral-700 hover:bg-neutral-100 dark:text-neutral-300 dark:hover:bg-neutral-800"
                         >
-                            <span className={`h-2.5 w-2.5 rounded-full ${communityColors[i % communityColors.length]}`} />
+                            <span className={`h-2.5 w-2.5 rounded-full`} style={{ backgroundColor: c.color}} />
                             <span className='w-50 truncate text-start'>c/{c.name.replace(" ", "")}</span>
                         </Link>
-                    ))}
+                    })}
                 </div>
             </div>
         </aside>

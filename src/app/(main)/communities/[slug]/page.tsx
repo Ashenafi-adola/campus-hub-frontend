@@ -20,11 +20,6 @@ const TABS: { id: TabId; label: string }[] = [
   { id: "members", label: "Members" },
 ];
 
-const RULES = [
-  "No direct answer sharing for active coursework",
-  "Keep discussions academic and respectful",
-  "Format code blocks properly",
-];
 
 function SideCard({
   title,
@@ -85,14 +80,19 @@ export default function CommunityDetailPage() {
                 style={{
                   backgroundImage:
                     "linear-gradient(120deg, rgba(79,70,229,0.5), rgba(236,72,153,0.4)), repeating-linear-gradient(45deg, rgba(255,255,255,0.06) 0 2px, transparent 2px 40px)",
-                }}
+                  backgroundColor: community.color,
+                  }}
               />
             )}
 
             <div className="px-6 pb-5">
               <div className="flex flex-wrap items-end justify-between gap-4">
                 <div className="flex items-end gap-4">
-                  <div className="relative -mt-12 h-24 w-24 shrink-0 overflow-hidden rounded-full border-4 border-white bg-indigo-600 shadow-lg shadow-neutral-400/40 dark:border-neutral-900">
+                  <div className="relative -mt-12 h-24 w-24 shrink-0 overflow-hidden rounded-full border-4 border-white shadow-lg shadow-neutral-400/40 dark:border-neutral-900"
+                      style={{
+                        backgroundColor: community.color
+                      }}
+                  >
                     {community?.icon ? (
                       <Image
                         fill
@@ -196,7 +196,7 @@ export default function CommunityDetailPage() {
 
           <SideCard title="Community Rules">
             <ol className="space-y-3">
-              {RULES.map((rule, i) => (
+              {community.rules.map((rule, i) => (
                 <li key={i} className="flex gap-2.5 text-sm text-neutral-600 dark:text-neutral-300">
                   <span className="font-semibold text-neutral-400 dark:text-neutral-500">
                     {i + 1}.

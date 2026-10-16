@@ -42,6 +42,7 @@ export interface Community {
   name: string;
   slug: string;
   description: string;
+  category: Category;
   icon: string | null | File;
   banner: string | null | File;
   creator?: User;
@@ -53,15 +54,19 @@ export interface Community {
   member_limit?: number | null;
   member_count: number;
   is_member?: boolean;
+  rules: string[];
+  color: string;
   can_manage?: boolean;
 }
 
 export interface NewCommunity {
     name: string,
+    category_id: number,
     description: string,
     is_private: boolean,
     banner: File | null,
     icon: File | null,
+    rules?: string[],
 }
 
 export interface Question {
@@ -107,6 +112,7 @@ export interface Post {
     downvoted: boolean;
     excerpt: string;
     comment_count: number;
+    tags?: string[];
 }
 
 export interface CommunityDetail {
@@ -136,4 +142,11 @@ export interface Comment {
   isModerator?: boolean;
   isAccepted?: boolean;
   replies: Comment[];
+}
+
+export interface Category {
+    id: number;
+    name: string;
+    slug: string;
+    description: string;
 }

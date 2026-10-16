@@ -51,7 +51,6 @@ export function CommentThread({
     if (requestedSlug.current === post.slug) return;
     requestedSlug.current = post.slug;
     const requestVersion = commentsVersion.current;
-
     getComments(post.slug)
       .then((res) => {
         if (
@@ -66,8 +65,8 @@ export function CommentThread({
           requestedSlug.current = null;
           console.error(error);
         }
-      });
-  }, [enabled, post.slug]);
+  });
+}, [enabled, post.slug]);
 
 
   const newComment = async (text: string, parent?: number): Promise<Comment> => {

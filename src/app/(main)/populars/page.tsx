@@ -1,5 +1,5 @@
 "use client"
-import QuestionCard from "@/components/main/question-card";
+import QuestionCard from "@/components/main/post-card";
 import { Chip, EmptyState, PageHeader } from "@/components/shared/ui";
 import { usePosts } from "@/hooks/use-posts";
 import { plural } from "@/libs/format";
@@ -26,7 +26,7 @@ export default function PopularPage() {
 
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 w-full">
       <PageHeader
         icon={Flame}
         title="Popular"

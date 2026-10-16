@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import {
   MoreHorizontal,
   Link2,
@@ -10,6 +10,8 @@ import {
   EyeOff,
   Check,
 } from "lucide-react";
+import { Post } from "@/libs/types";
+import { AuthContext } from "@/context/auth-context";
 
 interface MenuAction {
   id: string;
@@ -34,10 +36,13 @@ const COMMON_ACTIONS: MenuAction[] = [
 const REPORT_ACTION: MenuAction = { id: "report", label: "Report", icon: Flag, danger: true };
 const DELETE_ACTION: MenuAction = { id: "delete", label: "Delete post", icon: Trash2, danger: true };
 
-export function PostActionsMenu({ isOwner = false }: { isOwner?: boolean }) {
+export function PostActionsMenu({ post }: { post: Post }) {
   const [open, setOpen] = useState(false);
   const [copied, setCopied] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
+  const { user } = useContext(AuthContext)
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [isOwner, setIsOwner] = useState<boolean>(()=>post ? post.author.username === user?.username : false);
 
   useEffect(() => {
     function handleClickOutside(e: MouseEvent) {

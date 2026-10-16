@@ -7,7 +7,7 @@ import Link from 'next/link'
 function SiteHeader() {
     
     return (
-        <header className="sticky top-0 z-10 flex items-center gap-6 border-b border-neutral-200 bg-white px-6 py-3 dark:border-neutral-800 dark:bg-neutral-900">
+        <header className="sticky top-0 z-80 flex items-center gap-6 border-b border-neutral-200 bg-white px-6 py-3 dark:border-neutral-800 dark:bg-neutral-900">
             <div className="flex items-center gap-2">
                 <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-indigo-600">
                     <svg viewBox="0 0 24 24" className="h-4 w-4 text-white" fill="none">

@@ -11,7 +11,7 @@ import {
 } from "lucide-react";
 import { Post } from "@/libs/types";
 import { PostFeedSkeleton } from "../laoding-skeletons";
-import QuestionCard from "../question-card";
+import QuestionCard from "../post-card";
 import { EmptyState } from "@/components/shared/ui";
 
 /* ----------------------------------------------------------------- */

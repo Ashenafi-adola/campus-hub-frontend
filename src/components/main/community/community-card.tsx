@@ -55,7 +55,7 @@ function CommunityCard({ community }: { community: Community }) {
   const meta = CATEGORY_META[cats[2]];
 
   return (
-    <div className="group flex flex-col overflow-hidden rounded-2xl border border-neutral-200 bg-white transition-shadow hover:shadow-xl hover:shadow-gray-300 hover:scale-101 dark:border-neutral-800 dark:bg-neutral-900 dark:hover:shadow-black/40">
+    <div className="group flex flex-col overflow-hidden rounded-2xl border border-neutral-200 bg-white transition-shadow hover:shadow-xl hover:shadow-gray-300 dark:hover:shadow-indigo-900 hover:scale-101 dark:border-neutral-800 dark:bg-neutral-900">
       {/* Banner */}
       {community.banner ? (
         <div className="relative h-20 w-full">
@@ -69,10 +69,11 @@ function CommunityCard({ community }: { community: Community }) {
         </div>
       ) : (
         <div
-          className="relative h-20 bg-neutral-900"
+          className={`relative h-20`}
           style={{
             backgroundImage:
               "linear-gradient(120deg, rgba(79,70,229,0.5), rgba(236,72,153,0.4)), repeating-linear-gradient(45deg, rgba(255,255,255,0.06) 0 2px, transparent 2px 40px)",
+            backgroundColor: community.color
           }}
         />
       )}
@@ -80,7 +81,10 @@ function CommunityCard({ community }: { community: Community }) {
       <div className="flex flex-1 flex-col px-5 pb-5">
         { }
         <div
-          className={`-mt-7 flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl z-5 border-4 border-white bg-amber-200 shadow-lg shadow-gray-700 dark:border-neutral-900 ${meta.iconBg}`}
+          className={`-mt-7 flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl z-5 border-4 border-white shadow-lg shadow-gray-700 dark:border-neutral-900 ${meta.iconBg}`}
+          style={{
+            backgroundColor: community.color
+          }}
         >
           {community.icon ? <Image
             width={32}
@@ -89,7 +93,7 @@ function CommunityCard({ community }: { community: Community }) {
             alt={community.name}
             unoptimized
             className="h-10 w-10 shrink-0 rounded-full object-cover"
-          /> : <span className='text-2xl font-bold text-black'>{community.name.slice(0, 2).toUpperCase()}</span>}
+          /> : <span className='text-2xl font-bold text-black' style={{ color: community.color==="#000000"?"#ffffff":"#000000"}}>{community.name.slice(0, 2).toUpperCase()}</span>}
         </div>
 
         <Link href={`/communities/${community.slug}`} className="mt-3 font-semibold text-neutral-900 dark:text-neutral-100">

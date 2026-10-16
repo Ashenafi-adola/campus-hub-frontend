@@ -375,7 +375,7 @@ function ProfileTab({
         <label className={labelCls}>Display Name</label>
         <input
           type="text"
-          value={draft.displayName}
+          value={user?.first_name + " " + user?.last_name}
           maxLength={40}
           onChange={(e) => update({ displayName: e.target.value })}
           className={`${inputCls} ${

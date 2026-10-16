@@ -100,14 +100,12 @@ function Switch({
       role="switch"
       aria-checked={checked}
       onClick={() => onChange(!checked)}
-      className={`relative h-6 w-11 shrink-0 rounded-full transition-colors ${
-        checked ? "bg-indigo-600" : "bg-neutral-200 dark:bg-neutral-700"
-      }`}
+      className={`relative h-6 w-11 shrink-0 rounded-full transition-colors ${checked ? "bg-indigo-600" : "bg-neutral-200 dark:bg-neutral-700"
+        }`}
     >
       <span
-        className={`absolute top-0.5 h-5 w-5 rounded-full left-0.5 bg-white shadow transition-transform ${
-          checked ? "translate-x-5" : ""
-        }`}
+        className={`absolute top-0.5 h-5 w-5 rounded-full left-0.5 bg-white shadow transition-transform ${checked ? "translate-x-5" : ""
+          }`}
       />
     </button>
   );
@@ -202,19 +200,19 @@ export default function CreatePostPage() {
     type === "question"
       ? "Details"
       : type === "discussion"
-      ? "Body"
-      : type === "image"
-      ? "Caption (optional)"
-      : "Description (optional)";
+        ? "Body"
+        : type === "image"
+          ? "Caption (optional)"
+          : "Description (optional)";
 
   const bodyPlaceholder =
     type === "question"
       ? "Include what you've tried, error messages, or any context that helps..."
       : type === "discussion"
-      ? "What do you want to talk about?"
-      : type === "image"
-      ? "Add some context for your photos..."
-      : "Add any context for your poll...";
+        ? "What do you want to talk about?"
+        : type === "image"
+          ? "Add some context for your photos..."
+          : "Add any context for your poll...";
 
   const inputBase =
     "w-full rounded-xl border border-neutral-200 bg-white px-3.5 py-2.5 text-sm text-neutral-800 placeholder:text-neutral-400 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100 dark:placeholder:text-neutral-500";
@@ -248,11 +246,10 @@ export default function CreatePostPage() {
                     type="button"
                     onClick={() => setType(t)}
                     aria-pressed={active}
-                    className={`relative flex flex-col items-start gap-2 rounded-xl border p-3.5 text-left transition-colors ${
-                      active
+                    className={`relative flex flex-col items-start gap-2 rounded-xl border p-3.5 text-left transition-colors ${active
                         ? "border-indigo-600 bg-indigo-50/60 dark:bg-indigo-950/40"
                         : "border-neutral-200 hover:bg-neutral-50 dark:border-neutral-700 dark:hover:bg-neutral-800"
-                    }`}
+                      }`}
                   >
                     {active && (
                       <span className="absolute right-2.5 top-2.5 flex h-4 w-4 items-center justify-center rounded-full bg-indigo-600">
@@ -260,9 +257,8 @@ export default function CreatePostPage() {
                       </span>
                     )}
                     <span
-                      className={`flex h-9 w-9 items-center justify-center rounded-lg ${
-                        active ? "bg-indigo-600 text-white" : meta.chip
-                      }`}
+                      className={`flex h-9 w-9 items-center justify-center rounded-lg ${active ? "bg-indigo-600 text-white" : meta.chip
+                        }`}
                     >
                       <Icon className="h-4 w-4" />
                     </span>
@@ -302,9 +298,8 @@ export default function CreatePostPage() {
                     <span className="text-neutral-400 dark:text-neutral-500">Choose a community</span>
                   )}
                   <ChevronDown
-                    className={`h-4 w-4 text-neutral-400 transition-transform dark:text-neutral-500 ${
-                      commOpen ? "rotate-180" : ""
-                    }`}
+                    className={`h-4 w-4 text-neutral-400 transition-transform dark:text-neutral-500 ${commOpen ? "rotate-180" : ""
+                      }`}
                   />
                 </button>
                 {commOpen && (
@@ -366,8 +361,8 @@ export default function CreatePostPage() {
                   type === "question"
                     ? "What do you want to know?"
                     : type === "poll"
-                    ? "What's your poll question?"
-                    : "Give your post a clear title"
+                      ? "What's your poll question?"
+                      : "Give your post a clear title"
                 }
                 className={inputBase}
               />
@@ -395,6 +390,8 @@ export default function CreatePostPage() {
                         <Image
                           src={img.url}
                           alt=""
+                          height={100}
+                          width={100}
                           className="h-full w-full object-cover"
                         />
                         <button
@@ -422,11 +419,10 @@ export default function CreatePostPage() {
                       setDragging(false);
                       addFiles(e.dataTransfer.files);
                     }}
-                    className={`flex cursor-pointer flex-col items-center justify-center gap-1.5 rounded-xl border border-dashed py-8 text-center transition-colors ${
-                      dragging
+                    className={`flex cursor-pointer flex-col items-center justify-center gap-1.5 rounded-xl border border-dashed py-8 text-center transition-colors ${dragging
                         ? "border-indigo-500 bg-indigo-50/60 dark:bg-indigo-950/40"
                         : "border-neutral-300 bg-neutral-50/70 hover:bg-neutral-50 dark:border-neutral-700 dark:bg-neutral-800/70 dark:hover:bg-neutral-800"
-                    }`}
+                      }`}
                   >
                     <input
                       type="file"
@@ -635,49 +631,49 @@ export default function CreatePostPage() {
 
         {/* ---------------- Tips ---------------- */}
         <div className="space-y-4">
-            <div className="sticky top-20 z-50 space-y-4">
-          <div className="rounded-2xl border border-neutral-200 bg-white p-5 dark:border-neutral-800 dark:bg-neutral-900">
-            <div className="flex items-center gap-2">
-              <Lightbulb className="h-4 w-4 text-amber-500" />
-              <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">
-                Tips for a great {TYPE_META[type].label.toLowerCase()}
-              </h3>
+          <div className="sticky top-20 z-12 space-y-4">
+            <div className="rounded-2xl border border-neutral-200 bg-white p-5 dark:border-neutral-800 dark:bg-neutral-900">
+              <div className="flex items-center gap-2">
+                <Lightbulb className="h-4 w-4 text-amber-500" />
+                <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">
+                  Tips for a great {TYPE_META[type].label.toLowerCase()}
+                </h3>
+              </div>
+              <ul className="mt-3 space-y-2.5">
+                {TIPS[type].map((tip) => (
+                  <li
+                    key={tip}
+                    className="flex gap-2 text-sm leading-snug text-neutral-600 dark:text-neutral-300"
+                  >
+                    <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-indigo-400" />
+                    {tip}
+                  </li>
+                ))}
+              </ul>
             </div>
-            <ul className="mt-3 space-y-2.5">
-              {TIPS[type].map((tip) => (
-                <li
-                  key={tip}
-                  className="flex gap-2 text-sm leading-snug text-neutral-600 dark:text-neutral-300"
-                >
-                  <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-indigo-400" />
-                  {tip}
-                </li>
-              ))}
-            </ul>
-          </div>
 
-          <div className="rounded-2xl border border-neutral-200 bg-white p-5 dark:border-neutral-800 dark:bg-neutral-900">
-            <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">
-              Before you post
-            </h3>
-            <ol className="mt-3 space-y-2.5">
-              {[
-                "Search first, your question may already be answered",
-                "Don't share solutions to active coursework",
-                "Be kind, classmates are here to help",
-              ].map((rule, i) => (
-                <li
-                  key={rule}
-                  className="flex gap-2.5 text-sm leading-snug text-neutral-600 dark:text-neutral-300"
-                >
-                  <span className="font-semibold text-neutral-400 dark:text-neutral-500">
-                    {i + 1}.
-                  </span>
-                  {rule}
-                </li>
-              ))}
-            </ol>
-          </div>
+            <div className="rounded-2xl border border-neutral-200 bg-white p-5 dark:border-neutral-800 dark:bg-neutral-900">
+              <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">
+                Before you post
+              </h3>
+              <ol className="mt-3 space-y-2.5">
+                {[
+                  "Search first, your question may already be answered",
+                  "Don't share solutions to active coursework",
+                  "Be kind, classmates are here to help",
+                ].map((rule, i) => (
+                  <li
+                    key={rule}
+                    className="flex gap-2.5 text-sm leading-snug text-neutral-600 dark:text-neutral-300"
+                  >
+                    <span className="font-semibold text-neutral-400 dark:text-neutral-500">
+                      {i + 1}.
+                    </span>
+                    {rule}
+                  </li>
+                ))}
+              </ol>
+            </div>
           </div>
         </div>
       </div>

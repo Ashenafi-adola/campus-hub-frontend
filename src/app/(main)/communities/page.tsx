@@ -1,26 +1,27 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import CommunityCard from "@/components/main/community/community-card";
 import { useCommunities } from "@/hooks/use-communities";
-import { CategoryId } from "@/libs/types";
+import { Category } from "@/libs/types";
 import { CommunityGridSkeleton } from "@/components/main/laoding-skeletons";
 import { usePosts } from "@/hooks/use-posts";
 import RightSideBar from "@/components/main/layout/right-side-bar";
+import { getCategories } from "@/libs/api";
 
-
-const CATEGORIES: { id: CategoryId; label: string }[] = [
-  { id: "all", label: "All" },
-  { id: "academic", label: "Academic" },
-  { id: "campus-life", label: "Campus Life" },
-  { id: "career", label: "Career" },
-];
 
 
 export default function CommunitiesPage() {
-  const [category, setCategory] = useState<CategoryId>("all");
+  const [category, setCategory] = useState<Category | null>(null);
+  const [categories, setCategories] = useState<Category[]>([]);
   const { posts } = usePosts();
   const { communities } = useCommunities();
+  
+  useEffect(() =>{
+      getCategories()
+        .then((data) => setCategories(data))
+        .catch((error) => console.error("Error fetching categories:", error));
+  },[]);
 
   return (
     <>
@@ -31,18 +32,18 @@ export default function CommunitiesPage() {
             Explore Communities
           </h1>
           <div className="mt-4 flex flex-wrap gap-2">
-            {CATEGORIES.map((c) => {
-              const active = category === c.id;
+            {categories.map((c) => {
+              const active = category === c;
               return (
                 <button
                   key={c.id}
-                  onClick={() => setCategory(c.id)}
-                  className={`rounded-full px-4 py-2 text-sm font-semibold transition-colors ${active
+                  onClick={() => setCategory(c)}
+                  className={`rounded-full px-4 py-2 text-sm w-40 truncate font-semibold transition-colors animate-marquee ${active
                     ? "bg-indigo-600 text-white"
                     : "bg-[#eef1f6] text-neutral-600 hover:bg-neutral-200 dark:bg-neutral-800 dark:text-neutral-300 dark:hover:bg-neutral-700"
                     }`}
                 >
-                  {c.label}
+                  {c.name}
                 </button>
               );
             })}

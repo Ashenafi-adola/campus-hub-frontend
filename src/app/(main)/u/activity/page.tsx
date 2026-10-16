@@ -5,7 +5,7 @@ import {
   ShieldCheck,
   Zap,
 } from "lucide-react";
-import QuestionCard from "@/components/main/question-card";
+import QuestionCard from "@/components/main/post-card";
 import { getPosts } from "@/libs/api";
 import { Post } from "@/libs/types";
 import { AuthContext } from "@/context/auth-context";

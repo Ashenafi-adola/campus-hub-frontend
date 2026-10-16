@@ -1,4 +1,4 @@
-import { Comment, Community, CommunityDetail, NewComment, NewCommunity, Post, UserRegistrationData } from "./types"
+import { Category, Comment, Community, CommunityDetail, NewComment, NewCommunity, Post, UserRegistrationData } from "./types"
 import { getAccessToken } from "@/app/actions/post-votes";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL
@@ -196,6 +196,19 @@ export async function getCommunities(signal?: AbortSignal, my?: boolean): Promis
     }
     return res.json();
 }
+export async function getCategories(signal?: AbortSignal): Promise<Category[]> {
+    const res = await fetch(`${API_URL}/categories/`, {
+            signal,
+            headers: {
+                Authorization: `Bearer ${await getAccessToken()}`
+            }
+        })
+    
+    if (!res.ok){
+        throw new Error(`Faild to load categories ${res.status}`);
+    }
+    return res.json();
+}
 
 export async function joinLeaveCommunity(status: boolean, c_slug: string) {
     const access = await getAccessToken();
@@ -262,7 +275,13 @@ export async function createCommunity(payload: NewCommunity, token: string): Pro
     if (payload.icon !== null) formData.append("icon", payload.icon);
     if (payload.banner !== null) formData.append("banner", payload.banner);
     formData.append("is_private", String(payload.is_private));
-    
+    formData.append("category_id", String(payload.category_id));
+    if (payload.rules) {
+        payload.rules.forEach((rule, index) => {
+            formData.append(`rules[${index}]`, rule);
+        });
+    }
+
     const res = await fetch(`${API_URL}/communities/`, {
         method: "POST",
         headers: {
