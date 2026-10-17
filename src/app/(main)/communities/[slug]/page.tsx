@@ -103,7 +103,7 @@ export default function CommunityDetailPage() {
                       />
                     ) : (
                       <div className="flex h-full w-full items-center justify-center">
-                        <span className="text-2xl font-bold text-white">
+                        <span className="text-5xl font-bold text-white">
                           {community.name.slice(0, 2).toUpperCase()}
                         </span>
                       </div>
@@ -166,7 +166,7 @@ export default function CommunityDetailPage() {
           {tab === "posts" && <PostsTab posts={posts}/>
           }
           {
-            tab === "about" && <AboutTab/>
+            tab === "about" && <AboutTab community={community} />
           }
 
           {tab === "questions" && (

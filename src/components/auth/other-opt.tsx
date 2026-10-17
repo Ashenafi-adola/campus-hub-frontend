@@ -5,7 +5,7 @@ function OtherOpt() {
     
     return (
         <div className="space-y-3">
-            <button className="flex w-full items-center justify-center gap-2 rounded-xl border border-neutral-200 py-2.5 text-sm font-semibold text-neutral-800 hover:bg-neutral-50">
+            <button className="flex w-full items-center justify-center gap-2 rounded-xl border border-neutral-200 py-2.5 text-sm font-semibold text-neutral-800 hover:bg-neutral-50 dark:border-neutral-700 dark:text-neutral-200 dark:hover:bg-neutral-800">
                 <svg viewBox="0 0 24 24" className="h-4 w-4">
                     <path
                         fill="#4285F4"
@@ -27,8 +27,8 @@ function OtherOpt() {
                 Continue with Google
             </button>
 
-            <button className="flex w-full items-center justify-center gap-2 rounded-xl border border-neutral-200 py-2.5 text-sm font-semibold text-neutral-800 hover:bg-neutral-50">
-                <svg viewBox="0 0 24 24" className="h-4 w-4 fill-neutral-900">
+            <button className="flex w-full items-center justify-center gap-2 rounded-xl border border-neutral-200 py-2.5 text-sm font-semibold text-neutral-800 hover:bg-neutral-50 dark:border-neutral-700 dark:text-neutral-200 dark:hover:bg-neutral-800">
+                <svg viewBox="0 0 24 24" className="h-4 w-4 fill-neutral-900 dark:fill-neutral-100">
                     <path d="M16.365 1.43c0 1.14-.462 2.09-1.234 2.868-.855.86-2.25 1.5-3.15 1.5-.117 0-.234-.02-.303-.03-.02-.117-.04-.293-.04-.47 0-1.11.51-2.14 1.29-2.85.78-.75 2.13-1.35 3.24-1.42.02.13.02.27.02.41zm4.5 16.06c-.43.99-.96 1.95-1.65 2.85-.93 1.24-1.62 2.1-2.79 2.1-1.02 0-1.35-.66-2.79-.66-1.47 0-1.92.66-2.85.68-1.14.04-2.01-1.34-2.94-2.58-1.62-2.19-2.91-6.21-1.2-9 .84-1.38 2.34-2.25 3.96-2.28 1.11-.02 2.16.75 2.85.75.66 0 1.95-.93 3.3-.79.57.02 2.16.23 3.18 1.74-.08.05-1.9 1.11-1.87 3.3.02 2.61 2.28 3.48 2.31 3.49-.02.06-.36 1.24-1.2 2.45h.66z" />
                 </svg>
                 Continue with Apple

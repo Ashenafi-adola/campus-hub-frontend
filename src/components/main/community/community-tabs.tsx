@@ -9,7 +9,7 @@ import {
   MoreHorizontal,
   PodcastIcon,
 } from "lucide-react";
-import { Post } from "@/libs/types";
+import { Community, Post } from "@/libs/types";
 import { PostFeedSkeleton } from "../laoding-skeletons";
 import QuestionCard from "../post-card";
 import { EmptyState } from "@/components/shared/ui";
@@ -64,12 +64,6 @@ interface Stat {
   value: string;
 }
 
-const STATS: Stat[] = [
-  { icon: Users, label: "Members", value: "12,450" },
-  { icon: MessageSquare, label: "Posts this week", value: "86" },
-  { icon: Calendar, label: "Created", value: "Sept 14, 2023" },
-  { icon: Globe, label: "Visibility", value: "Public" },
-];
 
 const MODERATORS: Moderator[] = [
   { id: "1", name: "Dr. Amara Bekele", role: "Faculty Moderator" },
@@ -77,36 +71,21 @@ const MODERATORS: Moderator[] = [
   { id: "3", name: "Priya Shah", role: "Student Moderator" },
 ];
 
-const RULES = [
-  {
-    title: "No direct answer sharing for active coursework",
-    detail:
-      "Help with concepts and approach, but don't post full solutions to assignments that are still open.",
-  },
-  {
-    title: "Keep discussions academic and respectful",
-    detail:
-      "Disagreements are fine — personal attacks, harassment, or off-topic arguments aren't.",
-  },
-  {
-    title: "Format code blocks properly",
-    detail:
-      "Use triple backticks for code so it's readable. Unformatted code walls get removed.",
-  },
-];
+export function AboutTab({ community } : {community: Community}) {
 
-export function AboutTab() {
+  const STATS: Stat[] = [
+    { icon: Users, label: "Members", value: community.member_count.toString() },
+    { icon: MessageSquare, label: "Posts this week", value: "86" },
+    { icon: Calendar, label: "Created", value: community.created_at ? new Date(community.created_at).toDateString().slice(3,) : "Sept 14, 2023" },
+    { icon: Globe, label: "Visibility", value: community.is_private? "Private" : "Public" },
+  ];
   return (
     <div className="space-y-4">
       {/* Description */}
       <div className="rounded-2xl border border-neutral-200 bg-white p-6 dark:border-neutral-800 dark:bg-neutral-900">
-        <h3 className="font-semibold text-neutral-900 dark:text-neutral-100">About r/ComputerScience</h3>
+        <h3 className="font-semibold text-neutral-900 dark:text-neutral-100">About c/{community.name}</h3>
         <p className="mt-2 text-sm leading-relaxed text-neutral-600 dark:text-neutral-300">
-          A space for CS students to ask questions, share resources, and get
-          unstuck together. Whether you&apos;re debugging your first recursive
-          function or prepping for a systems interview, this is the place to
-          post it. Moderated by university research assistants and faculty to
-          keep answers accurate and discussions on-topic.
+          {community.description || "No description provided."}
         </p>
       </div>
 
@@ -151,17 +130,14 @@ export function AboutTab() {
       <div className="rounded-2xl border border-neutral-200 bg-white p-6 dark:border-neutral-800 dark:bg-neutral-900">
         <h3 className="font-semibold text-neutral-900 dark:text-neutral-100">Community Rules</h3>
         <ol className="mt-4 space-y-4">
-          {RULES.map((rule, i) => (
+          {community.rules.map((rule, i) => (
             <li key={i} className="flex gap-3">
               <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-indigo-50 text-xs font-bold text-indigo-600 dark:bg-indigo-950 dark:text-indigo-300">
                 {i + 1}
               </span>
               <div>
                 <div className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">
-                  {rule.title}
-                </div>
-                <div className="mt-0.5 text-sm leading-relaxed text-neutral-500 dark:text-neutral-400">
-                  {rule.detail}
+                  {rule}
                 </div>
               </div>
             </li>

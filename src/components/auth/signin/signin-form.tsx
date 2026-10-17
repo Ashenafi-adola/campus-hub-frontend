@@ -87,7 +87,7 @@ function SingInForm() {
     return (
         <form className="mt-6 space-y-4" onSubmit={submit} noValidate>
             {generalError && (
-                <div className="rounded-xl border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
+                <div className="rounded-xl border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700 dark:border-red-900 dark:bg-red-950/40 dark:text-red-300">
                     {generalError}
                 </div>
             )}
@@ -112,8 +112,8 @@ function SingInForm() {
             />
             <div className='flex items-center justify-between'>
                 <div className='flex gap-1'>
-                    <input type="checkbox" />
-                    <span>Remember me</span>
+                    <input type="checkbox" className="accent-indigo-600" />
+                    <span className="text-neutral-700 dark:text-neutral-300">Remember me</span>
                 </div>
 
                 <div>
@@ -130,7 +130,7 @@ function SingInForm() {
             >
                 {loading ? 'Signing in...' : 'Log in'}
             </button>
-            <p className="mt-6 text-center text-sm text-neutral-500">
+            <p className="mt-6 text-center text-sm text-neutral-500 dark:text-neutral-400">
                 Don&apos;t have an account?{" "}
                 <Link href="/signup" className="font-semibold text-indigo-600 hover:underline">
                     Sign Up

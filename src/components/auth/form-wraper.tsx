@@ -8,11 +8,11 @@ type Props = {
 
 function AuthFormWrapper({ children, title, description }: Props) {
     return (
-        <div className="w-full max-w-sm border border-gray-300 p-5 rounded-2xl shadow">
-            <h2 className="text-2xl text-center font-extrabold text-neutral-900">
+        <div className="w-full max-w-sm rounded-2xl border border-gray-300 bg-white p-5 shadow dark:border-neutral-800 dark:bg-neutral-900">
+            <h2 className="text-center text-2xl font-extrabold text-neutral-900 dark:text-neutral-100">
                 {title}
             </h2>
-            <p className="mt-1 text-sm text-center text-neutral-500">
+            <p className="mt-1 text-center text-sm text-neutral-500 dark:text-neutral-400">
                 {description}
             </p>
 

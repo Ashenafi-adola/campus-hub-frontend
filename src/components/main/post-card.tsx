@@ -8,6 +8,7 @@ import { downvotePostForCurrentUser, upvotePostForCurrentUser } from '@/app/acti
 import { PostActionsMenu } from './post-actions';
 import Link from 'next/link';
 import { CommentThread } from './comment/comment-thread';
+import { PollBlock } from '../shared/ui';
 
 
 function QuestionCard({ post }: { post: Post }) {
@@ -27,6 +28,7 @@ function QuestionCard({ post }: { post: Post }) {
   }
 
 
+
   const upVote = async () => {
     const res = await upvotePostForCurrentUser(post.slug);
     setVotes(res.score);
@@ -38,6 +40,7 @@ function QuestionCard({ post }: { post: Post }) {
     setVotes(res.score);
     setCurrentPost(res);
   }
+  console.log(post.images)
 
 
   return (
@@ -89,8 +92,30 @@ function QuestionCard({ post }: { post: Post }) {
           content.endsWith("...") && <span onClick={changeContent} className="cursor-pointer text-sm text-indigo-500 hover:text-gray-800 dark:hover:text-neutral-100">read more</span>
         }
       </p>
+      {post.images && post.images.length > 0 && (
+        <div
+          className={`mt-3 grid gap-2 ${
+            post.images.length === 1 ? "grid-cols-1" : "grid-cols-2"
+          }`}
+        >
+          {post.images.map((src, i) => (
+            <Image
+              key={i}
+              src={src}
+              height={100}
+              width={100}
+              unoptimized
+              alt=""
+              className={`w-full rounded-xl object-cover ${
+                post.images!.length === 1 ? "max-h-80" : "h-40"
+              }`}
+            />
+          ))}
+        </div>
+      )}
 
 
+      {currentPost.post_type === "poll" && currentPost.polls && <PollBlock options={currentPost.polls} o_votes={currentPost.poll_votes || [0, 0, 0, 0]} />}
       <div className="mt-3 flex flex-wrap gap-2">
         {currentPost.tags && currentPost.tags.map((tag) => (
           <span

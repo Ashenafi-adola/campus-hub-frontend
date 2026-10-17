@@ -10,7 +10,7 @@ async function AuthLayout({children}: Props) {
     const user = await getCurrentUser();
     if (user) redirect("/");
   return (
-    <div className="flex min-h-screen">
+    <div className="flex min-h-screen bg-white text-neutral-900 dark:bg-neutral-950 dark:text-neutral-100">
             {/* Left brand panel */}
             <div className="relative hidden w-[46%] shrink-0 overflow-hidden bg-gradient-to-r from-indigo-600 to-indigo-900 lg:flex lg:flex-col lg:justify-between">
                 {/* Dot grid pattern */}
@@ -75,7 +75,7 @@ async function AuthLayout({children}: Props) {
             </div>
 
             {/* Right form panel */}
-            <div className="flex flex-1 items-center justify-center bg-white px-6 py-10">
+            <div className="flex flex-1 items-center justify-center bg-white px-6 py-10 dark:bg-neutral-950">
                 {children}
             </div>
         </div>

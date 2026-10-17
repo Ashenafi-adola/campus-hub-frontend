@@ -406,7 +406,7 @@ function ProfileTab({
           </span>
         </div>
         <textarea
-          value={draft.bio}
+          value={user?.bio}
           maxLength={MAX_BIO}
           rows={4}
           onChange={(e) => update({ bio: e.target.value })}

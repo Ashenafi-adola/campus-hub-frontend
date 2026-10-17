@@ -1,6 +1,7 @@
 import { AuthUser } from "@/libs/auth/types";
-import { colorFor, getInitials } from "@/libs/format";
+import { colorFor, getInitials, plural } from "@/libs/format";
 import Image from "next/image";
+import { useState } from "react";
 
 
 export function EmptyState({
@@ -123,6 +124,50 @@ export function Avatar({
             {getInitials(fullName)}
           </span>
         </div>}
+    </div>
+  );
+}
+
+export function PollBlock({ options, o_votes }: { options: string[], o_votes: number[] }) {
+  const [choice, setChoice] = useState<string | null>(null);
+  const total =
+    o_votes.reduce((sum, i) => sum + o_votes[i], 0) + (choice ? 1 : 0);
+
+  return (
+    <div className="mt-3 space-y-2">
+      {options.map((o, i) => {
+        const votes = o_votes[i] + (choice === o ? 1 : 0);
+        const pct = total ? Math.round((votes / total) * 100) : 0;
+        const selected = choice === o;
+        return (
+          <button
+            key={i}
+            onClick={() => setChoice(selected ? null : o)}
+            className={`relative w-full overflow-hidden rounded-xl border px-3.5 py-2.5 text-left text-sm font-medium transition-colors ${
+              selected
+                ? "border-indigo-500 text-indigo-700 dark:border-indigo-400 dark:text-indigo-300"
+                : "border-neutral-200 text-neutral-700 hover:bg-neutral-50 dark:border-neutral-700 dark:text-neutral-300 dark:hover:bg-neutral-800"
+            }`}
+          >
+            {choice !== null && (
+              <span
+                className="absolute inset-y-0 left-0 bg-indigo-100/70 dark:bg-indigo-900/50"
+                style={{ width: `${pct}%` }}
+              />
+            )}
+            <span className="relative flex items-center justify-between">
+              <span>{o}</span>
+              {choice !== null && (
+                <span className="text-xs font-bold">{pct}%</span>
+              )}
+            </span>
+          </button>
+        );
+      })}
+      <p className="text-xs text-neutral-400 dark:text-neutral-500">
+        {plural(total, "vote", "votes")}
+        {choice === null && " · vote to see results"}
+      </p>
     </div>
   );
 }

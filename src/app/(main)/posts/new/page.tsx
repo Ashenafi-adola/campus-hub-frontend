@@ -1,6 +1,9 @@
 "use client"
 
 import { Chip } from "@/components/shared/ui";
+import { useCommunities } from "@/hooks/use-communities";
+import { createPost } from "@/libs/api";
+import { NewPost } from "@/libs/types";
 import { BarChart3, Check, ChevronDown, HelpCircle, ImageIcon, Lightbulb, MessageSquare, Plus, X } from "lucide-react";
 import Image from "next/image";
 import { useState } from "react";
@@ -8,14 +11,6 @@ import { useState } from "react";
 
 type PostType = "question" | "discussion" | "image" | "poll";
 const POST_TYPES: PostType[] = ["question", "discussion", "image", "poll"];
-
-const COMMUNITIES = [
-  { id: "cs", name: "r/ComputerScience", color: "bg-indigo-500", mine: true },
-  { id: "study", name: "r/StudyTips", color: "bg-emerald-500", mine: true },
-  { id: "life", name: "r/CampusLife", color: "bg-amber-500", mine: true },
-  { id: "math", name: "r/Mathematics", color: "bg-rose-500", mine: false },
-  { id: "schol", name: "r/Scholarships", color: "bg-sky-500", mine: false },
-];
 
 const TYPE_META: Record<
   PostType,
@@ -82,9 +77,9 @@ const MAX_IMAGES = 4;
 const MAX_POLL_OPTIONS = 6;
 
 const POLL_DURATIONS = [
-  { id: "1d", label: "1 day" },
-  { id: "3d", label: "3 days" },
-  { id: "7d", label: "7 days" },
+  { id: 1, label: "1 day" },
+  { id: 3, label: "3 days" },
+  { id: 7, label: "7 days" },
 ];
 
 function Switch({
@@ -113,19 +108,21 @@ function Switch({
 
 export default function CreatePostPage() {
   const [type, setType] = useState<PostType>("question");
-  const [communityId, setCommunityId] = useState<string | null>(null);
+  const [communityId, setCommunityId] = useState<number | null>(null);
   const [commOpen, setCommOpen] = useState(false);
   const [title, setTitle] = useState("");
   const [body, setBody] = useState("");
   const [tags, setTags] = useState<string[]>([]);
   const [tagInput, setTagInput] = useState("");
-  const [images, setImages] = useState<{ id: string; url: string }[]>([]);
+  const [images, setImages] = useState<File[]>([]);
   const [dragging, setDragging] = useState(false);
   const [pollOptions, setPollOptions] = useState<string[]>(["", ""]);
-  const [pollDuration, setPollDuration] = useState("3d");
+  const [pollDuration, setPollDuration] = useState<number>(3);
   const [notify, setNotify] = useState(true);
 
-  const community = COMMUNITIES.find((c) => c.id === communityId) ?? null;
+  const { communities } = useCommunities();
+
+  const community = communities.find((c) => c.id === communityId) ?? null;
   const filledOptions = pollOptions.filter((o) => o.trim());
 
   const missing: string[] = [];
@@ -150,18 +147,15 @@ export default function CreatePostPage() {
     const next = Array.from(files)
       .filter((f) => f.type.startsWith("image/"))
       .slice(0, room)
-      .map((f) => ({
-        id: `${f.name}-${f.size}-${Math.random().toString(36).slice(2, 6)}`,
-        url: URL.createObjectURL(f),
-      }));
+      .map((f) => (f));
     setImages((prev) => [...prev, ...next]);
   };
 
-  const removeImage = (id: string) =>
+  const removeImage = (im: File) =>
     setImages((prev) => {
-      const target = prev.find((i) => i.id === id);
-      if (target) URL.revokeObjectURL(target.url);
-      return prev.filter((i) => i.id !== id);
+      const target = prev.find((i) => i === im);
+      if (target) URL.revokeObjectURL(URL.createObjectURL(target));
+      return prev.filter((i) => i !== im);
     });
 
   /* ---- poll ---- */
@@ -169,31 +163,24 @@ export default function CreatePostPage() {
     setPollOptions((prev) => prev.map((o, idx) => (idx === i ? value : o)));
 
   /* ---- submit ---- */
-  const submit = () => {
+  const onPublish = async (par: NewPost) => {
+    await createPost(par);
+  }
+  const submit = async () => {
     if (!canPost || !community) return;
-    // onPublish({
-    //   id: `new-${Date.now()}`,
-    //   type,
-    //   author: ME,
-    //   school: ME_SCHOOL,
-    //   community: community.name,
-    //   ageHours: 0,
-    //   postedAt: "just now",
-    //   title: title.trim(),
-    //   body: body.trim(),
-    //   tags,
-    //   upvotes: 1,
-    //   answers: 0,
-    //   images: type === "image" ? images.map((i) => i.url) : undefined,
-    //   poll:
-    //     type === "poll"
-    //       ? filledOptions.map((label, i) => ({
-    //           id: `o${i}`,
-    //           label: label.trim(),
-    //           votes: 0,
-    //         }))
-    //       : undefined,
-    // });
+    onPublish({
+      post_type: type,
+      community_id: community.id,
+      poll_length: type === "poll" ? pollDuration : undefined,
+      title: title.trim(),
+      content: body.trim(),
+      tags: tags,
+      images: type === "image" ? images.map((i) => i) : undefined,
+      polls:
+        type === "poll"
+          ? pollOptions
+          : undefined,
+    });
   };
 
   const bodyLabel =
@@ -308,8 +295,8 @@ export default function CreatePostPage() {
                       className="fixed inset-0 z-10"
                       onClick={() => setCommOpen(false)}
                     />
-                    <div className="absolute left-0 right-0 top-full z-20 mt-1 overflow-hidden rounded-xl border border-neutral-200 bg-white py-1 shadow-lg dark:border-neutral-700 dark:bg-neutral-900">
-                      {COMMUNITIES.map((c) => (
+                    <div className="absolute left-0 right-0 top-full z-20 mt-1 max-h-50 overflow-y-scroll scrollbar-thumb-brand-100 rounded-xl border border-neutral-200 bg-white py-1 shadow-lg dark:border-neutral-700 dark:bg-neutral-900">
+                      {communities.map((c) => (
                         <button
                           key={c.id}
                           type="button"
@@ -322,7 +309,7 @@ export default function CreatePostPage() {
                           <span className="flex items-center gap-2">
                             <span className={`h-3 w-3 rounded ${c.color}`} />
                             {c.name}
-                            {c.mine && (
+                            {c.is_member && (
                               <span className="text-xs font-normal text-neutral-400 dark:text-neutral-500">
                                 joined
                               </span>
@@ -384,11 +371,11 @@ export default function CreatePostPage() {
                   <div className="mb-3 grid grid-cols-2 gap-3 sm:grid-cols-4">
                     {images.map((img) => (
                       <div
-                        key={img.id}
+                        key={URL.createObjectURL(img)}
                         className="group relative aspect-square overflow-hidden rounded-xl border border-neutral-200 dark:border-neutral-700"
                       >
                         <Image
-                          src={img.url}
+                          src={URL.createObjectURL(img)}
                           alt=""
                           height={100}
                           width={100}
@@ -396,7 +383,7 @@ export default function CreatePostPage() {
                         />
                         <button
                           type="button"
-                          onClick={() => removeImage(img.id)}
+                          onClick={() => removeImage(img)}
                           aria-label="Remove image"
                           className="absolute right-1.5 top-1.5 flex h-6 w-6 items-center justify-center rounded-full bg-neutral-900/70 text-white hover:bg-neutral-900"
                         >

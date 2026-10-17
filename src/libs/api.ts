@@ -1,4 +1,4 @@
-import { Category, Comment, Community, CommunityDetail, NewComment, NewCommunity, Post, UserRegistrationData } from "./types"
+import { Category, Comment, Community, CommunityDetail, NewComment, NewCommunity, NewPost, Post, UserRegistrationData } from "./types"
 import { getAccessToken } from "@/app/actions/post-votes";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL
@@ -264,6 +264,44 @@ export async function downvotePost(slug:string, access: string) {
     })
     if(!res.ok){
         throw new Error(`Couldn't downvote the post ${res.status}`)
+    }
+    return res.json();
+}
+
+export async function createPost(payload: NewPost): Promise<Post> {
+    const formData = new FormData();
+    formData.append("content", payload.content);
+    formData.append("title", payload.title);
+    formData.append("post_type", payload.post_type);
+    formData.append("community_id", String(payload.community_id));
+    // formData.append("status", payload.status);
+    if (payload.tags) {
+        payload.tags.forEach((tag, index) => {
+            formData.append(`tags[${index}]`, tag);
+        });
+    }
+
+    if (payload.post_type === "image") {
+        payload.images?.forEach((image, index) => {
+            formData.append(`image${index+1}`, image);
+        })
+    }
+    if (payload.post_type === "poll") {
+        formData.append("poll_length", String(payload.poll_length));
+        payload.polls?.forEach((poll, index) => {
+            formData.append(`polls[${index}]`, poll);
+        });
+    }
+
+    const res = await fetch(`${API_URL}/posts/`, {
+        method: "POST",
+        headers: {
+            Authorization: `Bearer ${await getAccessToken()}`
+        },
+        body: formData
+    })
+    if (!res.ok){
+        throw new Error(`Couldn't create a post ${res.status}`)
     }
     return res.json();
 }

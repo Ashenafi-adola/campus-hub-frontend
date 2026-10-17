@@ -65,7 +65,7 @@ function SignUpForm() {
     return (
         <form className="mt-6 space-y-4" onSubmit={submit}>
             {generalError && (
-                <div className="rounded-xl border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
+                <div className="rounded-xl border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700 dark:border-red-900 dark:bg-red-950/40 dark:text-red-300">
                     {generalError}
                 </div>
             )}
@@ -135,7 +135,7 @@ function SignUpForm() {
                 >
                     {agreed && <Check className="h-3 w-3 text-white" strokeWidth={3.5} />}
                 </button>
-                <span className="text-sm text-neutral-600">
+                <span className="text-sm text-neutral-600 dark:text-neutral-300">
                     I agree to the{" "}
                     <a href="#" className="font-medium text-indigo-600 hover:underline">
                         Terms of Service
@@ -154,7 +154,7 @@ function SignUpForm() {
             >
                 { loading ? "Creating Account..." :"Create Account"}
             </button>
-            <p className="mt-6 text-center text-sm text-neutral-500">
+            <p className="mt-6 text-center text-sm text-neutral-500 dark:text-neutral-400">
                 Already have an account?{" "}
                 <Link href="/signin" className="font-semibold text-indigo-600 hover:underline">
                     Log in

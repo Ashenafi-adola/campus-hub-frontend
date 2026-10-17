@@ -38,7 +38,7 @@ export class AuthApiError extends Error {
 export type CategoryId = "all" | "academic" | "campus-life" | "career";
 
 export interface Community {
-  id?: number;
+  id: number;
   name: string;
   slug: string;
   description: string;
@@ -92,6 +92,7 @@ export interface User {
     last_name: string;
     is_verified: boolean;
     avatar?: string | null;
+    bio?: string;
 }
 
 export interface Post {
@@ -100,9 +101,9 @@ export interface Post {
     content: string;
     title: string;
     slug: string;
+    images?: string[];
     post_type: string;
     community: Community;
-    image?: File | string | null;
     score: number;
     upvote: number;
     downvote: number;
@@ -113,6 +114,20 @@ export interface Post {
     excerpt: string;
     comment_count: number;
     tags?: string[];
+    polls?: string[];
+    poll_votes?: number[];
+}
+
+export interface NewPost {
+    content: string;
+    title: string;
+    post_type: string;
+    community_id: number;
+    status?: string;
+    tags?: string[];
+    images?: File[];
+    polls?: string[];
+    poll_length?: number;
 }
 
 export interface CommunityDetail {

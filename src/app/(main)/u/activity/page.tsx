@@ -177,8 +177,8 @@ export default function ProfilePage() {
           {tab === "questions" &&
             posts.map((p) => <QuestionCard key={p.id} post={p} />)}
           {tab === "saved" &&
-            (posts.filter((p) => p.image).length > 0 ? (
-              posts.filter((p) => p.image).map((p) => (
+            (posts.length > 0 ? (
+              posts.map((p) => (
                 <QuestionCard key={p.id} post={p} />
               ))
             ) : (

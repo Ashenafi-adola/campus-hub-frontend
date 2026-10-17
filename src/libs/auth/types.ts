@@ -20,6 +20,7 @@ export type AuthUser = {
     last_name?: string;
     is_verified: string;
     avatar?: string;
+    bio?: string;
 }
 
 export type LoginInput = {

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import CommunityCard from "@/components/main/community/community-card";
 import { useCommunities } from "@/hooks/use-communities";
 import { Category } from "@/libs/types";
@@ -9,20 +9,30 @@ import { usePosts } from "@/hooks/use-posts";
 import RightSideBar from "@/components/main/layout/right-side-bar";
 import { getCategories } from "@/libs/api";
 
-
+const allCategories: Category = {
+  id: 0,
+  name: "All",
+  description: "All communities",
+  slug: "all",
+}
 
 export default function CommunitiesPage() {
-  const [category, setCategory] = useState<Category | null>(null);
+  const [category, setCategory] = useState<Category>(allCategories);
   const [categories, setCategories] = useState<Category[]>([]);
   const { posts } = usePosts();
   const { communities } = useCommunities();
   
   useEffect(() =>{
       getCategories()
-        .then((data) => setCategories(data))
+        .then((data) => setCategories([allCategories, ...data]))
         .catch((error) => console.error("Error fetching categories:", error));
   },[]);
 
+  const coms = useMemo(()=>{
+    if (category.id === 0) return communities;
+    return communities.filter((c) => c.category && c.category.id === category.id);
+  }, [category, communities])
+    
   return (
     <>
       <main className="min-w-0 flex-1 space-y-4">
@@ -52,10 +62,10 @@ export default function CommunitiesPage() {
 
         {/* Community grid */}
         {
-          communities.length > 0 ?
+          coms.length > 0 ?
             <div className="min-h-screen bg-[#f4f6f9] p-0 dark:bg-neutral-950">
               <div className="mx-auto grid max-w-full grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
-                {communities.map((c) => (
+                {coms.map((c) => (
                   <CommunityCard key={c.id} community={c} />
                 ))}
               </div>

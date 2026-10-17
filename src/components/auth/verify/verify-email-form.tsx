@@ -72,24 +72,24 @@ export default function VerifyEmailForm({email}:{email: string}) {
   }
 
   return (
-    <div className="flex flex-1 items-center justify-center bg-white px-6 py-10">
+    <div className="flex flex-1 items-center justify-center bg-white px-6 py-10 dark:bg-neutral-950">
       <div className="w-full max-w-sm text-center">
-        <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-indigo-50">
+        <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-indigo-50 dark:bg-indigo-950">
           <Mail className="h-6 w-6 text-indigo-600" />
         </div>
 
-        <h2 className="mt-5 text-2xl font-extrabold text-neutral-900">
+        <h2 className="mt-5 text-2xl font-extrabold text-neutral-900 dark:text-neutral-100">
           Verify your email
         </h2>
-        <p className="mt-2 text-sm leading-relaxed text-neutral-500">
+        <p className="mt-2 text-sm leading-relaxed text-neutral-500 dark:text-neutral-400">
           We sent a 6-digit code to{" "}
-          <span className="font-semibold text-neutral-800">
+          <span className="font-semibold text-neutral-800 dark:text-neutral-200">
             {email}
           </span>
           . Enter it below to confirm your account.
         </p>
         {error?.error && (
-          <div className="rounded-xl border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
+          <div className="rounded-xl border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700 dark:border-red-900 dark:bg-red-950/40 dark:text-red-300">
             {error.error}
           </div>
         )}
@@ -107,7 +107,7 @@ export default function VerifyEmailForm({email}:{email: string}) {
               onChange={(e) => handleChange(i, e.target.value)}
               onKeyDown={(e) => handleKeyDown(i, e)}
               onPaste={handlePaste}
-              className="h-14 w-11 rounded-xl border border-neutral-200 text-center text-xl font-bold text-neutral-900 focus:outline-none focus:ring-2 focus:ring-indigo-500/30 focus:border-indigo-500"
+              className="h-14 w-11 rounded-xl border border-neutral-200 bg-white text-center text-xl font-bold text-neutral-900 focus:outline-none focus:ring-2 focus:ring-indigo-500/30 focus:border-indigo-500 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-100"
             />
           ))}
         </div>
@@ -115,7 +115,7 @@ export default function VerifyEmailForm({email}:{email: string}) {
         <button
           disabled={!complete}
           onClick={verify}
-          className="mt-7 w-full rounded-xl bg-indigo-600 py-3 text-sm font-semibold text-white transition-colors hover:bg-indigo-700 disabled:cursor-not-allowed disabled:bg-neutral-200 disabled:text-neutral-400"
+          className="mt-7 w-full rounded-xl bg-indigo-600 py-3 text-sm font-semibold text-white transition-colors hover:bg-indigo-700 disabled:cursor-not-allowed disabled:bg-neutral-200 disabled:text-neutral-400 dark:disabled:bg-neutral-800 dark:disabled:text-neutral-500"
         >
           Verify Account
         </button>
@@ -124,7 +124,7 @@ export default function VerifyEmailForm({email}:{email: string}) {
           {cooldown > 0 ? (
             <span>
               Resend code in{" "}
-              <span className="font-mono font-semibold text-neutral-700">
+              <span className="font-mono font-semibold text-neutral-700 dark:text-neutral-300">
                 {cooldown}s
               </span>
             </span>
