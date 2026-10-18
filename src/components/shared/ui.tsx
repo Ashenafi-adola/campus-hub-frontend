@@ -1,5 +1,6 @@
 import { AuthUser } from "@/libs/auth/types";
 import { colorFor, getInitials, plural } from "@/libs/format";
+import { PollOption } from "@/libs/types";
 import Image from "next/image";
 import { useState } from "react";
 
@@ -42,11 +43,10 @@ export function Chip({
   return (
     <button
       onClick={onClick}
-      className={`flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-sm font-semibold transition-colors ${
-        active
+      className={`flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-sm font-semibold transition-colors ${active
           ? "bg-indigo-600 text-white"
           : "bg-[#eef1f6] text-neutral-600 hover:bg-neutral-200 dark:bg-neutral-800 dark:text-neutral-300 dark:hover:bg-neutral-700"
-      }`}
+        }`}
     >
       {children}
       {count !== undefined && (
@@ -128,42 +128,21 @@ export function Avatar({
   );
 }
 
-export function PollBlock({ options, o_votes }: { options: string[], o_votes: number[] }) {
+export function PollBlock({ options }: { options: PollOption[] }) {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [choice, setChoice] = useState<string | null>(null);
-  const total =
-    o_votes.reduce((sum, i) => sum + o_votes[i], 0) + (choice ? 1 : 0);
+  const [selected, setSelected] = useState<number | null>(
+    () => options.find((option) => option.voted)?.id ?? null
+  );
+  const [total, setTotal] = useState<number>(()=>options.reduce((sum, option)=>sum + option.option_votes, 0))  
 
   return (
     <div className="mt-3 space-y-2">
-      {options.map((o, i) => {
-        const votes = o_votes[i] + (choice === o ? 1 : 0);
-        const pct = total ? Math.round((votes / total) * 100) : 0;
-        const selected = choice === o;
-        return (
-          <button
-            key={i}
-            onClick={() => setChoice(selected ? null : o)}
-            className={`relative w-full overflow-hidden rounded-xl border px-3.5 py-2.5 text-left text-sm font-medium transition-colors ${
-              selected
-                ? "border-indigo-500 text-indigo-700 dark:border-indigo-400 dark:text-indigo-300"
-                : "border-neutral-200 text-neutral-700 hover:bg-neutral-50 dark:border-neutral-700 dark:text-neutral-300 dark:hover:bg-neutral-800"
-            }`}
-          >
-            {choice !== null && (
-              <span
-                className="absolute inset-y-0 left-0 bg-indigo-100/70 dark:bg-indigo-900/50"
-                style={{ width: `${pct}%` }}
-              />
-            )}
-            <span className="relative flex items-center justify-between">
-              <span>{o}</span>
-              {choice !== null && (
-                <span className="text-xs font-bold">{pct}%</span>
-              )}
-            </span>
-          </button>
-        );
-      })}
+      {
+        options.map((o) => (
+          <PollRow key={o.id} option={o} total={total} setTotal={setTotal} selected={selected} setSelected={setSelected} />
+        ))
+      }
       <p className="text-xs text-neutral-400 dark:text-neutral-500">
         {plural(total, "vote", "votes")}
         {choice === null && " · vote to see results"}
@@ -171,3 +150,61 @@ export function PollBlock({ options, o_votes }: { options: string[], o_votes: nu
     </div>
   );
 }
+
+function PollRow({ option, total, selected, setSelected, setTotal }: { option: PollOption; total: number; selected: number | null, setSelected: (id: number | null) => void, setTotal: (total: number) => void }) {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [votes, setVotes] = useState<number>(option.option_votes)
+  const pct = total ? Math.round((votes / total) * 100) : 0;
+  
+  return (
+    <button
+      onClick={() => {
+        setSelected(selected === option.id ? null : option.id); 
+        setTotal(selected===option.id ? total-1: selected===null ? total+1 : total); 
+      }}
+      className={`relative w-full overflow-hidden rounded-xl border px-3.5 py-2.5 text-left text-sm font-medium transition-colors ${selected === option.id
+        ? "border-indigo-500 text-indigo-700 dark:border-indigo-400 dark:text-indigo-300"
+        : "border-neutral-200 text-neutral-700 hover:bg-neutral-50 dark:border-neutral-700 dark:text-neutral-300 dark:hover:bg-neutral-800"
+        }`}
+    >
+      {selected !== null && (
+        <span
+          className="absolute inset-y-0 left-0 bg-indigo-100/70 dark:bg-indigo-900/50"
+          style={{ width: `${pct}%` }}
+        />
+      )}
+      <span className="relative flex items-center justify-between">
+        <span>{option.text}</span>
+        {selected !== null && (
+          <span className="text-xs font-bold">{pct}%</span>
+        )}
+      </span>
+    </button>
+  );
+} 
+
+// const selected = o.voted || choice === o.text;
+// const votes = o.option_votes + (selected ? 1 : 0);
+// const pct = total ? Math.round((votes / total) * 100) : 0;
+// return (
+//   <button
+//     key={i}
+//     onClick={() => setChoice(selected ? null : o.text)}
+//     className={`relative w-full overflow-hidden rounded-xl border px-3.5 py-2.5 text-left text-sm font-medium transition-colors ${selected
+//         ? "border-indigo-500 text-indigo-700 dark:border-indigo-400 dark:text-indigo-300"
+//         : "border-neutral-200 text-neutral-700 hover:bg-neutral-50 dark:border-neutral-700 dark:text-neutral-300 dark:hover:bg-neutral-800"
+//       }`}
+//   >
+//     {choice !== null && (
+//       <span
+//         className="absolute inset-y-0 left-0 bg-indigo-100/70 dark:bg-indigo-900/50"
+//         style={{ width: `${pct}%` }}
+//       />
+//     )}
+//     <span className="relative flex items-center justify-between">
+//       <span>{o.text}</span>
+//       {choice !== null && (
+//         <span className="text-xs font-bold">{pct}%</span>
+//       )}
+//     </span>
+//   </button>

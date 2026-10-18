@@ -114,8 +114,17 @@ export interface Post {
     excerpt: string;
     comment_count: number;
     tags?: string[];
-    polls?: string[];
-    poll_votes?: number[];
+    polls?: PollOption[];
+    poll_votes: number[];
+}
+
+export interface PollOption {
+    id: number;
+    post: 45;
+    text: string;
+    option_votes: number,
+    voted: boolean;
+
 }
 
 export interface NewPost {

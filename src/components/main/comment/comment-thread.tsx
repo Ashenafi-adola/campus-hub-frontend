@@ -24,9 +24,10 @@ function addReply(
   parentId: number,
   reply: Comment
 ): Comment[] {
+  // console.log(comments, parentId, reply)
   return comments.map((c) =>
     c.id === parentId
-      ? { ...c, replies: [...c.replies, reply] }
+      ? { ...c, replies: [reply, ...c.replies] }
       : { ...c, replies: addReply(c.replies, parentId, reply) }
   );
 }

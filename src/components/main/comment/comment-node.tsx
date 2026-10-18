@@ -79,10 +79,8 @@ export function CommentNode({
   const [replying, setReplying] = useState(false);
   const [vote, setVote] = useState<number>(comment.score);
   const [currentComment, setCurrentComment] = useState<Comment>(comment);
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [replies, setReplies] = useState<Comment[]>(comment.replies.sort((a,b)=> a.score - b.score));
 
-  const score = currentComment.score + vote;
+  const replies: Comment[] = comment.replies.sort((a,b)=> a.score - b.score);
   const replyCount = countAll(comment.replies);
 
 
@@ -217,7 +215,7 @@ export function CommentNode({
                       : "text-neutral-600 dark:text-neutral-300"
                     }`}
                 >
-                  {score}
+                  {vote}
                 </span>
                 <button
                   onClick={downVote}

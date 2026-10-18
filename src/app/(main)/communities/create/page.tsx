@@ -117,7 +117,7 @@ export default function CreateCommunityPage() {
                         <Users className="h-10 w-10 text-indigo-600" />
                     </div>
                     <h3 className="mt-3 font-semibold text-neutral-900 dark:text-neutral-100">
-                        {name.trim() ? `r/${name.replace(/\s+/g, "")}` : "c/YourCommunity"}
+                        {name.trim() ? `c/${name.replace(/\s+/g, "")}` : "c/YourCommunity"}
                     </h3>
                     <p className="mt-0.5 text-xs text-neutral-400 dark:text-neutral-500">0 members · just now</p>
                     <p className="mt-2.5 text-sm leading-relaxed text-neutral-500 dark:text-neutral-400">
@@ -140,7 +140,7 @@ export default function CreateCommunityPage() {
                     </div>
                     <div className="relative">
                         <span className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-sm font-medium text-neutral-400 dark:text-neutral-500">
-                            r/
+                            c/
                         </span>
                         <input
                             type="text"

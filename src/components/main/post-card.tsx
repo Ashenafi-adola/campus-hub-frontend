@@ -18,7 +18,7 @@ function QuestionCard({ post }: { post: Post }) {
   const [saved, setSaved] = useState<boolean>(false);
   const [open, setOpen] = useState<boolean>(false);
   const [hasOpenedComments, setHasOpenedComments] = useState<boolean>(false);
-
+  const unanswered = post.post_type === "question" && post.comment_count === 0;
   if (!post?.author || !post?.community) return null;
 
   const panelId = `comment-${post.id}`
@@ -40,8 +40,6 @@ function QuestionCard({ post }: { post: Post }) {
     setVotes(res.score);
     setCurrentPost(res);
   }
-  console.log(post.images)
-
 
   return (
     <div className="rounded-2xl border border-neutral-200 bg-white p-5 dark:border-neutral-800 dark:bg-neutral-900">
@@ -74,7 +72,7 @@ function QuestionCard({ post }: { post: Post }) {
             <div className="text-xs text-neutral-400 dark:text-neutral-500">{getTimeSince(currentPost.created_at)}</div>
           </div>
         </div>
-        {currentPost.status && (
+        {unanswered && (
           <span className="shrink-0 rounded-full bg-orange-50 px-3 py-1 text-xs font-semibold text-orange-600 dark:bg-orange-950/50 dark:text-orange-300">
             Unanswered
           </span>
@@ -94,9 +92,8 @@ function QuestionCard({ post }: { post: Post }) {
       </p>
       {post.images && post.images.length > 0 && (
         <div
-          className={`mt-3 grid gap-2 ${
-            post.images.length === 1 ? "grid-cols-1" : "grid-cols-2"
-          }`}
+          className={`mt-3 grid gap-2 ${post.images.length === 1 ? "grid-cols-1" : "grid-cols-2"
+            }`}
         >
           {post.images.map((src, i) => (
             <Image
@@ -106,16 +103,15 @@ function QuestionCard({ post }: { post: Post }) {
               width={100}
               unoptimized
               alt=""
-              className={`w-full rounded-xl object-cover ${
-                post.images!.length === 1 ? "max-h-80" : "h-40"
-              }`}
+              className={`w-full rounded-xl object-cover ${post.images!.length === 1 ? "max-h-80" : "h-40"
+                }`}
             />
           ))}
         </div>
       )}
 
 
-      {currentPost.post_type === "poll" && currentPost.polls && <PollBlock options={currentPost.polls} o_votes={currentPost.poll_votes || [0, 0, 0, 0]} />}
+      {currentPost.post_type === "poll" && currentPost.polls && <PollBlock options={currentPost.polls} />}
       <div className="mt-3 flex flex-wrap gap-2">
         {currentPost.tags && currentPost.tags.map((tag) => (
           <span
@@ -130,38 +126,35 @@ function QuestionCard({ post }: { post: Post }) {
       <div className="mt-4 flex items-center justify-between border-t border-neutral-100 pt-3.5 dark:border-neutral-800">
         <div className="flex items-center gap-1 rounded-2xl bg-gray-100 dark:bg-neutral-800">
           <button
-                  onClick={upVote}
-                  className={`rounded-full p-1 hover:bg-neutral-100 dark:hover:bg-neutral-700 ${
-                    currentPost.upvoted ? "text-indigo-600" : ""
-                  }`}
-                  aria-label="Upvote"
-                >
-                  <ArrowBigUp
-                    className={`h-5 w-5 ${currentPost.upvoted ? "fill-indigo-600" : ""}`}
-                  />
-                </button>
-                <span
-                  className={`min-w-[1.5rem] text-center text-xs font-bold ${
-                    currentPost.upvoted
-                      ? "text-indigo-600"
-                      : currentPost.downvoted
-                      ? "text-rose-500"
-                      : "text-neutral-600 dark:text-neutral-300"
-                  }`}
-                >
-                  {votes}
-                </span>
-                <button
-                  onClick={downVote}
-                  className={`rounded-full p-1 hover:bg-neutral-100 dark:hover:bg-neutral-700 ${
-                    currentPost.downvoted ? "text-rose-500" : ""
-                  }`}
-                  aria-label="Downvote"
-                >
-                  <ArrowBigDown
-                    className={`h-5 w-5 ${currentPost.downvoted ? "fill-rose-500" : ""}`}
-                  />
-                </button>
+            onClick={upVote}
+            className={`rounded-full p-1 hover:bg-neutral-100 dark:hover:bg-neutral-700 ${currentPost.upvoted ? "text-indigo-600" : ""
+              }`}
+            aria-label="Upvote"
+          >
+            <ArrowBigUp
+              className={`h-5 w-5 ${currentPost.upvoted ? "fill-indigo-600" : ""}`}
+            />
+          </button>
+          <span
+            className={`min-w-[1.5rem] text-center text-xs font-bold ${currentPost.upvoted
+                ? "text-indigo-600"
+                : currentPost.downvoted
+                  ? "text-rose-500"
+                  : "text-neutral-600 dark:text-neutral-300"
+              }`}
+          >
+            {votes}
+          </span>
+          <button
+            onClick={downVote}
+            className={`rounded-full p-1 hover:bg-neutral-100 dark:hover:bg-neutral-700 ${currentPost.downvoted ? "text-rose-500" : ""
+              }`}
+            aria-label="Downvote"
+          >
+            <ArrowBigDown
+              className={`h-5 w-5 ${currentPost.downvoted ? "fill-rose-500" : ""}`}
+            />
+          </button>
         </div>
 
         <div className="flex items-center gap-4 text-sm text-neutral-500 dark:text-neutral-400">
