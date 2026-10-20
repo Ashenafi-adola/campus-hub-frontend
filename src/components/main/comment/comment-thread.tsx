@@ -44,30 +44,30 @@ export function CommentThread({
   const [sort, setSort] = useState<SortId>("best");
   const [sortOpen, setSortOpen] = useState(false);
   const [comments, setComments] = useState<Comment[]>([]);
-  const requestedSlug = useRef<string | null>(null);
+  const requestedSlug = useRef<number | null>(null);
   const commentsVersion = useRef(0);
 
   useEffect(() => {
     if (!enabled) return;
-    if (requestedSlug.current === post.slug) return;
-    requestedSlug.current = post.slug;
+    if (requestedSlug.current === post.id) return;
+    requestedSlug.current = post.id;
     const requestVersion = commentsVersion.current;
-    getComments(post.slug)
+    getComments(post.id)
       .then((res) => {
         if (
-          requestedSlug.current === post.slug &&
+          requestedSlug.current === post.id &&
           commentsVersion.current === requestVersion
         ) {
           setComments(res.sort((a, b) => a.score - b.score));
         }
       })
       .catch((error) => {
-        if (requestedSlug.current === post.slug) {
+        if (requestedSlug.current === post.id) {
           requestedSlug.current = null;
           console.error(error);
         }
   });
-}, [enabled, post.slug]);
+}, [enabled, post.id]);
 
 
   const newComment = async (text: string, parent?: number): Promise<Comment> => {

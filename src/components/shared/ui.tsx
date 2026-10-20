@@ -1,3 +1,4 @@
+import { getPollVotes, votePoll } from "@/libs/api";
 import { AuthUser } from "@/libs/auth/types";
 import { colorFor, getInitials, plural } from "@/libs/format";
 import { PollOption } from "@/libs/types";
@@ -129,39 +130,99 @@ export function Avatar({
 }
 
 export function PollBlock({ options }: { options: PollOption[] }) {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [choice, setChoice] = useState<string | null>(null);
   const [selected, setSelected] = useState<number | null>(
     () => options.find((option) => option.voted)?.id ?? null
   );
-  const [total, setTotal] = useState<number>(()=>options.reduce((sum, option)=>sum + option.option_votes, 0))  
+  const [votes, setVotes] = useState<Record<number, number>>(() =>
+    Object.fromEntries(options.map((option) => [option.id, option.option_votes]))
+  );
+  const [isVoting, setIsVoting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const total = Object.values(votes).reduce((sum, count) => sum + count, 0);
+
+  const refreshVotes = async () => {
+    const results = await Promise.all(options.map((option) => getPollVotes(option.id)));
+    setVotes(
+      Object.fromEntries(
+        options.map((option, index) => [option.id, results[index].option_votes])
+      )
+    );
+  };
+
+  const handleVote = async (optionId: number) => {
+    if (isVoting) return;
+
+    setIsVoting(true);
+    setError(null);
+
+    let voteSubmitted = false;
+    try {
+      await votePoll(optionId);
+      voteSubmitted = true;
+      setSelected((current) => (current === optionId ? null : optionId));
+      await refreshVotes();
+    } catch (cause) {
+      setError(
+        voteSubmitted
+          ? "Your vote was submitted, but the results could not be refreshed."
+          : cause instanceof Error
+            ? cause.message
+            : "Your vote could not be submitted."
+      );
+    } finally {
+      setIsVoting(false);
+    }
+  };
 
   return (
     <div className="mt-3 space-y-2">
-      {
-        options.map((o) => (
-          <PollRow key={o.id} option={o} total={total} setTotal={setTotal} selected={selected} setSelected={setSelected} />
-        ))
-      }
+      {options.map((option) => (
+        <PollRow
+          key={option.id}
+          option={option}
+          votes={votes[option.id] ?? option.option_votes}
+          total={total}
+          selected={selected}
+          isVoting={isVoting}
+          onVote={handleVote}
+        />
+      ))}
       <p className="text-xs text-neutral-400 dark:text-neutral-500">
         {plural(total, "vote", "votes")}
-        {choice === null && " · vote to see results"}
+        {selected === null && " · vote to see results"}
       </p>
+      {error && (
+        <p className="text-xs text-red-600 dark:text-red-400" role="alert">
+          {error}
+        </p>
+      )}
     </div>
   );
 }
 
-function PollRow({ option, total, selected, setSelected, setTotal }: { option: PollOption; total: number; selected: number | null, setSelected: (id: number | null) => void, setTotal: (total: number) => void }) {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [votes, setVotes] = useState<number>(option.option_votes)
+function PollRow({
+  option,
+  votes,
+  total,
+  selected,
+  isVoting,
+  onVote,
+}: {
+  option: PollOption;
+  votes: number;
+  total: number;
+  selected: number | null;
+  isVoting: boolean;
+  onVote: (id: number) => void;
+}) {
   const pct = total ? Math.round((votes / total) * 100) : 0;
-  
+
   return (
     <button
-      onClick={() => {
-        setSelected(selected === option.id ? null : option.id); 
-        setTotal(selected===option.id ? total-1: selected===null ? total+1 : total); 
-      }}
+      type="button"
+      onClick={() => onVote(option.id)}
+      disabled={isVoting}
+      aria-pressed={selected === option.id}
       className={`relative w-full overflow-hidden rounded-xl border px-3.5 py-2.5 text-left text-sm font-medium transition-colors ${selected === option.id
         ? "border-indigo-500 text-indigo-700 dark:border-indigo-400 dark:text-indigo-300"
         : "border-neutral-200 text-neutral-700 hover:bg-neutral-50 dark:border-neutral-700 dark:text-neutral-300 dark:hover:bg-neutral-800"
@@ -181,30 +242,4 @@ function PollRow({ option, total, selected, setSelected, setTotal }: { option: P
       </span>
     </button>
   );
-} 
-
-// const selected = o.voted || choice === o.text;
-// const votes = o.option_votes + (selected ? 1 : 0);
-// const pct = total ? Math.round((votes / total) * 100) : 0;
-// return (
-//   <button
-//     key={i}
-//     onClick={() => setChoice(selected ? null : o.text)}
-//     className={`relative w-full overflow-hidden rounded-xl border px-3.5 py-2.5 text-left text-sm font-medium transition-colors ${selected
-//         ? "border-indigo-500 text-indigo-700 dark:border-indigo-400 dark:text-indigo-300"
-//         : "border-neutral-200 text-neutral-700 hover:bg-neutral-50 dark:border-neutral-700 dark:text-neutral-300 dark:hover:bg-neutral-800"
-//       }`}
-//   >
-//     {choice !== null && (
-//       <span
-//         className="absolute inset-y-0 left-0 bg-indigo-100/70 dark:bg-indigo-900/50"
-//         style={{ width: `${pct}%` }}
-//       />
-//     )}
-//     <span className="relative flex items-center justify-between">
-//       <span>{o.text}</span>
-//       {choice !== null && (
-//         <span className="text-xs font-bold">{pct}%</span>
-//       )}
-//     </span>
-//   </button>
+}

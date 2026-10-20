@@ -100,7 +100,6 @@ export interface Post {
     author: User;
     content: string;
     title: string;
-    slug: string;
     images?: string[];
     post_type: string;
     community: Community;

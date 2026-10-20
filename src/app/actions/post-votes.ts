@@ -9,12 +9,12 @@ export async function getAccessToken(): Promise<string> {
   return access;
 }
 
-export async function upvotePostForCurrentUser(slug: string) {
-  if (!slug.trim()) throw new Error("A post slug is required.");
-  return upvotePost(slug, await getAccessToken());
+export async function upvotePostForCurrentUser(id: number) {
+  if (!id) throw new Error("A post id is required.");
+  return upvotePost(id, await getAccessToken());
 }
 
-export async function downvotePostForCurrentUser(slug: string) {
-  if (!slug.trim()) throw new Error("A post slug is required.");
-  return downvotePost(slug, await getAccessToken());
+export async function downvotePostForCurrentUser(id: number) {
+  if (!id) throw new Error("A post id is required.");
+  return downvotePost(id, await getAccessToken());
 }

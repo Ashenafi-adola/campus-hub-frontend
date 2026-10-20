@@ -30,13 +30,13 @@ function QuestionCard({ post }: { post: Post }) {
 
 
   const upVote = async () => {
-    const res = await upvotePostForCurrentUser(post.slug);
+    const res = await upvotePostForCurrentUser(post.id);
     setVotes(res.score);
     setCurrentPost(res);
   }
 
   const downVote = async () => {
-    const res = await downvotePostForCurrentUser(post.slug);
+    const res = await downvotePostForCurrentUser(post.id);
     setVotes(res.score);
     setCurrentPost(res);
   }

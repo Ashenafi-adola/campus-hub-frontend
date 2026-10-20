@@ -239,8 +239,8 @@ export async function getCommunity(slug: string | undefined, signal?: AbortSigna
 }
 
 
-export async function upvotePost(slug:string, access: string) {
-    const res = await fetch(`${API_URL}/posts/${slug}/upvote/`, {
+export async function upvotePost(id:number, access: string) {
+    const res = await fetch(`${API_URL}/posts/${id}/upvote/`, {
         method:"POST",
         headers: {
             "Content-Type": "application/json",
@@ -253,8 +253,8 @@ export async function upvotePost(slug:string, access: string) {
     }
     return res.json();
 }
-export async function downvotePost(slug:string, access: string) {
-    const res = await fetch(`${API_URL}/posts/${slug}/downvote/`, {
+export async function downvotePost(id:number, access: string) {
+    const res = await fetch(`${API_URL}/posts/${id}/downvote/`, {
         method:"POST",
         headers: {
             "Content-Type": "application/json",
@@ -264,6 +264,34 @@ export async function downvotePost(slug:string, access: string) {
     })
     if(!res.ok){
         throw new Error(`Couldn't downvote the post ${res.status}`)
+    }
+    return res.json();
+}
+
+export async function votePoll(id: number) {
+    const res = await fetch(`${API_URL}/polls/${id}/vote/`, {
+        method:"POST",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${await getAccessToken()}`
+        },
+        body: JSON.stringify({})
+    })
+    if(!res.ok){
+        throw new Error(`Couldn't vote the poll ${res.status}`)
+    }
+    return res.json();
+}
+
+export async function getPollVotes(id: number) {
+    const res = await fetch(`${API_URL}/polls/${id}/`, {
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${await getAccessToken()}`
+        },
+    })
+    if(!res.ok){
+        throw new Error(`Couldn't get the poll votes ${res.status}`)
     }
     return res.json();
 }
@@ -334,8 +362,8 @@ export async function createCommunity(payload: NewCommunity, token: string): Pro
     return res.json();
 }
 
-export async function getComments(post_slug: string): Promise<Comment[]> {
-    const res = await fetch(`${API_URL}/comments/?post_slug=${post_slug}`, {
+export async function getComments(post_id: number): Promise<Comment[]> {
+    const res = await fetch(`${API_URL}/comments/?post_id=${post_id}`, {
         headers: {
             Authorization: `Bearer ${await getAccessToken()}`
         }
