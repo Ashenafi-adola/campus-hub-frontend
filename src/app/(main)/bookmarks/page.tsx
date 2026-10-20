@@ -18,6 +18,10 @@ import {
   Image as ImageIcon,
   BarChart3,
 } from "lucide-react";
+import { getSavedPosts } from "@/libs/api";
+import { SavedPost } from "@/libs/types";
+import QuestionCard from "@/components/main/post-card";
+import { plural } from "@/libs/format";
 
 /* ================================================================= */
 /*  Types & data                                                     */
@@ -27,29 +31,12 @@ type PostType = "question" | "discussion" | "image" | "poll";
 type SortId = "recent" | "oldest" | "votes" | "answers";
 type ViewMode = "list" | "grid";
 
-interface SavedPost {
-  id: string;
-  type: PostType;
-  author: string;
-  school: string;
-  community: string;
-  postedAt: string;
-  savedAgeHours: number;
-  title: string;
-  body: string;
-  tags: string[];
-  upvotes: number;
-  answers: number;
-  collectionId: string | null;
-}
 
 interface Collection {
   id: string;
   name: string;
   color: string;
 }
-
-const ME = "Alex Johnson";
 
 const TYPE_META: Record<
   PostType,
@@ -85,175 +72,18 @@ const INITIAL_COLLECTIONS: Collection[] = [
   { id: "projects", name: "Project ideas", color: "bg-emerald-500" },
 ];
 
-const INITIAL_SAVED: SavedPost[] = [
-  {
-    id: "s1",
-    type: "question",
-    author: "Priya Shah",
-    school: "UC Berkeley",
-    community: "r/ComputerScience",
-    postedAt: "2 days ago",
-    savedAgeHours: 3,
-    title: "How to optimize Floyd-Warshall algorithm for dense graphs?",
-    body: "I am working on an all-pairs shortest path problem where the edge density is extremely high. Standard implementation is O(V^3), but I wonder if there is an alternative representation that performs better under GPU parallelism or cache-aware blocking?",
-    tags: ["Algorithms", "Graphs", "Optimization"],
-    upvotes: 56,
-    answers: 11,
-    collectionId: "exam",
-  },
-  {
-    id: "s2",
-    type: "discussion",
-    author: ME,
-    school: "Stanford University",
-    community: "r/StudyTips",
-    postedAt: "1 week ago",
-    savedAgeHours: 26,
-    title: "My structured system for keeping track of research papers",
-    body: "After trying Zotero, Notion, and physical folders, I finally designed a study pipeline that keeps me sane. Here's a brief markdown structure and tagging guide I use to summarize 10+ papers weekly.",
-    tags: ["Research", "StudyHabits", "Organization"],
-    upvotes: 142,
-    answers: 29,
-    collectionId: "read-later",
-  },
-  {
-    id: "s3",
-    type: "question",
-    author: "Ethan Wright",
-    school: "MIT",
-    community: "r/Mathematics",
-    postedAt: "4 hours ago",
-    savedAgeHours: 50,
-    title: "Best resources for linear algebra?",
-    body: "My professor is moving extremely fast and the textbook is super abstract. Are there any online series, visual guides, or supplementary problem sheets you'd recommend for someone who needs geometric intuition?",
-    tags: ["LinearAlgebra", "StudyResources"],
-    upvotes: 89,
-    answers: 15,
-    collectionId: "exam",
-  },
-  {
-    id: "s4",
-    type: "poll",
-    author: "Priya Shah",
-    school: "UC Berkeley",
-    community: "r/CampusLife",
-    postedAt: "5 hours ago",
-    savedAgeHours: 72,
-    title: "Best place to study on campus?",
-    body: "",
-    tags: ["Campus", "StudySpots"],
-    upvotes: 37,
-    answers: 9,
-    collectionId: null,
-  },
-  {
-    id: "s5",
-    type: "discussion",
-    author: "Marcus Aurelius",
-    school: "MIT",
-    community: "r/ComputerScience",
-    postedAt: "12 days ago",
-    savedAgeHours: 120,
-    title: "Recursive vs iterative solutions chart",
-    body: "I drafted a quick cheatsheet summarizing complexity tradeoffs, space constraints, and call stack overheads for common algorithms. Hope this helps anyone preparing for midterms!",
-    tags: ["Algorithms", "Cheatsheet"],
-    upvotes: 156,
-    answers: 9,
-    collectionId: "exam",
-  },
-  {
-    id: "s6",
-    type: "question",
-    author: "Grace Liu",
-    school: "UT Austin",
-    community: "r/Scholarships",
-    postedAt: "3 days ago",
-    savedAgeHours: 200,
-    title: "How do I find scholarships as a sophomore?",
-    body: "Most lists I find are for incoming freshmen or seniors. Are there databases or department offices that actually surface awards for second-year students?",
-    tags: ["Scholarships", "Funding"],
-    upvotes: 64,
-    answers: 7,
-    collectionId: "read-later",
-  },
-  {
-    id: "s7",
-    type: "image",
-    author: "Leo Martin",
-    school: "Georgia Tech",
-    community: "r/CampusLife",
-    postedAt: "2 weeks ago",
-    savedAgeHours: 300,
-    title: "Photo walk: old campus and new buildings",
-    body: "A few of us are taking a relaxed photo walk on Saturday morning, starting by the clock tower. All cameras and experience levels welcome.",
-    tags: ["Photography", "Campus"],
-    upvotes: 23,
-    answers: 4,
-    collectionId: null,
-  },
-  {
-    id: "s8",
-    type: "question",
-    author: "Lily Chen",
-    school: "UC Berkeley",
-    community: "r/StudyTips",
-    postedAt: "1 day ago",
-    savedAgeHours: 400,
-    title: "Tips for surviving finals week?",
-    body: "Facing three back-to-back exams next week and the stress is setting in. How do you block out your study days, organize summaries, and keep your sanity without burning out entirely by Wednesday?",
-    tags: ["Finals", "Productivity"],
-    upvotes: 112,
-    answers: 24,
-    collectionId: "exam",
-  },
-  {
-    id: "s9",
-    type: "question",
-    author: "Maya Cohen",
-    school: "NYU",
-    community: "r/ComputerScience",
-    postedAt: "5 hours ago",
-    savedAgeHours: 500,
-    title: "How to setup React with Tailwind?",
-    body: "I'm starting a side project and the docs seem to have changed a few times. What's the cleanest way to get React and Tailwind working together today, and do I still need a PostCSS config?",
-    tags: ["React", "Tailwind", "WebDev"],
-    upvotes: 8,
-    answers: 3,
-    collectionId: "projects",
-  },
-  {
-    id: "s10",
-    type: "discussion",
-    author: "Noah Park",
-    school: "Georgia Tech",
-    community: "r/ComputerScience",
-    postedAt: "3 weeks ago",
-    savedAgeHours: 700,
-    title: "Open-source projects friendly to first-time contributors",
-    body: "I've collected a list of repositories with good-first-issue labels, clear contributing guides, and maintainers who actually review pull requests within a few days.",
-    tags: ["OpenSource", "Career"],
-    upvotes: 71,
-    answers: 18,
-    collectionId: "projects",
-  },
-];
-
 /* ================================================================= */
 /*  Helpers                                                          */
 /* ================================================================= */
 
-function plural(n: number, one: string, many: string) {
-  return `${n} ${n === 1 ? one : many}`;
-}
-
-function savedLabel(hours: number) {
-  if (hours < 1) return "Saved just now";
-  if (hours < 24) return `Saved ${plural(Math.round(hours), "hour", "hours")} ago`;
-  const days = Math.round(hours / 24);
-  if (days < 7) return `Saved ${plural(days, "day", "days")} ago`;
-  const weeks = Math.round(days / 7);
-  return `Saved ${plural(weeks, "week", "weeks")} ago`;
-}
+// function savedLabel(hours: number) {
+//   if (hours < 1) return "Saved just now";
+//   if (hours < 24) return `Saved ${plural(Math.round(hours), "hour", "hours")} ago`;
+//   const days = Math.round(hours / 24);
+//   if (days < 7) return `Saved ${plural(days, "day", "days")} ago`;
+//   const weeks = Math.round(days / 7);
+//   return `Saved ${plural(weeks, "week", "weeks")} ago`;
+// }
 
 function SideCard({
   title,
@@ -362,135 +192,135 @@ function MoveMenu({
 /*  Saved post card                                                  */
 /* ================================================================= */
 
-function SavedCard({
-  post,
-  view,
-  collections,
-  selecting,
-  selected,
-  onToggleSelect,
-  onUnsave,
-  onMove,
-}: {
-  post: SavedPost;
-  view: ViewMode;
-  collections: Collection[];
-  selecting: boolean;
-  selected: boolean;
-  onToggleSelect: (id: string) => void;
-  onUnsave: (id: string) => void;
-  onMove: (id: string, collectionId: string | null) => void;
-}) {
-  const meta = TYPE_META[post.type];
-  const collection = collections.find((c) => c.id === post.collectionId);
+// function SavedCard({
+//   post,
+//   view,
+//   collections,
+//   selecting,
+//   selected,
+//   onToggleSelect,
+//   onUnsave,
+//   onMove,
+// }: {
+//   post: SavedPost;
+//   view: ViewMode;
+//   collections: Collection[];
+//   selecting: boolean;
+//   selected: boolean;
+//   onToggleSelect: (id: string) => void;
+//   onUnsave: (id: string) => void;
+//   onMove: (id: string, collectionId: string | null) => void;
+// }) {
+//   const meta = TYPE_META[post.type];
+//   const collection = collections.find((c) => c.id === post.collectionId);
 
-  return (
-    <div
-      className={`flex gap-3 rounded-2xl border bg-white p-4 transition-colors sm:p-5 ${selected
-          ? "border-indigo-500 ring-2 ring-indigo-500/20"
-          : "border-neutral-200 hover:border-neutral-300"
-        }`}
-    >
-      {selecting && (
-        <button
-          onClick={() => onToggleSelect(post.id)}
-          aria-label={selected ? "Deselect post" : "Select post"}
-          aria-pressed={selected}
-          className={`mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-md border-2 transition-colors ${selected
-              ? "border-indigo-600 bg-indigo-600"
-              : "border-neutral-300 bg-white hover:border-indigo-400"
-            }`}
-        >
-          {selected && <Check className="h-3 w-3 text-white" strokeWidth={4} />}
-        </button>
-      )}
+//   return (
+//     <div
+//       className={`flex gap-3 rounded-2xl border bg-white p-4 transition-colors sm:p-5 ${selected
+//           ? "border-indigo-500 ring-2 ring-indigo-500/20"
+//           : "border-neutral-200 hover:border-neutral-300"
+//         }`}
+//     >
+//       {selecting && (
+//         <button
+//           onClick={() => onToggleSelect(post.id)}
+//           aria-label={selected ? "Deselect post" : "Select post"}
+//           aria-pressed={selected}
+//           className={`mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-md border-2 transition-colors ${selected
+//               ? "border-indigo-600 bg-indigo-600"
+//               : "border-neutral-300 bg-white hover:border-indigo-400"
+//             }`}
+//         >
+//           {selected && <Check className="h-3 w-3 text-white" strokeWidth={4} />}
+//         </button>
+//       )}
 
-      <div className="flex min-w-0 flex-1 flex-col">
-        <div className="flex flex-wrap items-center gap-x-2 gap-y-1.5 text-xs">
-          <span
-            className={`rounded-full px-2.5 py-1 font-semibold ${meta.chip}`}
-          >
-            {meta.label}
-          </span>
-          <a href="#" className="font-semibold text-indigo-600 hover:underline">
-            {post.community}
-          </a>
-          <span className="text-neutral-400">
-            · {post.author} · {post.postedAt}
-          </span>
-          {collection && (
-            <span className="ml-auto flex items-center gap-1.5 rounded-full bg-neutral-100 px-2.5 py-1 font-semibold text-neutral-600">
-              <span className={`h-2 w-2 rounded-full ${collection.color}`} />
-              {collection.name}
-            </span>
-          )}
-        </div>
+//       <div className="flex min-w-0 flex-1 flex-col">
+//         <div className="flex flex-wrap items-center gap-x-2 gap-y-1.5 text-xs">
+//           <span
+//             className={`rounded-full px-2.5 py-1 font-semibold ${meta.chip}`}
+//           >
+//             {meta.label}
+//           </span>
+//           <a href="#" className="font-semibold text-indigo-600 hover:underline">
+//             {post.community}
+//           </a>
+//           <span className="text-neutral-400">
+//             · {post.author} · {post.postedAt}
+//           </span>
+//           {collection && (
+//             <span className="ml-auto flex items-center gap-1.5 rounded-full bg-neutral-100 px-2.5 py-1 font-semibold text-neutral-600">
+//               <span className={`h-2 w-2 rounded-full ${collection.color}`} />
+//               {collection.name}
+//             </span>
+//           )}
+//         </div>
 
-        <a
-          href="#"
-          className="mt-2.5 text-[17px] font-bold leading-snug text-neutral-900 hover:text-indigo-700"
-        >
-          {post.title}
-        </a>
+//         <a
+//           href="#"
+//           className="mt-2.5 text-[17px] font-bold leading-snug text-neutral-900 hover:text-indigo-700"
+//         >
+//           {post.title}
+//         </a>
 
-        {post.body && (
-          <p
-            className={`mt-1.5 text-sm leading-relaxed text-neutral-500 ${view === "grid" ? "line-clamp-3" : "line-clamp-2"
-              }`}
-          >
-            {post.body}
-          </p>
-        )}
+//         {post.body && (
+//           <p
+//             className={`mt-1.5 text-sm leading-relaxed text-neutral-500 ${view === "grid" ? "line-clamp-3" : "line-clamp-2"
+//               }`}
+//           >
+//             {post.body}
+//           </p>
+//         )}
 
-        <div className="mt-3 flex flex-wrap gap-2">
-          {post.tags.slice(0, 3).map((tag) => (
-            <span
-              key={tag}
-              className="rounded-md bg-neutral-100 px-2.5 py-1 text-xs font-medium text-neutral-600"
-            >
-              {tag}
-            </span>
-          ))}
-        </div>
+//         <div className="mt-3 flex flex-wrap gap-2">
+//           {post.tags.slice(0, 3).map((tag) => (
+//             <span
+//               key={tag}
+//               className="rounded-md bg-neutral-100 px-2.5 py-1 text-xs font-medium text-neutral-600"
+//             >
+//               {tag}
+//             </span>
+//           ))}
+//         </div>
 
-        {/* Spacer keeps footers aligned across a row in grid view */}
-        <div className="flex-1" />
+//         {/* Spacer keeps footers aligned across a row in grid view */}
+//         <div className="flex-1" />
 
-        <div className="mt-4 flex items-center justify-between gap-3 border-t border-neutral-100 pt-3.5">
-          <div className="flex min-w-0 flex-wrap items-center gap-x-4 gap-y-1 text-sm text-neutral-500">
-            <span className="flex items-center gap-1 font-semibold text-neutral-700">
-              <ChevronUp className="h-4 w-4" />
-              {post.upvotes}
-            </span>
-            <span className="flex items-center gap-1.5">
-              <MessageSquare className="h-4 w-4" />
-              {plural(post.answers, "answer", "answers")}
-            </span>
-            <span className="text-xs text-neutral-400">
-              {savedLabel(post.savedAgeHours)}
-            </span>
-          </div>
+//         <div className="mt-4 flex items-center justify-between gap-3 border-t border-neutral-100 pt-3.5">
+//           <div className="flex min-w-0 flex-wrap items-center gap-x-4 gap-y-1 text-sm text-neutral-500">
+//             <span className="flex items-center gap-1 font-semibold text-neutral-700">
+//               <ChevronUp className="h-4 w-4" />
+//               {post.upvotes}
+//             </span>
+//             <span className="flex items-center gap-1.5">
+//               <MessageSquare className="h-4 w-4" />
+//               {plural(post.answers, "answer", "answers")}
+//             </span>
+//             <span className="text-xs text-neutral-400">
+//               {savedLabel(post.savedAgeHours)}
+//             </span>
+//           </div>
 
-          <div className="flex shrink-0 items-center">
-            <MoveMenu
-              collections={collections}
-              current={post.collectionId}
-              onMove={(cid) => onMove(post.id, cid)}
-            />
-            <button
-              onClick={() => onUnsave(post.id)}
-              aria-label="Remove from saved"
-              title="Remove from saved"
-              className="rounded-full p-2 text-indigo-600 hover:bg-indigo-50"
-            >
-              <Bookmark className="h-4 w-4 fill-indigo-600" />
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
+//           <div className="flex shrink-0 items-center">
+//             <MoveMenu
+//               collections={collections}
+//               current={post.collectionId}
+//               onMove={(cid) => onMove(post.id, cid)}
+//             />
+//             <button
+//               onClick={() => onUnsave(post.id)}
+//               aria-label="Remove from saved"
+//               title="Remove from saved"
+//               className="rounded-full p-2 text-indigo-600 hover:bg-indigo-50"
+//             >
+//               <Bookmark className="h-4 w-4 fill-indigo-600" />
+//             </button>
+//           </div>
+//         </div>
+//       </div>
+//     </div>
+//   );
+// }
 
 /* ================================================================= */
 /*  Empty states                                                     */
@@ -522,7 +352,6 @@ function EmptyState({
 /* ================================================================= */
 
 export default function SavedPostsPage() {
-  const [items, setItems] = useState<SavedPost[]>(INITIAL_SAVED);
   const [collections, setCollections] =
     useState<Collection[]>(INITIAL_COLLECTIONS);
 
@@ -534,15 +363,20 @@ export default function SavedPostsPage() {
   const [view, setView] = useState<ViewMode>("list");
 
   const [selecting, setSelecting] = useState(false);
-  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+  const [selectedIds, setSelectedIds] = useState<Set<number>>(new Set());
 
   const [creating, setCreating] = useState(false);
   const [newName, setNewName] = useState("");
+  const [saveds, setSaveds] = useState<SavedPost[]>([])
 
   const [toast, setToast] = useState<{
     message: string;
     undo?: () => void;
   } | null>(null);
+
+  useEffect(()=>{
+    getSavedPosts().then(res=>setSaveds(res)).catch(error=>console.log(error))
+  }, [])
 
   useEffect(() => {
     if (!toast) return;
@@ -551,43 +385,37 @@ export default function SavedPostsPage() {
   }, [toast]);
 
   /* ---- derived data ---- */
-  const inCollection = useMemo(
-    () =>
-      items.filter(
-        (p) => activeCollection === "all" || p.collectionId === activeCollection
-      ),
-    [items, activeCollection]
-  );
+  const inCollection = saveds
 
   const visible = useMemo(() => {
     const q = query.trim().toLowerCase();
     const list = inCollection.filter(
       (p) =>
-        (typeFilter === "all" || p.type === typeFilter) &&
+        (typeFilter === "all" || p.post.post_type === typeFilter) &&
         (!q ||
-          [p.title, p.body, p.community, ...p.tags].some((s) =>
+          [p.post.title, p.post.content, p.post.community.name, ...(p.post.tags ?? [])].some((s) =>
             s.toLowerCase().includes(q)
           ))
     );
-    if (sort === "recent") list.sort((a, b) => a.savedAgeHours - b.savedAgeHours);
-    if (sort === "oldest") list.sort((a, b) => b.savedAgeHours - a.savedAgeHours);
-    if (sort === "votes") list.sort((a, b) => b.upvotes - a.upvotes);
-    if (sort === "answers") list.sort((a, b) => b.answers - a.answers);
+    if (sort === "recent") list.sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime());
+    if (sort === "oldest") list.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+    if (sort === "votes") list.sort((a, b) => b.post.upvote - a.post.upvote);
+    if (sort === "answers") list.sort((a, b) => b.post.comment_count - a.post.comment_count);
     return list;
   }, [inCollection, typeFilter, query, sort]);
 
   const stats = useMemo(() => {
     const byType = POST_TYPES.map((t) => ({
       type: t,
-      count: items.filter((p) => p.type === t).length,
+      count: visible.filter((p) => p.post.post_type === t).length,
     }));
     const byCommunity = new Map<string, number>();
-    items.forEach((p) =>
-      byCommunity.set(p.community, (byCommunity.get(p.community) ?? 0) + 1)
+    visible.forEach((p) =>
+      byCommunity.set(p.post.community.name, (byCommunity.get(p.post.community.name) ?? 0) + 1)
     );
     const top = Array.from(byCommunity.entries()).sort((a, b) => b[1] - a[1])[0];
     return { byType, top };
-  }, [items]);
+  }, [visible]);
 
   const hasFilters =
     query.trim() !== "" || typeFilter !== "all" || activeCollection !== "all";
@@ -597,25 +425,25 @@ export default function SavedPostsPage() {
     visible.length > 0 && selectedVisible.length === visible.length;
 
   /* ---- actions ---- */
-  const removePosts = (ids: string[]) => {
-    const removed = items.filter((p) => ids.includes(p.id));
-    if (removed.length === 0) return;
-    setItems((prev) => prev.filter((p) => !ids.includes(p.id)));
-    setSelectedIds(new Set());
-    setToast({
-      message:
-        removed.length === 1
-          ? "Removed from saved"
-          : `Removed ${removed.length} posts from saved`,
-      undo: () => {
-        setItems((prev) => [...prev, ...removed]);
-        setToast(null);
-      },
-    });
-  };
+  // const removePosts = (ids: number[]) => {
+  //   const removed = visible.filter((p) => ids.includes(p.id));
+  //   if (removed.length === 0) return;
+  //   setItems((prev) => prev.filter((p) => !ids.includes(p.id)));
+  //   setSelectedIds(new Set());
+  //   setToast({
+  //     message:
+  //       removed.length === 1
+  //         ? "Removed from saved"
+  //         : `Removed ${removed.length} posts from saved`,
+  //     undo: () => {
+  //       setItems((prev) => [...prev, ...removed]);
+  //       setToast(null);
+  //     },
+  //   });
+  // };
 
-  const movePosts = (ids: string[], collectionId: string | null) => {
-    setItems((prev) =>
+  const movePosts = (ids: number[], collectionId: string | null) => {
+    setSaveds((prev) =>
       prev.map((p) => (ids.includes(p.id) ? { ...p, collectionId } : p))
     );
     const name =
@@ -627,13 +455,13 @@ export default function SavedPostsPage() {
     setSelectedIds(new Set());
   };
 
-  const toggleSelect = (id: string) =>
-    setSelectedIds((prev) => {
-      const next = new Set(prev);
-      // eslint-disable-next-line @typescript-eslint/no-unused-expressions
-      next.has(id) ? next.delete(id) : next.add(id);
-      return next;
-    });
+  // const toggleSelect = (id: number) =>
+  //   setSelectedIds((prev) => {
+  //     const next = new Set(prev);
+  //     // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+  //     next.has(id) ? next.delete(id) : next.add(id);
+  //     return next;
+  //   });
 
   const exitSelecting = () => {
     setSelecting(false);
@@ -660,7 +488,7 @@ export default function SavedPostsPage() {
   };
 
   const countFor = (id: string) =>
-    id === "all" ? items.length : items.filter((p) => p.collectionId === id).length;
+    id === "all" ? saveds.length : saveds.filter((p) => p.post.post_type === id).length;
 
   const currentSort = SORT_OPTIONS.find((s) => s.id === sort)!;
 
@@ -678,7 +506,7 @@ export default function SavedPostsPage() {
               <div>
                 <h1 className="text-xl font-bold text-neutral-900">Saved</h1>
                 <p className="text-sm text-neutral-500">
-                  {plural(items.length, "post", "posts")} saved for later
+                  {plural(saveds.length, "post", "posts")} saved for later
                 </p>
               </div>
             </div>
@@ -686,7 +514,7 @@ export default function SavedPostsPage() {
             <div className="flex items-center gap-2">
               <button
                 onClick={() => (selecting ? exitSelecting() : setSelecting(true))}
-                disabled={items.length === 0}
+                disabled={saveds.length === 0}
                 className={`rounded-lg px-3.5 py-2 text-sm font-semibold transition-colors disabled:cursor-not-allowed disabled:opacity-40 ${selecting
                     ? "bg-indigo-600 text-white hover:bg-indigo-700"
                     : "border border-neutral-200 text-neutral-700 hover:bg-neutral-50"
@@ -798,7 +626,7 @@ export default function SavedPostsPage() {
                     : "text-neutral-400"
                 }
               >
-                {countFor("all")}
+                 {countFor("all")} 
               </span>
             </button>
 
@@ -874,7 +702,7 @@ export default function SavedPostsPage() {
           </div>
 
           {/* Type filter */}
-          {items.length > 0 && (
+          {saveds.length > 0 && (
             <div className="mt-3 flex flex-wrap items-center gap-2">
               <button
                 onClick={() => setTypeFilter("all")}
@@ -886,7 +714,7 @@ export default function SavedPostsPage() {
                 All types
               </button>
               {POST_TYPES.filter((t) =>
-                inCollection.some((p) => p.type === t)
+                saveds.some((p) => p.post.post_type === t)
               ).map((t) => (
                 <button
                   key={t}
@@ -898,7 +726,7 @@ export default function SavedPostsPage() {
                 >
                   {TYPE_META[t].label}
                   <span className="ml-1.5 opacity-60">
-                    {inCollection.filter((p) => p.type === t).length}
+                    {saveds.filter((p) => p.post.post_type === t).length}
                   </span>
                 </button>
               ))}
@@ -907,7 +735,7 @@ export default function SavedPostsPage() {
         </div>
 
         {/* Result line */}
-        {items.length > 0 && visible.length > 0 && (
+        {saveds.length > 0 && visible.length > 0 && (
           <div className="flex items-center justify-between px-1 text-sm text-neutral-500">
             {selecting ? (
               <button
@@ -932,7 +760,7 @@ export default function SavedPostsPage() {
               </button>
             ) : (
               <span>
-                Showing {visible.length} of {items.length}
+                Showing {visible.length} of {saveds.length}
               </span>
             )}
             {hasFilters && (
@@ -947,7 +775,7 @@ export default function SavedPostsPage() {
         )}
 
         {/* Results */}
-        {items.length === 0 ? (
+        {saveds.length === 0 ? (
           <EmptyState
             title="Nothing saved yet"
             text="Tap the bookmark on any post and it will show up here, ready for later."
@@ -979,16 +807,9 @@ export default function SavedPostsPage() {
             }
           >
             {visible.map((p) => (
-              <SavedCard
+              <QuestionCard
                 key={p.id}
-                post={p}
-                view={view}
-                collections={collections}
-                selecting={selecting}
-                selected={selectedIds.has(p.id)}
-                onToggleSelect={toggleSelect}
-                onUnsave={(id) => removePosts([id])}
-                onMove={(id, cid) => movePosts([id], cid)}
+                post={p.post}
               />
             ))}
           </div>
@@ -1000,7 +821,7 @@ export default function SavedPostsPage() {
         <SideCard title="At a glance">
           <div className="flex items-end gap-2">
             <span className="text-3xl font-extrabold text-neutral-900">
-              {items.length}
+              {saveds.length}
             </span>
             <span className="pb-1 text-sm text-neutral-400">
               saved posts
@@ -1020,8 +841,8 @@ export default function SavedPostsPage() {
                   <div
                     className="h-full rounded-full bg-indigo-500 transition-all"
                     style={{
-                      width: items.length
-                        ? `${(count / items.length) * 100}%`
+                      width: saveds.length
+                        ? `${(count / saveds.length) * 100}%`
                         : "0%",
                     }}
                   />
@@ -1075,7 +896,6 @@ export default function SavedPostsPage() {
             onMove={(cid) => movePosts(selectedVisible.map((p) => p.id), cid)}
           />
           <button
-            onClick={() => removePosts(selectedVisible.map((p) => p.id))}
             className="flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm font-semibold text-red-300 hover:bg-white/10"
           >
             <Trash2 className="h-4 w-4" />

@@ -1,3 +1,5 @@
+import { AuthUser } from "./auth/types";
+
 export type UserRegistrationData = {
     first_name: string;
     last_name: string;
@@ -115,6 +117,7 @@ export interface Post {
     tags?: string[];
     polls?: PollOption[];
     poll_votes: number[];
+    is_saved: boolean
 }
 
 export interface PollOption {
@@ -136,6 +139,13 @@ export interface NewPost {
     images?: File[];
     polls?: string[];
     poll_length?: number;
+}
+
+export interface SavedPost {
+    id: number;
+    user: AuthUser;
+    post: Post;
+    created_at: string;
 }
 
 export interface CommunityDetail {

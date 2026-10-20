@@ -1,4 +1,4 @@
-import { Category, Comment, Community, CommunityDetail, NewComment, NewCommunity, NewPost, Post, UserRegistrationData } from "./types"
+import { Category, Comment, Community, CommunityDetail, NewComment, NewCommunity, NewPost, Post, SavedPost, UserRegistrationData } from "./types"
 import { getAccessToken } from "@/app/actions/post-votes";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL
@@ -415,6 +415,48 @@ export async function downvoteComment(id:number, access: string) {
     })
     if(!res.ok){
         throw new Error(`Couldn't downvote the comment ${res.status}`)
+    }
+    return res.json();
+}
+
+export async function getSavedPosts(): Promise<SavedPost[]> {
+    const res = await fetch(`${API_URL}/bookmarks/`, {
+        headers: {
+            Authorization: `Bearer ${await getAccessToken()}`
+        }
+    }
+    );
+    if (!res.ok) {
+        throw new Error(`Couldn't fetch saved posts ${res.status}`);
+    }
+    return res.json();
+}
+
+export async function saveUnsave(is_saved: boolean, post_id: number) {
+    let res;
+    if (is_saved) {
+        res = await fetch(`${API_URL}/bookmarks/${post_id}/`, {
+            method: "DELETE",
+            headers: {
+                Authorization: `Bearer ${await getAccessToken()}`
+            }
+        });
+    } else {
+        const formData = new FormData()
+        if (post_id) {
+            formData.append("post", String(post_id))
+            formData.append("post_id", String(post_id))
+        }
+        res = await fetch(`${API_URL}/bookmarks/`, {
+            method: "POST",
+            headers: {
+                Authorization: `Bearer ${await getAccessToken()}`
+            },
+            body: formData
+        });
+    }
+    if (!res.ok) {
+        throw new Error(`Couldn't ${is_saved ? "delete" : "save"} post ${res.status}`);
     }
     return res.json();
 }

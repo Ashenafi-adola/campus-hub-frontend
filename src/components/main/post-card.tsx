@@ -9,13 +9,14 @@ import { PostActionsMenu } from './post-actions';
 import Link from 'next/link';
 import { CommentThread } from './comment/comment-thread';
 import { PollBlock } from '../shared/ui';
+import { saveUnsave } from '@/libs/api';
 
 
 function QuestionCard({ post }: { post: Post }) {
   const [votes, setVotes] = useState(post.score);
   const [currentPost, setCurrentPost] = useState<Post>(post);
   const [content, setContent] = useState<string>(post.excerpt);
-  const [saved, setSaved] = useState<boolean>(false);
+  const [saved, setSaved] = useState<boolean>(post.is_saved);
   const [open, setOpen] = useState<boolean>(false);
   const [hasOpenedComments, setHasOpenedComments] = useState<boolean>(false);
   const unanswered = post.post_type === "question" && post.comment_count === 0;
@@ -27,7 +28,13 @@ function QuestionCard({ post }: { post: Post }) {
     else setContent(post.excerpt);
   }
 
-
+  const handleSave = () => {
+    if (saved){
+      saveUnsave(saved, post.id).then(()=>setSaved(!saved)).catch(error=>console.log(error))
+    }else{
+      saveUnsave(saved, post.id).then(()=>setSaved(!saved)).catch(error=>console.log(error))
+    }
+  }
 
   const upVote = async () => {
     const res = await upvotePostForCurrentUser(post.id);
@@ -171,7 +178,7 @@ function QuestionCard({ post }: { post: Post }) {
             <Share2 className="h-4 w-4" />
             Share
           </button>
-          <button onClick={() => setSaved((v) => !v)} className="hover:text-neutral-800 dark:hover:text-neutral-100">
+          <button onClick={() => handleSave()} className="hover:text-neutral-800 dark:hover:text-neutral-100">
             <Bookmark className={`h-4 w-4 ${saved ? "fill-neutral-900 text-neutral-900 dark:fill-neutral-100 dark:text-neutral-100" : ""}`} />
           </button>
           <PostActionsMenu post={post} />
