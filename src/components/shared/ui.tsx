@@ -1,7 +1,7 @@
 import { getPollVotes, votePoll } from "@/libs/api";
 import { AuthUser } from "@/libs/auth/types";
 import { colorFor, getInitials, plural } from "@/libs/format";
-import { PollOption } from "@/libs/types";
+import { PollOption, User } from "@/libs/types";
 import Image from "next/image";
 import { useState } from "react";
 
@@ -101,7 +101,7 @@ export function Avatar({
   size = "h-9 w-9",
   textSize = "text-xs",
 }: {
-  user: AuthUser | null;
+  user: AuthUser | null | User;
   size?: string;
   textSize?: string;
 }) {
@@ -228,12 +228,10 @@ function PollRow({
         : "border-neutral-200 text-neutral-700 hover:bg-neutral-50 dark:border-neutral-700 dark:text-neutral-300 dark:hover:bg-neutral-800"
         }`}
     >
-      {selected !== null && (
-        <span
-          className="absolute inset-y-0 left-0 bg-indigo-100/70 dark:bg-indigo-900/50"
-          style={{ width: `${pct}%` }}
-        />
-      )}
+      <span
+        className="absolute inset-y-0 left-0 bg-indigo-100/70 transition-[width] duration-500 ease-out motion-reduce:transition-none dark:bg-indigo-900/50"
+        style={{ width: selected !== null ? `${pct}%` : "0%" }}
+      />
       <span className="relative flex items-center justify-between">
         <span>{option.text}</span>
         {selected !== null && (

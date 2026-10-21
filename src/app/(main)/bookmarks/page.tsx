@@ -42,10 +42,10 @@ const TYPE_META: Record<
   PostType,
   { label: string; chip: string; icon: React.ComponentType<{ className?: string }> }
 > = {
-  question: { label: "Question", chip: "bg-indigo-50 text-indigo-600", icon: QuestionIcon },
-  discussion: { label: "Discussion", chip: "bg-emerald-50 text-emerald-600", icon: MessageSquare },
-  image: { label: "Image", chip: "bg-amber-50 text-amber-600", icon: ImageIcon },
-  poll: { label: "Poll", chip: "bg-violet-50 text-violet-600", icon: BarChart3 },
+  question: { label: "Question", chip: "bg-indigo-50 text-indigo-600 dark:bg-indigo-950 dark:text-indigo-300", icon: QuestionIcon },
+  discussion: { label: "Discussion", chip: "bg-emerald-50 text-emerald-600 dark:bg-emerald-950 dark:text-emerald-300", icon: MessageSquare },
+  image: { label: "Image", chip: "bg-amber-50 text-amber-600 dark:bg-amber-950 dark:text-amber-300", icon: ImageIcon },
+  poll: { label: "Poll", chip: "bg-violet-50 text-violet-600 dark:bg-violet-950 dark:text-violet-300", icon: BarChart3 },
 };
 
 const POST_TYPES: PostType[] = ["question", "discussion", "image", "poll"];
@@ -93,8 +93,8 @@ function SideCard({
   children: React.ReactNode;
 }) {
   return (
-    <div className="rounded-2xl border border-neutral-200 bg-white p-5">
-      <h3 className="font-semibold text-neutral-900">{title}</h3>
+    <div className="rounded-2xl border border-neutral-200 bg-white p-5 dark:border-neutral-800 dark:bg-neutral-900">
+      <h3 className="font-semibold text-neutral-900 dark:text-neutral-100">{title}</h3>
       <div className="mt-3">{children}</div>
     </div>
   );
@@ -124,7 +124,7 @@ function MoveMenu({
           onClick={() => setOpen((v) => !v)}
           aria-label="Move to collection"
           aria-expanded={open}
-          className={`rounded-full p-2 transition-colors hover:bg-neutral-100 hover:text-neutral-700 ${open ? "bg-neutral-100 text-neutral-700" : "text-neutral-400"
+          className={`rounded-full p-2 transition-colors hover:bg-neutral-100 hover:text-neutral-700 dark:hover:bg-neutral-800 dark:hover:text-neutral-200 ${open ? "bg-neutral-100 text-neutral-700 dark:bg-neutral-800 dark:text-neutral-200" : "text-neutral-400 dark:text-neutral-500"
             }`}
         >
           <Folder className="h-4 w-4" />
@@ -145,12 +145,12 @@ function MoveMenu({
         <>
           <div className="fixed inset-0 z-10" onClick={() => setOpen(false)} />
           <div
-            className={`absolute z-20 w-52 overflow-hidden rounded-xl border border-neutral-200 bg-white py-1 shadow-lg ${variant === "bar"
+            className={`absolute z-20 w-52 overflow-hidden rounded-xl border border-neutral-200 bg-white py-1 shadow-lg dark:border-neutral-700 dark:bg-neutral-900 ${variant === "bar"
                 ? "bottom-full left-0 mb-2"
                 : "right-0 top-full mt-1"
               }`}
           >
-            <p className="px-3.5 pb-1 pt-2 text-xs font-semibold uppercase tracking-wide text-neutral-400">
+            <p className="px-3.5 pb-1 pt-2 text-xs font-semibold uppercase tracking-wide text-neutral-400 dark:text-neutral-500">
               Move to
             </p>
             {collections.map((c) => (
@@ -160,7 +160,7 @@ function MoveMenu({
                   onMove(c.id);
                   setOpen(false);
                 }}
-                className="flex w-full items-center justify-between px-3.5 py-2 text-left text-sm font-medium text-neutral-700 hover:bg-neutral-50"
+                className="flex w-full items-center justify-between px-3.5 py-2 text-left text-sm font-medium text-neutral-700 hover:bg-neutral-50 dark:text-neutral-200 dark:hover:bg-neutral-800"
               >
                 <span className="flex items-center gap-2">
                   <span className={`h-2.5 w-2.5 rounded-full ${c.color}`} />
@@ -171,13 +171,13 @@ function MoveMenu({
                 )}
               </button>
             ))}
-            <div className="my-1 border-t border-neutral-100" />
+            <div className="my-1 border-t border-neutral-100 dark:border-neutral-800" />
             <button
               onClick={() => {
                 onMove(null);
                 setOpen(false);
               }}
-              className="block w-full px-3.5 py-2 text-left text-sm font-medium text-neutral-500 hover:bg-neutral-50"
+              className="block w-full px-3.5 py-2 text-left text-sm font-medium text-neutral-500 hover:bg-neutral-50 dark:text-neutral-400 dark:hover:bg-neutral-800"
             >
               No collection
             </button>
@@ -336,12 +336,12 @@ function EmptyState({
   action: React.ReactNode;
 }) {
   return (
-    <div className="rounded-2xl border border-neutral-200 bg-white px-6 py-16 text-center">
-      <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-indigo-50">
+    <div className="rounded-2xl border border-neutral-200 bg-white px-6 py-16 text-center dark:border-neutral-800 dark:bg-neutral-900">
+      <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-indigo-50 dark:bg-indigo-950">
         <Bookmark className="h-6 w-6 text-indigo-600" />
       </div>
-      <h3 className="mt-4 text-lg font-semibold text-neutral-900">{title}</h3>
-      <p className="mx-auto mt-1 max-w-xs text-sm text-neutral-500">{text}</p>
+      <h3 className="mt-4 text-lg font-semibold text-neutral-900 dark:text-neutral-100">{title}</h3>
+      <p className="mx-auto mt-1 max-w-xs text-sm text-neutral-500 dark:text-neutral-400">{text}</p>
       <div className="mt-5">{action}</div>
     </div>
   );
@@ -497,15 +497,15 @@ export default function SavedPostsPage() {
     <>
       <main className="min-w-0 flex-1 space-y-4 pb-20">
         {/* Header card */}
-        <div className="rounded-2xl border border-neutral-200 bg-white p-4 sm:p-5">
+        <div className="rounded-2xl border border-neutral-200 bg-white p-4 sm:p-5 dark:border-neutral-800 dark:bg-neutral-900">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div className="flex items-center gap-3">
-              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-indigo-50">
+              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-indigo-50 dark:bg-indigo-950">
                 <Bookmark className="h-5 w-5 text-indigo-600" />
               </div>
               <div>
-                <h1 className="text-xl font-bold text-neutral-900">Saved</h1>
-                <p className="text-sm text-neutral-500">
+                <h1 className="text-xl font-bold text-neutral-900 dark:text-neutral-100">Saved</h1>
+                <p className="text-sm text-neutral-500 dark:text-neutral-400">
                   {plural(saveds.length, "post", "posts")} saved for later
                 </p>
               </div>
@@ -517,7 +517,7 @@ export default function SavedPostsPage() {
                 disabled={saveds.length === 0}
                 className={`rounded-lg px-3.5 py-2 text-sm font-semibold transition-colors disabled:cursor-not-allowed disabled:opacity-40 ${selecting
                     ? "bg-indigo-600 text-white hover:bg-indigo-700"
-                    : "border border-neutral-200 text-neutral-700 hover:bg-neutral-50"
+                    : "border border-neutral-200 text-neutral-700 hover:bg-neutral-50 dark:border-neutral-700 dark:text-neutral-200 dark:hover:bg-neutral-800"
                   }`}
               >
                 {selecting ? "Done" : "Select"}
@@ -534,13 +534,13 @@ export default function SavedPostsPage() {
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 placeholder="Search your saved posts..."
-                className="w-full rounded-xl border border-neutral-200 bg-white py-2.5 pl-10 pr-9 text-sm text-neutral-800 placeholder:text-neutral-400 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
+                className="w-full rounded-xl border border-neutral-200 bg-white py-2.5 pl-10 pr-9 text-sm text-neutral-800 placeholder:text-neutral-400 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-100 dark:placeholder:text-neutral-500"
               />
               {query && (
                 <button
                   onClick={() => setQuery("")}
                   aria-label="Clear search"
-                  className="absolute right-2.5 top-1/2 -translate-y-1/2 rounded-full p-1 text-neutral-400 hover:bg-neutral-100 hover:text-neutral-600"
+                  className="absolute right-2.5 top-1/2 -translate-y-1/2 rounded-full p-1 text-neutral-400 hover:bg-neutral-100 hover:text-neutral-600 dark:text-neutral-500 dark:hover:bg-neutral-800 dark:hover:text-neutral-300"
                 >
                   <X className="h-3.5 w-3.5" />
                 </button>
@@ -551,7 +551,7 @@ export default function SavedPostsPage() {
               <button
                 onClick={() => setSortOpen((v) => !v)}
                 aria-expanded={sortOpen}
-                className="flex items-center gap-2 rounded-xl border border-neutral-200 bg-white px-3.5 py-2.5 text-sm font-medium text-neutral-700 hover:bg-neutral-50"
+                className="flex items-center gap-2 rounded-xl border border-neutral-200 bg-white px-3.5 py-2.5 text-sm font-medium text-neutral-700 hover:bg-neutral-50 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-200 dark:hover:bg-neutral-800"
               >
                 {currentSort.label}
                 <ChevronDown className="h-4 w-4 text-neutral-400" />
@@ -562,7 +562,7 @@ export default function SavedPostsPage() {
                     className="fixed inset-0 z-10"
                     onClick={() => setSortOpen(false)}
                   />
-                  <div className="absolute right-0 top-full z-20 mt-1 w-44 overflow-hidden rounded-xl border border-neutral-200 bg-white py-1 shadow-lg">
+                  <div className="absolute right-0 top-full z-20 mt-1 w-44 overflow-hidden rounded-xl border border-neutral-200 bg-white py-1 shadow-lg dark:border-neutral-700 dark:bg-neutral-900">
                     {SORT_OPTIONS.map((s) => (
                       <button
                         key={s.id}
@@ -570,7 +570,7 @@ export default function SavedPostsPage() {
                           setSort(s.id);
                           setSortOpen(false);
                         }}
-                        className="flex w-full items-center justify-between px-3.5 py-2 text-left text-sm font-medium text-neutral-700 hover:bg-neutral-50"
+                        className="flex w-full items-center justify-between px-3.5 py-2 text-left text-sm font-medium text-neutral-700 hover:bg-neutral-50 dark:text-neutral-200 dark:hover:bg-neutral-800"
                       >
                         {s.label}
                         {sort === s.id && (
@@ -586,7 +586,7 @@ export default function SavedPostsPage() {
               )}
             </div>
 
-            <div className="flex rounded-xl bg-neutral-100 p-1">
+            <div className="flex rounded-xl bg-neutral-100 p-1 dark:bg-neutral-800">
               {(
                 [
                   { id: "list", icon: List, label: "List view" },
@@ -599,8 +599,8 @@ export default function SavedPostsPage() {
                   aria-label={label}
                   aria-pressed={view === id}
                   className={`rounded-lg p-2 transition-colors ${view === id
-                      ? "bg-white text-indigo-600 shadow-sm"
-                      : "text-neutral-500 hover:text-neutral-800"
+                      ? "bg-white text-indigo-600 shadow-sm dark:bg-neutral-700"
+                      : "text-neutral-500 hover:text-neutral-800 dark:text-neutral-400 dark:hover:text-neutral-200"
                     }`}
                 >
                   <Icon className="h-4 w-4" />
@@ -610,12 +610,12 @@ export default function SavedPostsPage() {
           </div>
 
           {/* Collections */}
-          <div className="mt-4 flex flex-wrap items-center gap-2 border-t border-neutral-100 pt-4">
+          <div className="mt-4 flex flex-wrap items-center gap-2 border-t border-neutral-100 pt-4 dark:border-neutral-800">
             <button
               onClick={() => setActiveCollection("all")}
               className={`flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-sm font-semibold transition-colors ${activeCollection === "all"
                   ? "bg-indigo-600 text-white"
-                  : "bg-[#eef1f6] text-neutral-600 hover:bg-neutral-200"
+                  : "bg-[#eef1f6] text-neutral-600 hover:bg-neutral-200 dark:bg-neutral-800 dark:text-neutral-300 dark:hover:bg-neutral-700"
                 }`}
             >
               All saved
@@ -623,7 +623,7 @@ export default function SavedPostsPage() {
                 className={
                   activeCollection === "all"
                     ? "text-indigo-200"
-                    : "text-neutral-400"
+                    : "text-neutral-400 dark:text-neutral-500"
                 }
               >
                  {countFor("all")} 
@@ -638,7 +638,7 @@ export default function SavedPostsPage() {
                   onClick={() => setActiveCollection(c.id)}
                   className={`flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-sm font-semibold transition-colors ${active
                       ? "bg-indigo-600 text-white"
-                      : "bg-[#eef1f6] text-neutral-600 hover:bg-neutral-200"
+                      : "bg-[#eef1f6] text-neutral-600 hover:bg-neutral-200 dark:bg-neutral-800 dark:text-neutral-300 dark:hover:bg-neutral-700"
                     }`}
                 >
                   <span
@@ -646,7 +646,7 @@ export default function SavedPostsPage() {
                       }`}
                   />
                   {c.name}
-                  <span className={active ? "text-indigo-200" : "text-neutral-400"}>
+                  <span className={active ? "text-indigo-200" : "text-neutral-400 dark:text-neutral-500"}>
                     {countFor(c.id)}
                   </span>
                 </button>
@@ -669,13 +669,13 @@ export default function SavedPostsPage() {
                     }
                   }}
                   placeholder="Collection name"
-                  className="w-40 rounded-full border border-indigo-500 bg-white px-3.5 py-1.5 text-sm text-neutral-800 placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
+                  className="w-40 rounded-full border border-indigo-500 bg-white px-3.5 py-1.5 text-sm text-neutral-800 placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 dark:bg-neutral-900 dark:text-neutral-100 dark:placeholder:text-neutral-500"
                 />
                 <button
                   onClick={createCollection}
                   disabled={!newName.trim()}
                   aria-label="Create collection"
-                  className="rounded-full bg-indigo-600 p-1.5 text-white hover:bg-indigo-700 disabled:cursor-not-allowed disabled:bg-neutral-200 disabled:text-neutral-400"
+                  className="rounded-full bg-indigo-600 p-1.5 text-white hover:bg-indigo-700 disabled:cursor-not-allowed disabled:bg-neutral-200 disabled:text-neutral-400 dark:disabled:bg-neutral-700 dark:disabled:text-neutral-500"
                 >
                   <Check className="h-4 w-4" strokeWidth={3} />
                 </button>
@@ -685,7 +685,7 @@ export default function SavedPostsPage() {
                     setNewName("");
                   }}
                   aria-label="Cancel"
-                  className="rounded-full p-1.5 text-neutral-400 hover:bg-neutral-100 hover:text-neutral-600"
+                  className="rounded-full p-1.5 text-neutral-400 hover:bg-neutral-100 hover:text-neutral-600 dark:text-neutral-500 dark:hover:bg-neutral-800 dark:hover:text-neutral-300"
                 >
                   <X className="h-4 w-4" />
                 </button>
@@ -693,7 +693,7 @@ export default function SavedPostsPage() {
             ) : (
               <button
                 onClick={() => setCreating(true)}
-                className="flex items-center gap-1.5 rounded-full border border-dashed border-neutral-300 px-3.5 py-1.5 text-sm font-semibold text-neutral-500 hover:border-indigo-400 hover:text-indigo-600"
+                className="flex items-center gap-1.5 rounded-full border border-dashed border-neutral-300 px-3.5 py-1.5 text-sm font-semibold text-neutral-500 hover:border-indigo-400 hover:text-indigo-600 dark:border-neutral-700 dark:text-neutral-400"
               >
                 <Plus className="h-3.5 w-3.5" />
                 New collection
@@ -708,7 +708,7 @@ export default function SavedPostsPage() {
                 onClick={() => setTypeFilter("all")}
                 className={`rounded-lg px-3 py-1 text-xs font-semibold transition-colors ${typeFilter === "all"
                     ? "bg-neutral-900 text-white"
-                    : "text-neutral-500 hover:bg-neutral-100"
+                    : "text-neutral-500 hover:bg-neutral-100 dark:text-neutral-400 dark:hover:bg-neutral-800"
                   }`}
               >
                 All types
@@ -721,7 +721,7 @@ export default function SavedPostsPage() {
                   onClick={() => setTypeFilter(t)}
                   className={`rounded-lg px-3 py-1 text-xs font-semibold transition-colors ${typeFilter === t
                       ? "bg-neutral-900 text-white"
-                      : "text-neutral-500 hover:bg-neutral-100"
+                      : "text-neutral-500 hover:bg-neutral-100 dark:text-neutral-400 dark:hover:bg-neutral-800"
                     }`}
                 >
                   {TYPE_META[t].label}
@@ -736,7 +736,7 @@ export default function SavedPostsPage() {
 
         {/* Result line */}
         {saveds.length > 0 && visible.length > 0 && (
-          <div className="flex items-center justify-between px-1 text-sm text-neutral-500">
+          <div className="flex items-center justify-between px-1 text-sm text-neutral-500 dark:text-neutral-400">
             {selecting ? (
               <button
                 onClick={() =>
@@ -744,12 +744,12 @@ export default function SavedPostsPage() {
                     allSelected ? new Set() : new Set(visible.map((p) => p.id))
                   )
                 }
-                className="flex items-center gap-2 font-semibold text-neutral-700 hover:text-indigo-600"
+                className="flex items-center gap-2 font-semibold text-neutral-700 hover:text-indigo-600 dark:text-neutral-300"
               >
                 <span
                   className={`flex h-5 w-5 items-center justify-center rounded-md border-2 ${allSelected
                       ? "border-indigo-600 bg-indigo-600"
-                      : "border-neutral-300 bg-white"
+                      : "border-neutral-300 bg-white dark:border-neutral-600 dark:bg-neutral-900"
                     }`}
                 >
                   {allSelected && (
@@ -820,10 +820,10 @@ export default function SavedPostsPage() {
       <aside className="hidden w-72 shrink-0 self-start space-y-4 xl:sticky xl:top-16 xl:block">
         <SideCard title="At a glance">
           <div className="flex items-end gap-2">
-            <span className="text-3xl font-extrabold text-neutral-900">
+            <span className="text-3xl font-extrabold text-neutral-900 dark:text-neutral-100">
               {saveds.length}
             </span>
-            <span className="pb-1 text-sm text-neutral-400">
+            <span className="pb-1 text-sm text-neutral-400 dark:text-neutral-500">
               saved posts
             </span>
           </div>
@@ -832,12 +832,12 @@ export default function SavedPostsPage() {
             {stats.byType.map(({ type, count }) => (
               <div key={type}>
                 <div className="flex items-center justify-between text-xs">
-                  <span className="font-semibold text-neutral-600">
+                  <span className="font-semibold text-neutral-600 dark:text-neutral-300">
                     {TYPE_META[type].label}
                   </span>
-                  <span className="text-neutral-400">{count}</span>
+                  <span className="text-neutral-400 dark:text-neutral-500">{count}</span>
                 </div>
-                <div className="mt-1 h-1.5 overflow-hidden rounded-full bg-neutral-100">
+                <div className="mt-1 h-1.5 overflow-hidden rounded-full bg-neutral-100 dark:bg-neutral-800">
                   <div
                     className="h-full rounded-full bg-indigo-500 transition-all"
                     style={{
@@ -852,7 +852,7 @@ export default function SavedPostsPage() {
           </div>
 
           {stats.top && (
-            <div className="mt-4 border-t border-neutral-100 pt-3 text-xs text-neutral-500">
+            <div className="mt-4 border-t border-neutral-100 pt-3 text-xs text-neutral-500 dark:border-neutral-800 dark:text-neutral-400">
               Most saved from{" "}
               <a href="#" className="font-semibold text-indigo-600 hover:underline">
                 {stats.top[0]}
@@ -862,14 +862,14 @@ export default function SavedPostsPage() {
           )}
         </SideCard>
 
-        <div className="rounded-2xl border border-indigo-100 bg-indigo-50/60 p-5">
+        <div className="rounded-2xl border border-indigo-100 bg-indigo-50/60 p-5 dark:border-indigo-900 dark:bg-indigo-950/30">
           <div className="flex items-center gap-2">
             <Lightbulb className="h-4 w-4 text-amber-500" />
-            <h3 className="text-sm font-semibold text-neutral-900">
+            <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">
               Stay organized
             </h3>
           </div>
-          <p className="mt-2 text-sm leading-relaxed text-neutral-600">
+          <p className="mt-2 text-sm leading-relaxed text-neutral-600 dark:text-neutral-300">
             Group related posts into collections like &quot;Exam prep&quot; so you can
             find them in seconds.
           </p>

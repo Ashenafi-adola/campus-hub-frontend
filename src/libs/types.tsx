@@ -103,7 +103,7 @@ export interface Post {
     content: string;
     title: string;
     images?: string[];
-    post_type: string;
+    post_type: PostType;
     community: Community;
     score: number;
     upvote: number;
@@ -183,3 +183,5 @@ export interface Category {
     slug: string;
     description: string;
 }
+
+export type PostType = "question" | "discussion" | "image" | "poll";

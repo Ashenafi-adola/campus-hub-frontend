@@ -49,7 +49,7 @@ function QuestionCard({ post }: { post: Post }) {
   }
 
   return (
-    <div className="rounded-2xl border border-neutral-200 bg-white p-5 dark:border-neutral-800 dark:bg-neutral-900">
+    <div className="flex flex-col rounded-2xl border border-neutral-200 bg-white p-5 dark:border-neutral-800 dark:bg-neutral-900">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2.5">
           {currentPost.author.avatar ?
@@ -130,7 +130,7 @@ function QuestionCard({ post }: { post: Post }) {
         ))}
       </div>
 
-      <div className="mt-4 flex items-center justify-between border-t border-neutral-100 pt-3.5 dark:border-neutral-800">
+      <div className="mt-auto flex items-center justify-between border-t border-neutral-100 pt-3.5 dark:border-neutral-800">
         <div className="flex items-center gap-1 rounded-2xl bg-gray-100 dark:bg-neutral-800">
           <button
             onClick={upVote}
