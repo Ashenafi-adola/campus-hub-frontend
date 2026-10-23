@@ -1,13 +1,33 @@
-import { Category, Comment, Community, CommunityDetail, NewComment, NewCommunity, NewPost, Post, SavedPost, UserRegistrationData } from "./types"
+import {
+    Category,
+    Comment,
+    Community,
+    CommunityDetail,
+    NewComment,
+    NewCommunity,
+    NewPost,
+    Post,
+    SavedPost,
+    UserRegistrationData,
+} from "./types";
 import { getAccessToken } from "@/app/actions/post-votes";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL
+const API_URL = process.env.NEXT_PUBLIC_API_URL;
+
+const DEFAULT_ERROR = "Something went wrong. Please try again.";
+const VALIDATION_ERROR = "Validation failed. Please check your inputs.";
+
+/* -------------------------------------------------------------------------- */
+/*  Errors                                                                    */
+/* -------------------------------------------------------------------------- */
+
+type FieldErrors = Record<string, string[]>;
 
 export class ApiError extends Error {
     status: number;
-    fieldErrors: Record<string, string[]>;
+    fieldErrors: FieldErrors;
 
-    constructor(message: string, status: number, fieldErrors: Record<string, string[]> = {}) {
+    constructor(message: string, status: number, fieldErrors: FieldErrors = {}) {
         super(message);
         this.name = "ApiError";
         this.status = status;
@@ -15,448 +35,361 @@ export class ApiError extends Error {
     }
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-function extractApiError(data: any): string {
-    if (!data || typeof data !== "object") return "Something went wrong. Please try again.";
+/** Pulls the most useful human-readable message out of a DRF-style error body. */
+function extractApiError(data: unknown): string {
+    if (!data || typeof data !== "object") return DEFAULT_ERROR;
+    const record = data as Record<string, unknown>;
 
-    if (typeof data.detail === "string") return data.detail;
-    if (typeof data.message === "string") return data.message;
-    if (typeof data.error === "string") return data.error;
+    for (const key of ["detail", "message", "error"]) {
+        const value = record[key];
+        if (typeof value === "string" && value.trim()) return value;
+    }
 
-    const nonFieldErrors = data.non_field_errors ?? data.nonFieldErrors;
+    const nonFieldErrors = record.non_field_errors ?? record.nonFieldErrors;
     if (Array.isArray(nonFieldErrors) && nonFieldErrors.length > 0) {
         return String(nonFieldErrors[0]);
     }
 
-    for (const key of Object.keys(data)) {
-        const value = data[key];
-        if (Array.isArray(value) && value.length > 0) {
-            return String(value[0]);
-        }
-        if (typeof value === "string" && value.trim()) {
-            return value;
-        }
+    for (const value of Object.values(record)) {
+        if (Array.isArray(value) && value.length > 0) return String(value[0]);
+        if (typeof value === "string" && value.trim()) return value;
     }
 
-    return "Validation failed. Please check your inputs.";
+    return VALIDATION_ERROR;
 }
 
-export async function postRegistrationData(payload: UserRegistrationData): Promise<UserRegistrationData> {
-    const formData = new FormData()
+/** Normalises `{ field: "msg" | ["msg", ...] }` into `{ field: ["msg", ...] }`. */
+function toFieldErrors(data: unknown): FieldErrors {
+    const fieldErrors: FieldErrors = {};
+    if (!data || typeof data !== "object") return fieldErrors;
+
+    for (const [key, value] of Object.entries(data)) {
+        if (Array.isArray(value)) {
+            fieldErrors[key] = value.map(String);
+        } else if (typeof value === "string") {
+            fieldErrors[key] = [value];
+        }
+    }
+    return fieldErrors;
+}
+
+/* -------------------------------------------------------------------------- */
+/*  Request helper                                                            */
+/* -------------------------------------------------------------------------- */
+
+// Endpoints without a response type yet. Replace with real types as you add them.
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type UntypedResponse = any;
+
+type QueryValue = string | number | boolean | undefined;
+
+interface RequestOptions {
+    method?: "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
+    /** FormData is sent as-is; any other object is sent as JSON. */
+    body?: FormData | object;
+    query?: Record<string, QueryValue>;
+    signal?: AbortSignal;
+    /** Explicit access token. Falls back to the session token when omitted. */
+    token?: string | null;
+    /** Set to false for public endpoints (login, register, ...). */
+    auth?: boolean;
+    /**
+     * Message used when the request fails. When omitted, the message is
+     * taken from the server's response body instead.
+     */
+    errorMessage?: string;
+}
+
+async function parseJson(res: Response): Promise<unknown> {
+    if (res.status === 204) return null;
+    const text = await res.text();
+    if (!text) return null;
+    try {
+        return JSON.parse(text);
+    } catch {
+        return null;
+    }
+}
+
+async function request<T = UntypedResponse>(path: string, options: RequestOptions = {}): Promise<T> {
+    if (!API_URL) {
+        throw new Error("NEXT_PUBLIC_API_URL is not configured");
+    }
+
+    const { method = "GET", body, query, signal, token, auth = true, errorMessage } = options;
+
+    const headers = new Headers();
+    if (auth) {
+        const accessToken = token ?? (await getAccessToken());
+        if (accessToken) headers.set("Authorization", `Bearer ${accessToken}`);
+    }
+
+    let requestBody: BodyInit | undefined;
+    if (body instanceof FormData) {
+        // Let the browser set the multipart boundary.
+        requestBody = body;
+    } else if (body !== undefined) {
+        headers.set("Content-Type", "application/json");
+        requestBody = JSON.stringify(body);
+    }
+
+    const search = new URLSearchParams();
+    for (const [key, value] of Object.entries(query ?? {})) {
+        if (value !== undefined) search.set(key, String(value));
+    }
+    const queryString = search.size > 0 ? `?${search}` : "";
+
+    const res = await fetch(`${API_URL}${path}${queryString}`, {
+        method,
+        headers,
+        body: requestBody,
+        signal,
+    });
+
+    const data = await parseJson(res);
+
+    if (!res.ok) {
+        const message = errorMessage ? `${errorMessage} (${res.status})` : extractApiError(data);
+        throw new ApiError(message, res.status, toFieldErrors(data));
+    }
+
+    return data as T;
+}
+
+/** Appends `items` as `key[0]`, `key[1]`, ... */
+function appendIndexed(formData: FormData, key: string, items?: string[]) {
+    items?.forEach((item, index) => formData.append(`${key}[${index}]`, item));
+}
+
+/* -------------------------------------------------------------------------- */
+/*  Auth                                                                      */
+/* -------------------------------------------------------------------------- */
+
+export function postRegistrationData(payload: UserRegistrationData): Promise<UserRegistrationData> {
+    const formData = new FormData();
     formData.append("first_name", payload.first_name);
     formData.append("last_name", payload.last_name);
     formData.append("username", payload.username);
     formData.append("email", payload.email);
     if (payload.password) formData.append("password", payload.password);
 
-    const res = await fetch(`${API_URL}/auth/register/`, {
+    return request<UserRegistrationData>("/auth/register/", {
         method: "POST",
         body: formData,
+        auth: false,
     });
-
-    if (!res.ok) {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        let payload: any = {};
-        try {
-            payload = await res.json();
-        } catch {
-            payload = {};
-        }
-
-        const fieldErrors: Record<string, string[]> = {};
-        for (const [key, value] of Object.entries(payload || {})) {
-            if (Array.isArray(value)) {
-                fieldErrors[key] = value.map((item) => String(item));
-            } else if (typeof value === "string") {
-                fieldErrors[key] = [value];
-            }
-        }
-
-        throw new ApiError(extractApiError(payload), res.status, fieldErrors);
-    }
-
-    return res.json()
 }
 
-export async function verifyEmail(payload : {email: string, action: string, code?: string}) {
+export function verifyEmail(payload: { email: string; action: string; code?: string }) {
     const formData = new FormData();
     formData.append("action", payload.action);
-    if(payload.code) formData.append("code", payload.code);
     formData.append("email", payload.email);
+    if (payload.code) formData.append("code", payload.code);
 
-    const res = await fetch(`${API_URL}/auth/verify/`, {
-        method: "POST",
-        body: formData
-    })
-
-    if (!res.ok){
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        let payload: any = {};
-        try {
-            payload = await res.json();
-        } catch {
-            payload = {};
-        }
-        console.log(payload)
-        throw new ApiError(extractApiError(payload), res.status, payload);
-    }
-    return res.json()
+    return request("/auth/verify/", { method: "POST", body: formData, auth: false });
 }
 
-export async function forgotPasswordRequest(payload:Record<string, string>) {
+export function forgotPasswordRequest(payload: Record<string, string>) {
     const formData = new FormData();
     formData.append("email", payload.email);
-    const res = await fetch(`${API_URL}/auth/password-reset/`, {
-        method: "POST",
-        body: formData
-    });
-    if (!res.ok){
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        let payload: any = {};
-        try {
-            payload = await res.json();
-        } catch {
-            payload = {};
-        }
-        console.log(payload)
-        throw new ApiError(extractApiError(payload), res.status, payload);
-    }
-    return res.json()
+
+    return request("/auth/password-reset/", { method: "POST", body: formData, auth: false });
 }
 
-export async function resetPasswordRequest(payload:Record<string, string>) {
+export function resetPasswordRequest(payload: Record<string, string>) {
     const formData = new FormData();
     formData.append("new_password", payload.password);
     formData.append("token", payload.token);
-    const res = await fetch(`${API_URL}/auth/password-reset/confirm/`, {
-        method: "POST",
-        body: formData
-    })
 
-    if (!res.ok){
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        let payload: any = {};
-        try {
-            payload = await res.json();
-        } catch {
-            payload = {};
-        }
-        console.log(payload)
-        throw new ApiError(extractApiError(payload), res.status, payload);
-    }
-    return res.json()
+    return request("/auth/password-reset/confirm/", { method: "POST", body: formData, auth: false });
 }
 
-export async function getPosts(signal?: AbortSignal, access?: string, myPosts?: false | boolean): Promise<Post[]> {
-    let res;
-    if(myPosts){
-        res = await fetch(`${API_URL}/posts/?my_posts=${true}`, { 
-            signal,
-            headers: {
-                "Content-Type": "application/json",
-                "Authorization": `Bearer ${await getAccessToken()}`
-            }
-        })
-    } else {
-        res = await fetch(`${API_URL}/posts/`, { 
-            signal,
-            headers: {
-                "Content-Type": "application/json",
-                "Authorization": `Bearer ${access}`
-            }
-        })
-    }
-    
-    if (!res.ok){
-        throw new Error(`Faild to load posts ${res.status}`);
-    }
-    return res.json();
-}
+/* -------------------------------------------------------------------------- */
+/*  Posts                                                                     */
+/* -------------------------------------------------------------------------- */
 
-export async function getCommunities(signal?: AbortSignal, my?: boolean): Promise<Community[]> {
-    let res;
-    const access = await getAccessToken();
-    if (my) {
-        res = await fetch(`${API_URL}/communities/?my_communities=${true}`, {
-            signal,
-            headers: {
-                Authorization: `Bearer ${access}`
-            }
-        })
-    }else{
-        res = await fetch(`${API_URL}/communities/`, {
-            signal,
-            headers: {
-                Authorization: `Bearer ${access}`
-            }
-        })
-    }
-    if (!res.ok){
-        throw new Error(`Faild to load communities ${res.status}`);
-    }
-    return res.json();
-}
-export async function getCategories(signal?: AbortSignal): Promise<Category[]> {
-    const res = await fetch(`${API_URL}/categories/`, {
-            signal,
-            headers: {
-                Authorization: `Bearer ${await getAccessToken()}`
-            }
-        })
-    
-    if (!res.ok){
-        throw new Error(`Faild to load categories ${res.status}`);
-    }
-    return res.json();
-}
-
-export async function joinLeaveCommunity(status: boolean, c_slug: string) {
-    const access = await getAccessToken();
-    const res = await fetch(`${API_URL}/communities/${c_slug}/${status?"leave":"join"}/`, {
-        method: "POST",
-        headers: {
-            Authorization: `Bearer ${access}`
-        }
-    })
-    if (!res.ok){
-        throw new Error(`Faild to ${status?"leave":"join"} the community`);
-    }
-    return res.json();
-}
-
-export async function getCommunity(slug: string | undefined, signal?: AbortSignal): Promise<CommunityDetail> {
-    const res = await fetch(`${API_URL}/communities/${slug}`, { 
+export function getPosts(signal?: AbortSignal, access?: string, myPosts?: boolean): Promise<Post[]> {
+    return request<Post[]>("/posts/", {
         signal,
-        headers: {
-            Authorization: `Bearer ${await getAccessToken()}`
-        }
-     })
-
-    if (!res.ok){
-        throw new Error(`Faild to load community ${res.status}`);
-    }
-    return res.json();
+        token: access,
+        query: { my_posts: myPosts ? true : undefined },
+        errorMessage: "Failed to load posts",
+    });
 }
 
-
-export async function upvotePost(id:number, access: string) {
-    const res = await fetch(`${API_URL}/posts/${id}/upvote/`, {
-        method:"POST",
-        headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${access}`
-        },
-        body: JSON.stringify({})
-    })
-    if(!res.ok){
-        throw new Error(`Couldn't upvote the post ${res.status}`)
-    }
-    return res.json();
-}
-export async function downvotePost(id:number, access: string) {
-    const res = await fetch(`${API_URL}/posts/${id}/downvote/`, {
-        method:"POST",
-        headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${access}`
-        },
-        body: JSON.stringify({})
-    })
-    if(!res.ok){
-        throw new Error(`Couldn't downvote the post ${res.status}`)
-    }
-    return res.json();
-}
-
-export async function votePoll(id: number) {
-    const res = await fetch(`${API_URL}/polls/${id}/vote/`, {
-        method:"POST",
-        headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${await getAccessToken()}`
-        },
-        body: JSON.stringify({})
-    })
-    if(!res.ok){
-        throw new Error(`Couldn't vote the poll ${res.status}`)
-    }
-    return res.json();
-}
-
-export async function getPollVotes(id: number) {
-    const res = await fetch(`${API_URL}/polls/${id}/`, {
-        headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${await getAccessToken()}`
-        },
-    })
-    if(!res.ok){
-        throw new Error(`Couldn't get the poll votes ${res.status}`)
-    }
-    return res.json();
-}
-
-export async function createPost(payload: NewPost): Promise<Post> {
+export function createPost(payload: NewPost): Promise<Post> {
     const formData = new FormData();
     formData.append("content", payload.content);
     formData.append("title", payload.title);
     formData.append("post_type", payload.post_type);
     formData.append("community_id", String(payload.community_id));
-    // formData.append("status", payload.status);
-    if (payload.tags) {
-        payload.tags.forEach((tag, index) => {
-            formData.append(`tags[${index}]`, tag);
-        });
-    }
+    appendIndexed(formData, "tags", payload.tags);
 
     if (payload.post_type === "image") {
-        payload.images?.forEach((image, index) => {
-            formData.append(`image${index+1}`, image);
-        })
+        payload.images?.forEach((image, index) => formData.append(`image${index + 1}`, image));
     }
+
     if (payload.post_type === "poll") {
         formData.append("poll_length", String(payload.poll_length));
-        payload.polls?.forEach((poll, index) => {
-            formData.append(`polls[${index}]`, poll);
-        });
+        appendIndexed(formData, "polls", payload.polls);
     }
 
-    const res = await fetch(`${API_URL}/posts/`, {
+    return request<Post>("/posts/", {
         method: "POST",
-        headers: {
-            Authorization: `Bearer ${await getAccessToken()}`
-        },
-        body: formData
-    })
-    if (!res.ok){
-        throw new Error(`Couldn't create a post ${res.status}`)
-    }
-    return res.json();
+        body: formData,
+        errorMessage: "Couldn't create a post",
+    });
 }
 
-export async function createCommunity(payload: NewCommunity, token: string): Promise<Community> {
+export function upvotePost(id: number, access: string) {
+    return request(`/posts/${id}/upvote/`, {
+        method: "POST",
+        body: {},
+        token: access,
+        errorMessage: "Couldn't upvote the post",
+    });
+}
+
+export function downvotePost(id: number, access: string) {
+    return request(`/posts/${id}/downvote/`, {
+        method: "POST",
+        body: {},
+        token: access,
+        errorMessage: "Couldn't downvote the post",
+    });
+}
+
+/* -------------------------------------------------------------------------- */
+/*  Polls                                                                     */
+/* -------------------------------------------------------------------------- */
+
+export function votePoll(id: number) {
+    return request(`/polls/${id}/vote/`, {
+        method: "POST",
+        body: {},
+        errorMessage: "Couldn't vote on the poll",
+    });
+}
+
+export function getPollVotes(id: number) {
+    return request(`/polls/${id}/`, { errorMessage: "Couldn't get the poll votes" });
+}
+
+/* -------------------------------------------------------------------------- */
+/*  Communities & categories                                                  */
+/* -------------------------------------------------------------------------- */
+
+export function getCommunities(signal?: AbortSignal, my?: boolean): Promise<Community[]> {
+    return request<Community[]>("/communities/", {
+        signal,
+        query: { my_communities: my ? true : undefined },
+        errorMessage: "Failed to load communities",
+    });
+}
+
+export function getCommunity(slug: string | undefined, signal?: AbortSignal): Promise<CommunityDetail> {
+    return request<CommunityDetail>(`/communities/${slug}/`, {
+        signal,
+        errorMessage: "Failed to load community",
+    });
+}
+
+export function createCommunity(payload: NewCommunity, token: string): Promise<Community> {
     const formData = new FormData();
     formData.append("name", payload.name);
     formData.append("description", payload.description);
-    if (payload.icon !== null) formData.append("icon", payload.icon);
-    if (payload.banner !== null) formData.append("banner", payload.banner);
     formData.append("is_private", String(payload.is_private));
     formData.append("category_id", String(payload.category_id));
-    if (payload.rules) {
-        payload.rules.forEach((rule, index) => {
-            formData.append(`rules[${index}]`, rule);
-        });
-    }
+    if (payload.icon !== null) formData.append("icon", payload.icon);
+    if (payload.banner !== null) formData.append("banner", payload.banner);
+    appendIndexed(formData, "rules", payload.rules);
 
-    const res = await fetch(`${API_URL}/communities/`, {
+    return request<Community>("/communities/", {
         method: "POST",
-        headers: {
-            "Authorization": `Bearer ${token}`
-        },
         body: formData,
-    })
-
-    if (!res.ok){
-        throw new Error(`Couldn't create a community ${res.status}`)
-    }
-    return res.json();
-}
-
-export async function getComments(post_id: number): Promise<Comment[]> {
-    const res = await fetch(`${API_URL}/comments/?post_id=${post_id}`, {
-        headers: {
-            Authorization: `Bearer ${await getAccessToken()}`
-        }
+        token,
+        errorMessage: "Couldn't create a community",
     });
-    if (!res.ok){
-        throw new Error(`Couldn't fetch comments${res.status}`);
-    }
-    return res.json();
 }
 
-export async function postComment(comment: NewComment, token: string): Promise<Comment> {
-    const res = await fetch(`${API_URL}/comments/`, {
+/** Pass `isMember = true` to leave the community, `false` to join it. */
+export function joinLeaveCommunity(isMember: boolean, slug: string) {
+    const action = isMember ? "leave" : "join";
+    return request(`/communities/${slug}/${action}/`, {
         method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`
-        },
-        body: JSON.stringify(comment)
+        errorMessage: `Failed to ${action} the community`,
     });
-    if(!res.ok){
-        throw new Error(`Couldn't post the comment ${res.status}`);
-    }
-    return res.json();
 }
 
-
-export async function upvoteComment(id:number, access: string) {
-    const res = await fetch(`${API_URL}/comments/${id}/upvote/`, {
-        method:"POST",
-        headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${access}`
-        },
-        body: JSON.stringify({})
-    })
-    if(!res.ok){
-        throw new Error(`Couldn't upvote the comment ${res.status}`)
-    }
-    return res.json();
-}
-export async function downvoteComment(id:number, access: string) {
-    const res = await fetch(`${API_URL}/comments/${id}/downvote/`, {
-        method:"POST",
-        headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${access}`
-        },
-        body: JSON.stringify({})
-    })
-    if(!res.ok){
-        throw new Error(`Couldn't downvote the comment ${res.status}`)
-    }
-    return res.json();
+export function getCategories(signal?: AbortSignal): Promise<Category[]> {
+    return request<Category[]>("/categories/", {
+        signal,
+        errorMessage: "Failed to load categories",
+    });
 }
 
-export async function getSavedPosts(): Promise<SavedPost[]> {
-    const res = await fetch(`${API_URL}/bookmarks/`, {
-        headers: {
-            Authorization: `Bearer ${await getAccessToken()}`
-        }
-    }
-    );
-    if (!res.ok) {
-        throw new Error(`Couldn't fetch saved posts ${res.status}`);
-    }
-    return res.json();
+/* -------------------------------------------------------------------------- */
+/*  Comments                                                                  */
+/* -------------------------------------------------------------------------- */
+
+export function getComments(postId: number): Promise<Comment[]> {
+    return request<Comment[]>("/comments/", {
+        query: { post_id: postId },
+        errorMessage: "Couldn't fetch comments",
+    });
 }
 
-export async function saveUnsave(is_saved: boolean, post_id: number) {
-    let res;
-    if (is_saved) {
-        res = await fetch(`${API_URL}/bookmarks/${post_id}/`, {
+export function postComment(comment: NewComment, token: string): Promise<Comment> {
+    return request<Comment>("/comments/", {
+        method: "POST",
+        body: comment,
+        token,
+        errorMessage: "Couldn't post the comment",
+    });
+}
+
+export function upvoteComment(id: number, access: string) {
+    return request(`/comments/${id}/upvote/`, {
+        method: "POST",
+        body: {},
+        token: access,
+        errorMessage: "Couldn't upvote the comment",
+    });
+}
+
+export function downvoteComment(id: number, access: string) {
+    return request(`/comments/${id}/downvote/`, {
+        method: "POST",
+        body: {},
+        token: access,
+        errorMessage: "Couldn't downvote the comment",
+    });
+}
+
+/* -------------------------------------------------------------------------- */
+/*  Bookmarks                                                                 */
+/* -------------------------------------------------------------------------- */
+
+export function getSavedPosts(): Promise<SavedPost[]> {
+    return request<SavedPost[]>("/bookmarks/", { errorMessage: "Couldn't fetch saved posts" });
+}
+
+/** Pass `isSaved = true` to remove the bookmark, `false` to create it. */
+export function saveUnsave(isSaved: boolean, postId: number) {
+    if (isSaved) {
+        return request(`/bookmarks/${postId}/`, {
             method: "DELETE",
-            headers: {
-                Authorization: `Bearer ${await getAccessToken()}`
-            }
-        });
-    } else {
-        const formData = new FormData()
-        if (post_id) {
-            formData.append("post", String(post_id))
-            formData.append("post_id", String(post_id))
-        }
-        res = await fetch(`${API_URL}/bookmarks/`, {
-            method: "POST",
-            headers: {
-                Authorization: `Bearer ${await getAccessToken()}`
-            },
-            body: formData
+            errorMessage: "Couldn't delete the saved post",
         });
     }
-    if (!res.ok) {
-        throw new Error(`Couldn't ${is_saved ? "delete" : "save"} post ${res.status}`);
-    }
-    return res.json();
+
+    const formData = new FormData();
+    formData.append("post", String(postId));
+    formData.append("post_id", String(postId));
+
+    return request("/bookmarks/", {
+        method: "POST",
+        body: formData,
+        errorMessage: "Couldn't save the post",
+    });
 }
