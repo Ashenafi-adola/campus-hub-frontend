@@ -3,11 +3,11 @@
 import { useEffect, useState } from "react";
 import { BookOpen, HelpCircle, Mail } from "lucide-react";
 
-import { AccountTab } from "../../../../components/main/accounts-settings/AccountTab";
-import { AppearanceTab } from "../../../../components/main/accounts-settings/AppearanceTab";
-import { NotificationsTab } from "../../../../components/main/accounts-settings/NotificationsTab";
-import { PrivacyTab } from "../../../../components/main/accounts-settings/PrivacyTab";
-import { ProfileTab } from "../../../../components/main/accounts-settings/ProfileTab";
+import { AccountTab } from "../../../../components/accounts-settings/AccountTab";
+import { AppearanceTab } from "../../../../components/accounts-settings/AppearanceTab";
+import { NotificationsTab } from "../../../../components/accounts-settings/NotificationsTab";
+import { PrivacyTab } from "../../../../components/accounts-settings/PrivacyTab";
+import { ProfileTab } from "../../../../components/accounts-settings/ProfileTab";
 import {
   TABS,
   Toast,
@@ -18,7 +18,7 @@ import {
   type ProfileForm,
   useDraft,
   useScrollEdges,
-} from "../../../../components/main/accounts-settings/settings-shared";
+} from "../../../../components/accounts-settings/settings-shared";
 
 export default function SettingsPage() {
   const [tab, setTab] = useState<(typeof TABS)[number]["id"]>("profile");

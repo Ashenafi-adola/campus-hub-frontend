@@ -37,18 +37,18 @@ export default function CommunitiesPage() {
     <>
       <main className="min-w-0 flex-1 space-y-4">
         {/* Header + filter chips */}
-        <div className="sticky top-16 z-10 rounded-2xl border border-neutral-200 bg-white p-6 dark:border-neutral-800 dark:bg-neutral-900">
-          <h1 className="text-2xl font-bold text-neutral-900 dark:text-neutral-100">
+        <div className="sticky top-0 z-10 rounded-2xl border border-neutral-200 bg-white p-4 sm:p-6 dark:border-neutral-800 dark:bg-neutral-900">
+          <h1 className="text-xl font-bold text-neutral-900 sm:text-2xl dark:text-neutral-100">
             Explore Communities
           </h1>
-          <div className="mt-4 flex flex-wrap gap-2">
+          <div className="mt-4 flex max-w-full gap-2 overflow-x-auto pb-1 scrollbar-none sm:flex-wrap sm:overflow-visible sm:pb-0 [&::-webkit-scrollbar]:hidden">
             {categories.map((c) => {
               const active = category === c;
               return (
                 <button
                   key={c.id}
                   onClick={() => setCategory(c)}
-                  className={`rounded-full px-4 py-2 text-sm w-40 truncate font-semibold transition-colors animate-marquee ${active
+                  className={`max-w-48 shrink-0 truncate rounded-full px-4 py-2 text-sm font-semibold transition-colors ${active
                     ? "bg-indigo-600 text-white"
                     : "bg-[#eef1f6] text-neutral-600 hover:bg-neutral-200 dark:bg-neutral-800 dark:text-neutral-300 dark:hover:bg-neutral-700"
                     }`}

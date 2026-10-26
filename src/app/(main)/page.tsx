@@ -27,7 +27,7 @@ export default function CampusHubFeed() {
   return (
     <>
       {/* Main feed */}
-      <main className="min-w-0 flex-1 space-y-4">
+      <main className="min-w-0 flex-1 space-y-4 px-0">
         {/* Ask question composer */}
         <div className="sticky top-15 z-50 flex items-center gap-3 rounded-2xl border border-neutral-200 bg-white p-3 dark:border-neutral-800 dark:bg-neutral-900">
           <Avatar user={user} />

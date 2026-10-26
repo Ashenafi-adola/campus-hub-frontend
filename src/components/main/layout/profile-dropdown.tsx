@@ -16,10 +16,10 @@ interface MenuItem {
 }
 
 const MENU_ITEMS: MenuItem[] = [
-  { id: "profile", label: "View Profile", icon: User },
-  { id: "saved", label: "Saved", icon: Bookmark },
-  { id: "activity", label: "My Activity", icon: Clock },
-  { id: "settings", label: "Settings", icon: Settings },
+  { id: "/u/profile", label: "View Profile", icon: User },
+  { id: "/bookmarks", label: "Saved", icon: Bookmark },
+  { id: "/u/activity", label: "My Activity", icon: Clock },
+  { id: "/u/settings", label: "Settings", icon: Settings },
   { id: "help", label: "Help & Support", icon: HelpCircle },
 ];
 
@@ -106,7 +106,7 @@ function ProfileDropdown() {
           <div className="py-1.5">
             {MENU_ITEMS.map(({ id, label, icon: Icon }) => (
               <Link
-                href={`/u/${id}`}
+                href={id}
                 key={id}
                 onClick={() => setOpen(false)}
                 className="flex w-full items-center gap-3 px-4 py-2.5 text-left text-sm font-medium text-neutral-700 hover:bg-neutral-50 dark:text-neutral-200 dark:hover:bg-neutral-800"

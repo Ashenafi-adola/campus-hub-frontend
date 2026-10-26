@@ -18,8 +18,10 @@ async function Layout({ children }: Props) {
         <AuthProvider value={{ user }}>
             <div className="min-h-screen bg-[#f7f6f2] dark:bg-neutral-950">
                 <SiteHeader />
-                <div className="mx-auto flex max-w-full gap-6 md:px-6 px-2 py-6">
-                    <SideBar />
+                <div className="mx-auto flex max-w-full gap-6 md:pr-6 ml-0 px-0 py-0">
+                    <div className="ml-0 pl-0 transition-all hidden md:block dark:border-neutral-800">
+                        <SideBar />
+                    </div>
                     {children}
                 </div>
             </div>

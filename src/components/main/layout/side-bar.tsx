@@ -24,7 +24,7 @@ const NAV_ITEMS: NavItem[] = [
     { id: "new community", label: "New Community", icon: Plus, href: "/communities/create" }
 ];
 
-function SideBar() {
+function SideBar({ onClose, mobile = false }: { onClose?: () => void; mobile?: boolean }) {
     const [active, setActive] = useState<string>("home");
     const [myCommunities, setMyCommunities] = useState<Community[]>([]);
 
@@ -33,8 +33,20 @@ function SideBar() {
             .then(res => setMyCommunities(res))
             .catch(error => console.log(error))
     }, [])
+
+    const handleNavClick = (id: string) => {
+        setActive(id)
+        onClose?.()
+    }
+
     return (
-        <aside className="sticky top-16 z-0 h-[calc(100dvh-4rem)] w-56 shrink-0 self-start space-y-6 overflow-y-auto border-r border-gray-300 transition-all hidden md:block dark:border-neutral-800">
+        <aside
+            onClick={(e) => e.stopPropagation()}
+            className={`${mobile
+                ? "h-full w-56 bg-white dark:bg-neutral-950"
+                : "sticky top-16 z-0 h-[calc(100dvh-4rem)] w-56 transition-all hidden md:block dark:border-neutral-800"
+                } shrink-0 self-start space-y-6 overflow-y-auto border-r border-gray-300 dark:border-neutral-700`}
+        >
             <nav className="space-y-1">
                 {NAV_ITEMS.map(({ id, label, icon: Icon, href }) => {
                     const isActive = active === id;
@@ -42,7 +54,7 @@ function SideBar() {
                         <Link
                             href={href}
                             key={id}
-                            onClick={() => setActive(id)}
+                            onClick={() => handleNavClick(id)}
                             className={`flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-colors ${isActive
                                 ? "bg-indigo-50 text-indigo-700 dark:bg-indigo-950/50 dark:text-indigo-300"
                                 : "text-neutral-600 hover:bg-neutral-100 dark:text-neutral-300 dark:hover:bg-neutral-800"
