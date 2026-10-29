@@ -6,7 +6,7 @@ import {
 } from "lucide-react";
 import Image from "next/image"
 import { useParams } from "next/navigation";
-import { Community, Post } from "@/libs/types";
+import { Community, CommunityMemeber, Post } from "@/libs/types";
 import { getCommunity, joinLeaveCommunity } from "@/libs/api";
 import { AboutTab, MembersTab, PostsTab } from "@/components/main/community/community-tabs";
 import { AuthContext } from "@/context/auth-context";
@@ -45,12 +45,13 @@ export default function CommunityDetailPage() {
   const [joined, setJoined] = useState<boolean | null>(null);
   const [posts, setPosts] = useState<Post[]>([]);
   const [community, setCommunity] = useState<Community | null>(null);
+  const [members, setMembers] = useState<CommunityMemeber[]>([])
   const { user } = useContext(AuthContext)
   useEffect(() => {
     const controller = new AbortController();
 
     getCommunity(slug, controller.signal)
-      .then(res=>{setCommunity(res.community); setPosts(res.posts); setJoined(Boolean(res.community.is_member))})
+      .then(res=>{setCommunity(res.community); setPosts(res.posts); setJoined(Boolean(res.community.is_member)); setMembers(res.members);})
       .catch((error: unknown) => {
         if (!controller.signal.aborted) console.error(error);
       });
@@ -169,17 +170,15 @@ export default function CommunityDetailPage() {
           {tab === "posts" && <PostsTab posts={posts}/>
           }
           {
-            tab === "about" && <AboutTab community={community} />
+            tab === "about" && <AboutTab community={community} posts={posts} members={members}/>
           }
 
           {tab === "questions" && (
-            <div className="rounded-2xl border border-neutral-200 bg-white p-8 text-center text-sm text-neutral-400 dark:border-neutral-800 dark:bg-neutral-900 dark:text-neutral-500">
-              {TABS.find((t) => t.id === tab)?.label} content goes here.
-            </div>
+            <PostsTab posts={posts.filter((p)=>p.post_type === "question")}/>
           )}
 
           {
-            tab === "members" && <MembersTab/>
+            tab === "members" && <MembersTab members={members}/>
           }
         </main>
 

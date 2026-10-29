@@ -71,6 +71,14 @@ export interface NewCommunity {
     rules?: string[],
 }
 
+export interface CommunityMemeber {
+    id: number;
+    user: User;
+    role: string;
+    joined_at: string;
+    is_active: boolean;
+}
+
 export interface Question {
   id: string;
   author: string;
@@ -151,6 +159,7 @@ export interface SavedPost {
 export interface CommunityDetail {
     community: Community;
     posts: Post[];
+    members: CommunityMemeber[];
 }
 
 export interface NewComment {

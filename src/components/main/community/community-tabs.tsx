@@ -9,54 +9,12 @@ import {
   MoreHorizontal,
   PodcastIcon,
 } from "lucide-react";
-import { Community, Post } from "@/libs/types";
+import { Community, CommunityMemeber, Post } from "@/libs/types";
 import { PostFeedSkeleton } from "../laoding-skeletons";
 import QuestionCard from "../post-card";
-import { EmptyState } from "@/components/shared/ui";
+import { Avatar, EmptyState } from "@/components/shared/ui";
 
-/* ----------------------------------------------------------------- */
-/*  Shared initials avatar — same pattern as ProfileDropdown         */
-/* ----------------------------------------------------------------- */
 
-function getInitials(name: string) {
-  return name
-    .trim()
-    .split(/\s+/)
-    .map((part) => part[0])
-    .slice(0, 2)
-    .join("")
-    .toUpperCase();
-}
-
-function Avatar({
-  name,
-  size = "h-10 w-10",
-  textSize = "text-sm",
-  color = "bg-indigo-600",
-}: {
-  name: string;
-  size?: string;
-  textSize?: string;
-  color?: string;
-}) {
-  return (
-    <div
-      className={`flex ${size} shrink-0 items-center justify-center rounded-full ${color} font-semibold text-white ${textSize}`}
-    >
-      {getInitials(name)}
-    </div>
-  );
-}
-
-/* ----------------------------------------------------------------- */
-/*  ABOUT TAB                                                        */
-/* ----------------------------------------------------------------- */
-
-interface Moderator {
-  id: string;
-  name: string;
-  role: string;
-}
 
 interface Stat {
   icon: React.ComponentType<{ className?: string }>;
@@ -65,17 +23,13 @@ interface Stat {
 }
 
 
-const MODERATORS: Moderator[] = [
-  { id: "1", name: "Dr. Amara Bekele", role: "Faculty Moderator" },
-  { id: "2", name: "Daniel Kim", role: "Student Moderator" },
-  { id: "3", name: "Priya Shah", role: "Student Moderator" },
-];
 
-export function AboutTab({ community } : {community: Community}) {
+export function AboutTab({ community, posts, members } : {community: Community, posts: Post[], members: CommunityMemeber[]}) {
 
+  const postNum = posts.filter((p)=> new Date(p.created_at).getTime() > new Date().getTime() - 1000 * 60 * 60 * 24 * 7).length
   const STATS: Stat[] = [
     { icon: Users, label: "Members", value: community.member_count.toString() },
-    { icon: MessageSquare, label: "Posts this week", value: "86" },
+    { icon: MessageSquare, label: "Posts this week", value: postNum.toLocaleString() },
     { icon: Calendar, label: "Created", value: community.created_at ? new Date(community.created_at).toDateString().slice(3,) : "Sept 14, 2023" },
     { icon: Globe, label: "Visibility", value: community.is_private? "Private" : "Public" },
   ];
@@ -112,12 +66,12 @@ export function AboutTab({ community } : {community: Community}) {
           <h3 className="font-semibold text-neutral-900 dark:text-neutral-100">Moderators</h3>
         </div>
         <div className="mt-4 space-y-3">
-          {MODERATORS.map((mod) => (
+          {members.filter((m)=> m.role === "moderator").map((mod) => (
             <div key={mod.id} className="flex items-center gap-3">
-              <Avatar name={mod.name} size="h-9 w-9" />
+              <Avatar user={mod.user} />
               <div>
                 <div className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">
-                  {mod.name}
+                  {mod.user.first_name + " " + mod.user.last_name}
                 </div>
                 <div className="text-xs text-neutral-400 dark:text-neutral-500">{mod.role}</div>
               </div>
@@ -148,71 +102,8 @@ export function AboutTab({ community } : {community: Community}) {
   );
 }
 
-/* ----------------------------------------------------------------- */
-/*  MEMBERS TAB                                                      */
-/* ----------------------------------------------------------------- */
 
-interface Member {
-  id: string;
-  name: string;
-  school: string;
-  role: "moderator" | "member";
-  joined: string;
-  avatarColor: string;
-}
-
-const MEMBERS: Member[] = [
-  {
-    id: "1",
-    name: "Dr. Amara Bekele",
-    school: "Stanford University",
-    role: "moderator",
-    joined: "Sept 2023",
-    avatarColor: "bg-indigo-600",
-  },
-  {
-    id: "2",
-    name: "Daniel Kim",
-    school: "UCLA",
-    role: "moderator",
-    joined: "Sept 2023",
-    avatarColor: "bg-emerald-600",
-  },
-  {
-    id: "3",
-    name: "Priya Shah",
-    school: "UC Berkeley",
-    role: "moderator",
-    joined: "Oct 2023",
-    avatarColor: "bg-amber-600",
-  },
-  {
-    id: "4",
-    name: "Marcus Aurelius",
-    school: "MIT",
-    role: "member",
-    joined: "Nov 2023",
-    avatarColor: "bg-rose-600",
-  },
-  {
-    id: "5",
-    name: "Sophia Martinez",
-    school: "Stanford University",
-    role: "member",
-    joined: "Jan 2024",
-    avatarColor: "bg-sky-600",
-  },
-  {
-    id: "6",
-    name: "Ethan Wright",
-    school: "MIT",
-    role: "member",
-    joined: "Feb 2024",
-    avatarColor: "bg-violet-600",
-  },
-];
-
-function RoleBadge({ role }: { role: Member["role"] }) {
+function RoleBadge({ role }: { role: string }) {
   if (role === "moderator") {
     return (
       <span className="flex items-center gap-1 rounded-full bg-indigo-50 px-2.5 py-1 text-xs font-semibold text-indigo-600 dark:bg-indigo-950 dark:text-indigo-300">
@@ -228,14 +119,14 @@ function RoleBadge({ role }: { role: Member["role"] }) {
   );
 }
 
-export function MembersTab() {
+export function MembersTab({members}:{members: CommunityMemeber[]}) {
   const [query, setQuery] = useState("");
 
-  const filtered = MEMBERS.filter((m) =>
-    m.name.toLowerCase().includes(query.toLowerCase())
+  const filtered = members.filter((m) =>
+    m.user.first_name.toLowerCase().includes(query.toLowerCase())
   );
   const moderators = filtered.filter((m) => m.role === "moderator");
-  const members = filtered.filter((m) => m.role === "member");
+  const visible = filtered.filter((m) => m.role === "member");
 
   return (
     <div className="space-y-4">
@@ -270,11 +161,11 @@ export function MembersTab() {
       {/* Members */}
       <div className="rounded-2xl border border-neutral-200 bg-white p-2 dark:border-neutral-800 dark:bg-neutral-900">
       <p className="px-4 pt-3 text-xs font-semibold uppercase tracking-wide text-neutral-400 dark:text-neutral-500">
-          Members · {members.length}
+          Members · {visible.length}
         </p>
         <div className="mt-1 divide-y divide-neutral-100 dark:divide-neutral-800">
-          {members.length > 0 ? (
-            members.map((m) => <MemberRow key={m.id} member={m} />)
+          {visible.length > 0 ? (
+            visible.map((m) => <MemberRow key={m.id} member={m} />)
           ) : (
             <p className="px-4 py-6 text-center text-sm text-neutral-400 dark:text-neutral-500">
               No members match {query}
@@ -286,16 +177,16 @@ export function MembersTab() {
   );
 }
 
-function MemberRow({ member }: { member: Member }) {
+function MemberRow({ member }: { member: CommunityMemeber }) {
   return (
     <div className="flex items-center gap-3 px-4 py-3">
-      <Avatar name={member.name} color={member.avatarColor} />
+      <Avatar user={member.user}/>
       <div className="min-w-0 flex-1">
         <div className="truncate text-sm font-semibold text-neutral-900 dark:text-neutral-100">
-          {member.name}
+          {member.user.first_name + " " + member.user.last_name}
         </div>
         <div className="truncate text-xs text-neutral-400 dark:text-neutral-500">
-          {member.school} · Joined {member.joined}
+          ASTU· Joined {new Date(member.joined_at).toDateString().slice(3,)}
         </div>
       </div>
       <RoleBadge role={member.role} />

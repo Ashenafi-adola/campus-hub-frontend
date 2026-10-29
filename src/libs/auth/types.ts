@@ -13,7 +13,7 @@ export type AuthTokens = {
 export type Session = AuthTokens & {user: AuthUser};
 
 export type AuthUser = {
-    id: string;
+    id: number;
     username: string;
     email: string;
     first_name: string;
