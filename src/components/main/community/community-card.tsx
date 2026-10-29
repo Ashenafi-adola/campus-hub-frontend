@@ -4,8 +4,9 @@ import { CategoryId, Community } from '@/libs/types';
 import { ArrowUpRight, Check, Users } from 'lucide-react';
 import Link from 'next/link';
 import Image from "next/image";
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
 import { joinLeaveCommunity } from '@/libs/api';
+import { AuthContext } from '@/context/auth-context';
 
 const CATEGORY_META: Record<
   CategoryId,
@@ -52,6 +53,7 @@ const cats: CategoryId[] = ["all", "academic", "campus-life", "career"]
 
 function CommunityCard({ community }: { community: Community }) {
   const [joined, setJoined] = useState<boolean>(Boolean(community.is_member));
+  const { user } = useContext(AuthContext)
   const meta = CATEGORY_META[cats[2]];
 
   return (
@@ -111,20 +113,23 @@ function CommunityCard({ community }: { community: Community }) {
         <div
           className="mt-4 flex items-center gap-2 border-t border-neutral-100 pt-4 dark:border-neutral-800">
           <button
+            disabled={ user?.email === community.creator?.email }
             onClick={async () => { const res = await joinLeaveCommunity(joined, community.slug); setJoined(res.is_member); }}
-            className={`flex-1 rounded-lg px-3.5 py-2 text-sm font-semibold transition-colors ${joined
+            className={`flex-1  ${ user?.email === community.creator?.email && "cursor-not-allowed"} rounded-lg px-3.5 py-2 text-sm font-semibold transition-colors ${joined
               ? "bg-neutral-900 text-white hover:bg-neutral-800 dark:bg-neutral-700 dark:hover:bg-neutral-600"
               : "bg-indigo-50 text-indigo-600 hover:bg-indigo-100 dark:bg-indigo-950 dark:text-indigo-300 dark:hover:bg-indigo-900"
               }`}
           >
-            {joined ? (
+            {
+            (joined ? (
               <span className="flex items-center justify-center gap-1.5">
                 <Check className="h-3.5 w-3.5" strokeWidth={3} />
                 Joined
               </span>
             ) : (
               "Join Community"
-            )}
+            ))
+            }
           </button>
           <Link href={`/communities/${community.slug}`} className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-neutral-200 text-neutral-400 opacity-0 transition-opacity group-hover:opacity-100 hover:text-neutral-700 dark:border-neutral-700 dark:text-neutral-500 dark:hover:text-neutral-200">
             <ArrowUpRight className="h-4 w-4" />

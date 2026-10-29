@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
   Check,
 } from "lucide-react";
@@ -9,6 +9,7 @@ import { useParams } from "next/navigation";
 import { Community, Post } from "@/libs/types";
 import { getCommunity, joinLeaveCommunity } from "@/libs/api";
 import { AboutTab, MembersTab, PostsTab } from "@/components/main/community/community-tabs";
+import { AuthContext } from "@/context/auth-context";
 
 type TabId = "posts" | "questions" | "about" | "members";
 
@@ -44,6 +45,7 @@ export default function CommunityDetailPage() {
   const [joined, setJoined] = useState<boolean | null>(null);
   const [posts, setPosts] = useState<Post[]>([]);
   const [community, setCommunity] = useState<Community | null>(null);
+  const { user } = useContext(AuthContext)
   useEffect(() => {
     const controller = new AbortController();
 
@@ -58,14 +60,14 @@ export default function CommunityDetailPage() {
   if (!community) return null;
 
   return (
-    <div className="min-h-screen w-full bg-[#f4f6f9] dark:bg-neutral-950">
+    <div className="min-h-screen w-full min-w-0 bg-[#f4f6f9] dark:bg-neutral-950">
       <div className="mx-auto flex max-w-full gap-6 px-1 py-6">
         {/* Main content */}
-        <main className="min-w- flex-1 space-y-5">
+        <main className="flex-1 space-y-5 min-w-0">
           {/* Banner + header */}
-          <div className="overflow-hidden rounded-2xl border border-neutral-200 bg-white dark:border-neutral-800 dark:bg-neutral-900">
+          <div className="overflow-hidden max-w-full relative rounded-2xl border border-neutral-200 bg-white dark:border-neutral-800 dark:bg-neutral-900">
             {community.banner ? (
-              <div className="relative h-44 w-full">
+              <div className="relative h-25 w-full">
                 <Image
                   fill
                   src={typeof(community.banner) === "object" ? community.banner.name : community.banner}
@@ -76,7 +78,7 @@ export default function CommunityDetailPage() {
               </div>
             ) : (
               <div
-                className="relative h-44 bg-neutral-900"
+                className="relative h-30 w-full bg-neutral-900"
                 style={{
                   backgroundImage:
                     "linear-gradient(120deg, rgba(79,70,229,0.5), rgba(236,72,153,0.4)), repeating-linear-gradient(45deg, rgba(255,255,255,0.06) 0 2px, transparent 2px 40px)",
@@ -111,7 +113,7 @@ export default function CommunityDetailPage() {
                   </div>
 
                   <div className="pb-1">
-                    <h1 className="text-2xl font-bold text-neutral-900 dark:text-neutral-100">
+                    <h1 className="text-2xl truncate sm:w-70 md:w-full font-bold text-neutral-900 dark:text-neutral-100">
                       c/{community?.name.replaceAll(" ", "")}
                     </h1>
                     <p className="text-sm text-neutral-400 dark:text-neutral-500">
@@ -123,8 +125,9 @@ export default function CommunityDetailPage() {
                 <div
                   className="mt-4 flex items-center gap-2 border-t border-neutral-100 pt-4 dark:border-neutral-800">
                   <button
+                    disabled={ user?.email === community.creator?.email }
                     onClick={async () => { const res = await joinLeaveCommunity(Boolean(joined), community.slug); setJoined(res.is_member); }}
-                    className={`flex-1 rounded-lg px-3.5 py-2 text-sm font-semibold transition-colors ${joined
+                    className={`flex-1 ${ user?.email === community.creator?.email && "cursor-not-allowed"} rounded-lg px-3.5 py-2 text-sm font-semibold transition-colors ${joined
                       ? "bg-neutral-900 text-white hover:bg-neutral-800 dark:bg-neutral-700 dark:hover:bg-neutral-600"
                       : "bg-indigo-50 text-indigo-600 hover:bg-indigo-100 dark:bg-indigo-950 dark:text-indigo-300 dark:hover:bg-indigo-900"
                       }`}

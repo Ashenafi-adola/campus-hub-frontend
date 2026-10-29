@@ -29,27 +29,29 @@ export default function CampusHubFeed() {
       {/* Main feed */}
       <main className="min-w-0 flex-1 space-y-4 px-0">
         {/* Ask question composer */}
-        <div className="sticky top-15 z-50 flex items-center gap-3 rounded-2xl border border-neutral-200 bg-white p-3 dark:border-neutral-800 dark:bg-neutral-900">
+        <div className="sticky top-15 z-50 flex items-center justify-between gap-3 rounded-2xl border border-neutral-200 bg-white p-3 dark:border-neutral-800 dark:bg-neutral-900">
           <Avatar user={user} />
           <Link
             href={"/posts/new"}
-            className="flex-1 rounded-full bg-[#eef1f6] px-4 py-2.5 text-left text-sm text-neutral-500 hover:bg-neutral-200/70 dark:bg-neutral-800 dark:text-neutral-300 dark:hover:bg-neutral-700"
+            className="flex-1 rounded-full hidden md:block bg-[#eef1f6] px-4 py-2.5 text-left text-sm text-neutral-500 hover:bg-neutral-200/70 dark:bg-neutral-800 dark:text-neutral-300 dark:hover:bg-neutral-700"
           >
             Ask the community a question...
           </Link>
-          <Link
-            href={"/posts/new"}
-            aria-label="Create image post"
-            className="rounded-full p-2.5 text-neutral-400 hover:bg-neutral-100 dark:text-neutral-500 dark:hover:bg-neutral-800"
-          >
-            <ImageIcon className="h-5 w-5" />
-          </Link>
-          <Link
-            href={"/posts/new"}
-            className="rounded-full bg-indigo-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-indigo-700"
-          >
-            Create Post
-          </Link>
+          <div className="flex items-center justify-center">
+            <Link
+              href={"/posts/new"}
+              aria-label="Create image post"
+              className="rounded-full p-2.5 text-neutral-400 hover:bg-neutral-100 dark:text-neutral-500 dark:hover:bg-neutral-800"
+            >
+              <ImageIcon className="h-5 w-5" />
+            </Link>
+            <Link
+              href={"/posts/new"}
+              className="rounded-full bg-indigo-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-indigo-700"
+            >
+              Create Post
+            </Link>
+          </div>
         </div>
 
         {/* Question list */}

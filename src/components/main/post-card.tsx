@@ -119,7 +119,7 @@ function QuestionCard({ post }: { post: Post }) {
 
 
       {currentPost.post_type === "poll" && currentPost.polls && <PollBlock options={currentPost.polls} />}
-      <div className="mt-3 flex flex-wrap gap-2">
+      <div className="mt-3 flex mb-2 flex-wrap gap-2">
         {currentPost.tags && currentPost.tags.map((tag) => (
           <span
             key={tag}

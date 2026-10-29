@@ -100,7 +100,7 @@ export function CommentThread({
   }, [comments, sort]);
 
   return (
-    <div className="p-5">
+    <div className="p-0">
       <Composer
         placeholder="Share your answer or ask a follow-up..."
         onSubmit={handleAdd}
