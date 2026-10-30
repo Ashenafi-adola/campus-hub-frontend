@@ -217,6 +217,14 @@ export function getPosts(signal?: AbortSignal, access?: string, myPosts?: boolea
     });
 }
 
+export function getPost(id: number, access?: string, signal?: AbortSignal ): Promise<Post> {
+    return request<Post>(`/posts/${id}/`, {
+        signal,
+        token: access,
+        errorMessage: "Failed to load posts",
+    });
+}
+
 export function createPost(payload: NewPost): Promise<Post> {
     const formData = new FormData();
     formData.append("content", payload.content);

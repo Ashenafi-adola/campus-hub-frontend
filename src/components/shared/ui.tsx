@@ -98,7 +98,7 @@ export function PageHeader({
 
 export function Avatar({
   user,
-  size = "h-9 w-9",
+  size = "h-10 w-10",
   textSize = "text-xs",
 }: {
   user: AuthUser | null | User;

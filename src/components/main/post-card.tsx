@@ -87,7 +87,11 @@ function QuestionCard({ post }: { post: Post }) {
       </div>
 
       <h3 className="mt-3 text-lg font-bold text-neutral-900 dark:text-neutral-100">
-        {currentPost.title}
+        <Link
+          href={`/posts/${post.id}`}
+        >
+          {currentPost.title}
+        </Link>
       </h3>
       <p
         onClick={() => { if (!content.endsWith("...")) changeContent() }}
