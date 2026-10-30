@@ -5,8 +5,6 @@ import CommunityCard from "@/components/main/community/community-card";
 import { useCommunities } from "@/hooks/use-communities";
 import { Category } from "@/libs/types";
 import { CommunityGridSkeleton } from "@/components/main/laoding-skeletons";
-import { usePosts } from "@/hooks/use-posts";
-import RightSideBar from "@/components/main/layout/right-side-bar";
 import { getCategories } from "@/libs/api";
 
 const allCategories: Category = {
@@ -19,7 +17,6 @@ const allCategories: Category = {
 export default function CommunitiesPage() {
   const [category, setCategory] = useState<Category>(allCategories);
   const [categories, setCategories] = useState<Category[]>([]);
-  const { posts } = usePosts();
   const { communities } = useCommunities();
   
   useEffect(() =>{
@@ -72,10 +69,7 @@ export default function CommunitiesPage() {
             </div> :
             <CommunityGridSkeleton count={9} />
         }
-
       </main>
-      {/* Right sidebar */}
-      <RightSideBar trending={communities.sort((a, b) => b.member_count - a.member_count).slice(0, 4)} posts={posts} />
     </>
   );
 }

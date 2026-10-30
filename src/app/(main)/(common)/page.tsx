@@ -1,27 +1,19 @@
 "use client";
 
 import { PostFeedSkeleton } from "@/components/main/laoding-skeletons";
-import RightSideBar from "@/components/main/layout/right-side-bar";
 import QuestionCard from "@/components/main/post-card";
 import { Avatar } from "@/components/shared/ui";
 import { usePosts } from "@/hooks/use-posts";
-import { getCommunities } from "@/libs/api";
-import { Community } from "@/libs/types";
 import {
   Image as ImageIcon,
 } from "lucide-react";
 import Link from "next/link";
-import { useContext, useEffect, useState } from "react";
+import { useContext } from "react";
 import { AuthContext } from "@/context/auth-context";
 
 
 
 export default function CampusHubFeed() {
-  const [trending, setTrending] = useState<Community[]>([]);
-  useEffect(() => {
-    getCommunities()
-      .then(res => setTrending(res.length > 4 ? res.sort((a, b) => b.member_count - a.member_count).slice(0, 4) : res.sort((a, b) => b.member_count - a.member_count)))
-  }, [])
   const { posts } = usePosts();
   const { user } = useContext(AuthContext);
   return (
@@ -61,9 +53,6 @@ export default function CampusHubFeed() {
           )) : <PostFeedSkeleton />
         }
       </main>
-
-      {/* Right sidebar */}
-      <RightSideBar posts={posts} trending={trending} />
     </>
   );
 }
