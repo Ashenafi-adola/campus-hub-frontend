@@ -125,7 +125,8 @@ export interface Post {
     tags?: string[];
     polls?: PollOption[];
     poll_votes: number[];
-    is_saved: boolean
+    is_saved: boolean;
+    answered: boolean;
 }
 
 export interface PollOption {
