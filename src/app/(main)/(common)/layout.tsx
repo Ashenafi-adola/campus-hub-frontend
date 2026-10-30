@@ -19,11 +19,10 @@ export default function SharedLaout({
   }, [])
   const { posts } = usePosts();
   const pathname = usePathname();
-
     return (
         <>
             {children}
-            {  pathname === "/" || pathname === "/communities" &&
+            {  (pathname === "/" || pathname === "/communities" )&&
                 <RightSideBar posts={posts} trending={trending} />
             }
         </>
