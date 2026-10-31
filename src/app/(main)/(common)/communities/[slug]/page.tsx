@@ -3,6 +3,7 @@
 import React, { useContext, useEffect, useState } from "react";
 import {
   Check,
+  Plus,
 } from "lucide-react";
 import Image from "next/image"
 import { useParams } from "next/navigation";
@@ -61,7 +62,7 @@ export default function CommunityDetailPage() {
   if (!community) return null;
 
   return (
-    <div className="min-h-screen w-full min-w-0 bg-[#f4f6f9] dark:bg-neutral-950">
+    <div className="relative min-h-screen w-full min-w-0 bg-[#f4f6f9] dark:bg-neutral-950">
       <div className="mx-auto flex max-w-full gap-6 px-1 py-6">
         {/* Main content */}
         <main className="flex-1 space-y-5 min-w-0">
@@ -209,6 +210,17 @@ export default function CommunityDetailPage() {
             </ol>
           </SideCard>
         </aside>
+      </div>
+      <div className="group fixed right-4 bottom-[calc(1rem+env(safe-area-inset-bottom))] sm:right-6 sm:bottom-6 z-40">
+        <span className="pointer-events-none absolute right-full top-1/2 mr-3 -translate-y-1/2 whitespace-nowrap rounded-md bg-neutral-900 px-2.5 py-1 text-xs font-medium text-white opacity-0 transition-opacity group-hover:opacity-100 group-focus-within:opacity-100">
+          Create post
+        </span>
+        <button
+          aria-label="Create post"
+          className="flex h-12 w-12 items-center justify-center rounded-full bg-blue-700 text-white shadow-lg hover:bg-blue-600 sm:h-14 sm:w-14"
+        >
+          <Plus className="h-5 w-5 sm:h-6 sm:w-6" strokeWidth={2.5} />
+        </button>
       </div>
     </div>
   );

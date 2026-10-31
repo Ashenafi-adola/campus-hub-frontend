@@ -73,7 +73,7 @@ export default function CommunitiesPage() {
         <div
           role="group"
           aria-label="Filter by category"
-          className="scrollbar-none mt-4 flex max-w-full gap-2 overflow-x-auto pb-1 sm:flex-wrap sm:overflow-visible sm:pb-0 [&::-webkit-scrollbar]:hidden"
+          className="scrollbar-none mt-4 flex max-w-full gap-2 overflow-x-auto pb-1  sm:pb-0 [&::-webkit-scrollbar]:hidden"
         >
           {categories.map((c) => {
             const active = c.id === selectedId;

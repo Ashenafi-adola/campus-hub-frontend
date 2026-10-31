@@ -296,23 +296,48 @@ export default function PostDetailPage() {
                                 </p>
                             </div>
                             {post.images && post.images.length > 0 && (
-                                <div
-                                    className={`mt-3 grid gap-2 ${post.images.length === 1 ? "grid-cols-1" : "grid-cols-2"
-                                        }`}
-                                >
-                                    {post.images.map((src, i) => (
+                                post.images.length === 1 ? (
+                                    // Single image: keep the natural aspect ratio, never crop
+                                    <div className="mt-3 flex justify-center overflow-hidden rounded-xl bg-neutral-100 dark:bg-neutral-800">
                                         <Image
-                                            key={i}
-                                            src={src}
-                                            height={100}
-                                            width={100}
+                                            src={post.images[0]}
+                                            alt={post.title}
+                                            width={800}
+                                            height={600}
                                             unoptimized
-                                            alt=""
-                                            className={`w-full rounded-xl object-cover ${post.images!.length === 1 ? "max-h-80" : "h-40"
-                                                }`}
+                                            className="h-auto max-h-[32rem] w-auto max-w-full object-contain"
                                         />
-                                    ))}
-                                </div>
+                                    </div>
+                                ) : (
+                                    // Multiple images: uniform tiles, up to 4 shown, "+N" on the last one
+                                    <div className="mt-3 grid grid-cols-2 gap-2 overflow-hidden rounded-xl">
+                                        {post.images.slice(0, 4).map((src, i) => {
+                                            const extra = post.images!.length - 4;
+                                            const isLast = i === 3 && extra > 0;
+                                            return (
+                                                <div
+                                                    key={i}
+                                                    className={`relative aspect-[4/3] overflow-hidden bg-neutral-100 dark:bg-neutral-800 ${post.images!.length === 3 && i === 0 ? "col-span-2 aspect-[16/9]" : ""
+                                                        }`}
+                                                >
+                                                    <Image
+                                                        src={src}
+                                                        alt=""
+                                                        fill
+                                                        unoptimized
+                                                        sizes="(max-width: 768px) 50vw, 400px"
+                                                        className="object-cover"
+                                                    />
+                                                    {isLast && (
+                                                        <div className="absolute inset-0 flex items-center justify-center bg-black/50 text-xl font-semibold text-white">
+                                                            +{extra}
+                                                        </div>
+                                                    )}
+                                                </div>
+                                            );
+                                        })}
+                                    </div>
+                                )
                             )}
                             {post.post_type === "poll" && post.polls && <PollBlock options={post.polls} />}
 

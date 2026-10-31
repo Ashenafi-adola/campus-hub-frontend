@@ -43,9 +43,9 @@ function SideBar({ onClose, mobile = false }: { onClose?: () => void; mobile?: b
         <aside
             onClick={(e) => e.stopPropagation()}
             className={`${mobile
-                ? "h-full w-56 bg-white dark:bg-neutral-950"
-                : "sticky top-16 z-0 h-[calc(100dvh-4rem)] w-56 transition-all hidden md:block dark:border-neutral-800"
-                } shrink-0 self-start space-y-6 overflow-y-auto border-r border-gray-300 dark:border-neutral-700`}
+                ? "h-screen w-56 bg-white dark:bg-neutral-950"
+                : "sticky top-16 z-0 h-[calc(100dvh-4rem)] transition-all hidden lg:block dark:border-neutral-800"
+                } shrink-0 self-start pl-3 space-y-6 w-80 overflow-y-auto border-r border-gray-300 dark:border-neutral-700`}
         >
             <nav className="space-y-1">
                 {NAV_ITEMS.map(({ id, label, icon: Icon, href }) => {

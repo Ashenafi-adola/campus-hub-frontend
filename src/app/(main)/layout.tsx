@@ -19,7 +19,7 @@ async function Layout({ children }: Props) {
             <div className="min-h-screen bg-[#f7f6f2] dark:bg-neutral-950">
                 <SiteHeader />
                 <div className="mx-auto flex max-w-full gap-6 md:pr-6 ml-0 px-0 py-0">
-                    <div className="ml-0 pl-0 transition-all hidden md:block dark:border-neutral-800">
+                    <div className="ml-0 pl-0 transition-all transform-content duration-500 hidden lg:block dark:border-neutral-800">
                         <SideBar />
                     </div>
                     {children}

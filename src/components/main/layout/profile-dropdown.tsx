@@ -91,7 +91,7 @@ function ProfileDropdown() {
               alt={user.username}
               unoptimized
               className="h-10 w-10 shrink-0 rounded-full object-cover"
-            /> : <div>{user?.first_name.slice(0, 1)}</div>}
+            /> : <div>{user.first_name ? user?.first_name.slice(0, 1) : "NN"}</div>}
             <div className="min-w-0">
               <div className="truncate text-sm font-semibold text-neutral-900 dark:text-neutral-100">
                 {user?.first_name + " " + user?.last_name}

@@ -21,7 +21,7 @@ function SiteHeader() {
             </div>
 
             <div className="flex items-center gap-2">
-                <div className="md:flex h-9 w-9 items-center justify-center rounded-xl bg-indigo-600 hidden">
+                <div className="lg:flex h-9 w-9 items-center justify-center rounded-xl bg-indigo-600 hidden">
                     <svg viewBox="0 0 24 24" className="h-4 w-4 text-white" fill="none">
                         <path
                             d="M4 12l8-5 8 5-8 5-8-5z"
@@ -35,7 +35,7 @@ function SiteHeader() {
                     aria-label="Toggle sidebar"
                     aria-expanded={openSideBar}
                     onClick={() => setOpenSideBar(prev => !prev)}
-                    className="hover:cursor-pointer md:hidden dark:text-gray-400"
+                    className="hover:cursor-pointer lg:hidden dark:text-gray-400"
                 >
                     <svg viewBox="0 0 24 24" width="24" height="24">
                         <path fill="currentColor" d="M3 6h18v2H3V6zm0 5h18v2H3v-2zm0 5h18v2H3v-16z" />
