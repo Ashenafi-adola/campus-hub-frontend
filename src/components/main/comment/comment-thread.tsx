@@ -19,12 +19,11 @@ const SORT_OPTIONS: { id: SortId; label: string }[] = [
 ];
 
 
-function addReply(
+export function addReply(
   comments: Comment[],
   parentId: number,
   reply: Comment
 ): Comment[] {
-  // console.log(comments, parentId, reply)
   return comments.map((c) =>
     c.id === parentId
       ? { ...c, replies: [reply, ...c.replies] }

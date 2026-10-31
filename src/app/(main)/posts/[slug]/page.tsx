@@ -15,6 +15,7 @@ import { useContext, useEffect, useMemo, useRef, useState } from "react";
 import { Comment } from "@/libs/types";
 import { CommentNode } from "@/components/main/comment/comment-node";
 import { Composer } from "@/components/main/comment/comment-composer";
+import { addReply } from "@/components/main/comment/comment-thread";
 
 
 const RELATED = [
@@ -210,6 +211,11 @@ export default function PostDetailPage() {
         commentsVersion.current += 1;
         setComments((prev) => [comment, ...prev]);
       }
+  const handleReply = async (parentId: number, text: string) => {
+    const comment = await newComment(text, parentId)
+    commentsVersion.current += 1;
+    setComments((prev) => addReply(prev, parentId, comment));
+  }
 
   const handleSave = () => {
     if (saved){
@@ -507,10 +513,9 @@ export default function PostDetailPage() {
                                     <CommentNode
                                         key={c.id}
                                         comment={c}
-                                        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-                                        depth={0} onReply={function (parentId: number, text: string): void {
-                                            throw new Error("Function not implemented.");
-                                        }} />
+                                        depth={0} 
+                                        onReply={handleReply}
+                                    />
                                 ))
                             )}
                         </div>
