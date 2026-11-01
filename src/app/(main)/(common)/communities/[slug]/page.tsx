@@ -67,7 +67,7 @@ export default function CommunityDetailPage() {
     <div className="relative min-h-screen w-full min-w-0 bg-[#f4f6f9] dark:bg-neutral-950">
       <CreatePostModal show={show} setShow={() => setShow(false)}/>
  
-      <div className="mx-auto flex max-w-full gap-6 px-1 py-6">
+      <div className="mx-auto flex max-w-full gap-2 md:px-1 py-6">
         {/* Main content */}
         <main className="flex-1 space-y-5 min-w-0">
           {/* Banner + header */}
@@ -188,31 +188,33 @@ export default function CommunityDetailPage() {
         </main>
 
         {/* Right sidebar */}
-        <aside className="hidden w-72 shrink-0 self-start space-y-4 xl:sticky xl:top-16 xl:block">
-          <SideCard title="About Community">
-            <p className="text-sm leading-relaxed text-neutral-600 dark:text-neutral-300">
-              {community.description}
-            </p>
-            <div className="border-t border-neutral-100 pt-3 dark:border-neutral-800">
-              <p className="text-xs font-semibold uppercase tracking-wide text-neutral-400 dark:text-neutral-500">
-                Created
+        <aside className="w-0 xl:w-72 transition-all duration-300 shrink-0 self-start xl:sticky xl:top-16 xl:block">
+          <div className="hidden xl:block space-y-4">
+            <SideCard title="About Community">
+              <p className="text-sm leading-relaxed text-neutral-600 dark:text-neutral-300">
+                {community.description}
               </p>
-              <p className="mt-1 text-sm text-neutral-700 dark:text-neutral-300">{ community.created_at && new Date(community.created_at).toDateString().slice(3,)}</p>
-            </div>
-          </SideCard>
+              <div className="border-t border-neutral-100 pt-3 dark:border-neutral-800">
+                <p className="text-xs font-semibold uppercase tracking-wide text-neutral-400 dark:text-neutral-500">
+                  Created
+                </p>
+                <p className="mt-1 text-sm text-neutral-700 dark:text-neutral-300">{ community.created_at && new Date(community.created_at).toDateString().slice(3,)}</p>
+              </div>
+            </SideCard>
 
-          <SideCard title="Community Rules">
-            <ol className="space-y-3">
-              {community.rules.map((rule, i) => (
-                <li key={i} className="flex gap-2.5 text-sm text-neutral-600 dark:text-neutral-300">
-                  <span className="font-semibold text-neutral-400 dark:text-neutral-500">
-                    {i + 1}.
-                  </span>
-                  {rule}
-                </li>
-              ))}
-            </ol>
-          </SideCard>
+            <SideCard title="Community Rules">
+              <ol className="space-y-3">
+                {community.rules.map((rule, i) => (
+                  <li key={i} className="flex gap-2.5 text-sm text-neutral-600 dark:text-neutral-300">
+                    <span className="font-semibold text-neutral-400 dark:text-neutral-500">
+                      {i + 1}.
+                    </span>
+                    {rule}
+                  </li>
+                ))}
+              </ol>
+            </SideCard>
+          </div>
         </aside>
       </div>
       <div className="group fixed right-4 bottom-[calc(1rem+env(safe-area-inset-bottom))] sm:right-6 sm:bottom-6 z-101">

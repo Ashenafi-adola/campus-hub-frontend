@@ -106,7 +106,7 @@ export default function PopularPage() {
 
   return (
     <div className="min-w-0 flex-1 space-y-4">
-      <div className="mx-auto flex w-full gap-6 px-2 py-1">
+      <div className="mx-auto flex w-full gap-2 px-0 py-1">
         {/* Main */}
         <main className="min-w-0 flex-1 space-y-4">
           {/* Header + controls */}
@@ -290,92 +290,94 @@ export default function PopularPage() {
         </main>
 
         {/* Right sidebar */}
-        <aside className="hidden w-72 shrink-0 self-start space-y-4 xl:sticky xl:top-16 xl:block">
-          <SideCard title="Trending tags" subtitle={`Most upvoted ${rangeLabel}`}>
-            {topTags.length === 0 ? (
-              <p className="text-sm text-neutral-400 dark:text-neutral-500">No tags yet.</p>
-            ) : (
-              <ol className="space-y-2.5">
-                {topTags.slice(0, 6).map(([tag, points], i) => (
-                  <li key={tag} className="flex items-center gap-3">
-                    <span className="w-4 text-sm font-bold text-neutral-300 dark:text-neutral-600">
-                      {i + 1}
-                    </span>
-                    <span className="min-w-0 flex-1 truncate text-sm font-semibold text-neutral-800 dark:text-neutral-200">
-                      <span className="text-indigo-500">#</span>
-                      {tag}
-                    </span>
-                    <span className="text-xs text-neutral-400 dark:text-neutral-500">{points}</span>
-                  </li>
-                ))}
-              </ol>
-            )}
-          </SideCard>
+        <aside className="w-0 xl:w-72 transition-all duration-300 shrink-0 self-start xl:sticky xl:top-16 xl:block">
+          <div className="hidden xl:block space-y-4">
 
-          <SideCard title="Top contributors" subtitle={`Most upvotes ${rangeLabel}`}>
-            {contributors.length === 0 ? (
-              <p className="text-sm text-neutral-400 dark:text-neutral-500">No activity yet.</p>
-            ) : (
+            <SideCard title="Trending tags" subtitle={`Most upvoted ${rangeLabel}`}>
+              {topTags.length === 0 ? (
+                <p className="text-sm text-neutral-400 dark:text-neutral-500">No tags yet.</p>
+              ) : (
+                <ol className="space-y-2.5">
+                  {topTags.slice(0, 6).map(([tag, points], i) => (
+                    <li key={tag} className="flex items-center gap-3">
+                      <span className="w-4 text-sm font-bold text-neutral-300 dark:text-neutral-600">
+                        {i + 1}
+                      </span>
+                      <span className="min-w-0 flex-1 truncate text-sm font-semibold text-neutral-800 dark:text-neutral-200">
+                        <span className="text-indigo-500">#</span>
+                        {tag}
+                      </span>
+                      <span className="text-xs text-neutral-400 dark:text-neutral-500">{points}</span>
+                    </li>
+                  ))}
+                </ol>
+              )}
+            </SideCard>
+
+            <SideCard title="Top contributors" subtitle={`Most upvotes ${rangeLabel}`}>
+              {contributors.length === 0 ? (
+                <p className="text-sm text-neutral-400 dark:text-neutral-500">No activity yet.</p>
+              ) : (
+                <div className="space-y-3">
+                  {contributors.map((c, i) => (
+                    <div key={c.name} className="flex items-center gap-3">
+                      <span className="w-4 text-sm font-bold text-neutral-300 dark:text-neutral-600">
+                        {i + 1}
+                      </span>
+                      <div className="min-w-0 flex-1">
+                        <div className="truncate text-sm font-semibold text-neutral-900 dark:text-neutral-100">
+                          {c.name}
+                        </div>
+                        <div className="truncate text-xs text-neutral-400 dark:text-neutral-500">
+                          {c.school}
+                        </div>
+                      </div>
+                      <span className="flex items-center gap-0.5 text-sm font-bold text-indigo-600">
+                        <ChevronUp className="h-4 w-4" />
+                        {c.points}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </SideCard>
+
+            <SideCard title="Trending communities" subtitle="Gaining the most votes today">
               <div className="space-y-3">
-                {contributors.map((c, i) => (
-                  <div key={c.name} className="flex items-center gap-3">
-                    <span className="w-4 text-sm font-bold text-neutral-300 dark:text-neutral-600">
-                      {i + 1}
-                    </span>
-                    <div className="min-w-0 flex-1">
-                      <div className="truncate text-sm font-semibold text-neutral-900 dark:text-neutral-100">
-                        {c.name}
+                {trendingCommunities.map(([name, votes]) => {
+                  const isJoined = joined.has(name);
+                  return (
+                    <div key={name} className="flex items-center justify-between">
+                      <div>
+                        <div className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">
+                          {name}
+                        </div>
+                        <div className="flex items-center gap-0.5 text-xs font-semibold text-emerald-600">
+                          <TrendingUp className="h-3 w-3" />+{votes} today
+                        </div>
                       </div>
-                      <div className="truncate text-xs text-neutral-400 dark:text-neutral-500">
-                        {c.school}
-                      </div>
+                      <button
+                        onClick={() =>
+                          setJoined((prev) => {
+                            const next = new Set(prev);
+                            // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+                            next.has(name) ? next.delete(name) : next.add(name);
+                            return next;
+                          })
+                        }
+                        className={`rounded-lg px-3.5 py-1.5 text-xs font-semibold transition-colors ${isJoined
+                            ? "bg-indigo-600 text-white hover:bg-indigo-700"
+                            : "bg-indigo-50 text-indigo-600 hover:bg-indigo-100 dark:bg-indigo-950 dark:text-indigo-300 dark:hover:bg-indigo-900"
+                          }`}
+                      >
+                        {isJoined ? "Joined" : "Join"}
+                      </button>
                     </div>
-                    <span className="flex items-center gap-0.5 text-sm font-bold text-indigo-600">
-                      <ChevronUp className="h-4 w-4" />
-                      {c.points}
-                    </span>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
-            )}
-          </SideCard>
-
-          <SideCard title="Trending communities" subtitle="Gaining the most votes today">
-            <div className="space-y-3">
-              {trendingCommunities.map(([name, votes]) => {
-                const isJoined = joined.has(name);
-                return (
-                  <div key={name} className="flex items-center justify-between">
-                    <div>
-                      <div className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">
-                        {name}
-                      </div>
-                      <div className="flex items-center gap-0.5 text-xs font-semibold text-emerald-600">
-                        <TrendingUp className="h-3 w-3" />+{votes} today
-                      </div>
-                    </div>
-                    <button
-                      onClick={() =>
-                        setJoined((prev) => {
-                          const next = new Set(prev);
-                          // eslint-disable-next-line @typescript-eslint/no-unused-expressions
-                          next.has(name) ? next.delete(name) : next.add(name);
-                          return next;
-                        })
-                      }
-                      className={`rounded-lg px-3.5 py-1.5 text-xs font-semibold transition-colors ${
-                        isJoined
-                          ? "bg-indigo-600 text-white hover:bg-indigo-700"
-                          : "bg-indigo-50 text-indigo-600 hover:bg-indigo-100 dark:bg-indigo-950 dark:text-indigo-300 dark:hover:bg-indigo-900"
-                      }`}
-                    >
-                      {isJoined ? "Joined" : "Join"}
-                    </button>
-                  </div>
-                );
-              })}
-            </div>
-          </SideCard>
+            </SideCard>
+          </div>
         </aside>
       </div>
 

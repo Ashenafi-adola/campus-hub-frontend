@@ -817,72 +817,74 @@ export default function SavedPostsPage() {
       </main>
 
       {/* Right sidebar */}
-      <aside className="hidden w-72 shrink-0 self-start space-y-4 xl:sticky xl:top-16 xl:block">
-        <SideCard title="At a glance">
-          <div className="flex items-end gap-2">
-            <span className="text-3xl font-extrabold text-neutral-900 dark:text-neutral-100">
-              {saveds.length}
-            </span>
-            <span className="pb-1 text-sm text-neutral-400 dark:text-neutral-500">
-              saved posts
-            </span>
-          </div>
-
-          <div className="mt-4 space-y-2.5">
-            {stats.byType.map(({ type, count }) => (
-              <div key={type}>
-                <div className="flex items-center justify-between text-xs">
-                  <span className="font-semibold text-neutral-600 dark:text-neutral-300">
-                    {TYPE_META[type].label}
-                  </span>
-                  <span className="text-neutral-400 dark:text-neutral-500">{count}</span>
-                </div>
-                <div className="mt-1 h-1.5 overflow-hidden rounded-full bg-neutral-100 dark:bg-neutral-800">
-                  <div
-                    className="h-full rounded-full bg-indigo-500 transition-all"
-                    style={{
-                      width: saveds.length
-                        ? `${(count / saveds.length) * 100}%`
-                        : "0%",
-                    }}
-                  />
-                </div>
-              </div>
-            ))}
-          </div>
-
-          {stats.top && (
-            <div className="mt-4 border-t border-neutral-100 pt-3 text-xs text-neutral-500 dark:border-neutral-800 dark:text-neutral-400">
-              Most saved from{" "}
-              <a href="#" className="font-semibold text-indigo-600 hover:underline">
-                {stats.top[0]}
-              </a>{" "}
-              ({stats.top[1]})
+      <aside className="w-0 xl:w-72 transition-all duration-300 shrink-0 self-start xl:sticky xl:top-16 xl:block">
+        <div className="hidden xl:block space-y-4">
+          <SideCard title="At a glance">
+            <div className="flex items-end gap-2">
+              <span className="text-3xl font-extrabold text-neutral-900 dark:text-neutral-100">
+                {saveds.length}
+              </span>
+              <span className="pb-1 text-sm text-neutral-400 dark:text-neutral-500">
+                saved posts
+              </span>
             </div>
-          )}
-        </SideCard>
 
-        <div className="rounded-2xl border border-indigo-100 bg-indigo-50/60 p-5 dark:border-indigo-900 dark:bg-indigo-950/30">
-          <div className="flex items-center gap-2">
-            <Lightbulb className="h-4 w-4 text-amber-500" />
-            <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">
-              Stay organized
-            </h3>
+            <div className="mt-4 space-y-2.5">
+              {stats.byType.map(({ type, count }) => (
+                <div key={type}>
+                  <div className="flex items-center justify-between text-xs">
+                    <span className="font-semibold text-neutral-600 dark:text-neutral-300">
+                      {TYPE_META[type].label}
+                    </span>
+                    <span className="text-neutral-400 dark:text-neutral-500">{count}</span>
+                  </div>
+                  <div className="mt-1 h-1.5 overflow-hidden rounded-full bg-neutral-100 dark:bg-neutral-800">
+                    <div
+                      className="h-full rounded-full bg-indigo-500 transition-all"
+                      style={{
+                        width: saveds.length
+                          ? `${(count / saveds.length) * 100}%`
+                          : "0%",
+                      }}
+                    />
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {stats.top && (
+              <div className="mt-4 border-t border-neutral-100 pt-3 text-xs text-neutral-500 dark:border-neutral-800 dark:text-neutral-400">
+                Most saved from{" "}
+                <a href="#" className="font-semibold text-indigo-600 hover:underline">
+                  {stats.top[0]}
+                </a>{" "}
+                ({stats.top[1]})
+              </div>
+            )}
+          </SideCard>
+
+          <div className="rounded-2xl border border-indigo-100 bg-indigo-50/60 p-5 dark:border-indigo-900 dark:bg-indigo-950/30">
+            <div className="flex items-center gap-2">
+              <Lightbulb className="h-4 w-4 text-amber-500" />
+              <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">
+                Stay organized
+              </h3>
+            </div>
+            <p className="mt-2 text-sm leading-relaxed text-neutral-600 dark:text-neutral-300">
+              Group related posts into collections like &quot;Exam prep&quot; so you can
+              find them in seconds.
+            </p>
+            <button
+              onClick={() => setCreating(true)}
+              className="mt-3 flex items-center gap-1.5 text-sm font-semibold text-indigo-600 hover:underline"
+            >
+              <Plus className="h-3.5 w-3.5" />
+              Create a collection
+            </button>
           </div>
-          <p className="mt-2 text-sm leading-relaxed text-neutral-600 dark:text-neutral-300">
-            Group related posts into collections like &quot;Exam prep&quot; so you can
-            find them in seconds.
-          </p>
-          <button
-            onClick={() => setCreating(true)}
-            className="mt-3 flex items-center gap-1.5 text-sm font-semibold text-indigo-600 hover:underline"
-          >
-            <Plus className="h-3.5 w-3.5" />
-            Create a collection
-          </button>
         </div>
       </aside>
-      {/* Bulk action bar */}
+      { }
       {selecting && selectedVisible.length > 0 && (
         <div className="fixed bottom-6 left-1/2 z-40 flex -translate-x-1/2 items-center gap-1 rounded-2xl bg-neutral-900 px-3 py-2 text-white shadow-xl">
           <span className="px-3 text-sm font-semibold">
