@@ -15,7 +15,7 @@ function SiteHeader() {
         <header className="sticky top-0 z-80 flex items-center gap-6 border-b border-neutral-200 bg-white px-6 py-3 dark:border-neutral-800 dark:bg-neutral-900">
             <div
                 onClick={closeSideBar}
-                className={`fixed inset-x-0 top-16 bottom-0 z-40 bg-black/10 backdrop-blur-[2px] transition-all duration-300 md:hidden ${!openSideBar ? "hidden" : "block"}`}
+                className={`fixed inset-x-0 top-16 bottom-0 z-40 bg-black/10 backdrop-blur-[2px] transition-all duration-300 lg:hidden ${!openSideBar ? "hidden" : "block"}`}
             >
                 <SideBar mobile onClose={closeSideBar} />
             </div>

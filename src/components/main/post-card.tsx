@@ -10,6 +10,7 @@ import Link from 'next/link';
 import { CommentThread } from './comment/comment-thread';
 import { PollBlock } from '../shared/ui';
 import { saveUnsave } from '@/libs/api';
+import ImageLightbox from './posts/image-light-box';
 
 
 function QuestionCard({ post }: { post: Post }) {
@@ -19,6 +20,8 @@ function QuestionCard({ post }: { post: Post }) {
   const [saved, setSaved] = useState<boolean>(post.is_saved);
   const [open, setOpen] = useState<boolean>(false);
   const [hasOpenedComments, setHasOpenedComments] = useState<boolean>(false);
+  // Index of the image being viewed in the lightbox, or null when it's closed
+  const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
   const unanswered = post.post_type === "question" && post.comment_count === 0;
   if (!post?.author || !post?.community) return null;
 
@@ -103,8 +106,13 @@ function QuestionCard({ post }: { post: Post }) {
       </p>
       {post.images && post.images.length > 0 && (
         post.images.length === 1 ? (
-          // Single image: keep the natural aspect ratio, never crop
-          <div className="mt-3 flex justify-center overflow-hidden rounded-xl bg-neutral-100 dark:bg-neutral-800">
+          // Single image: keep the natural aspect ratio, never crop. Click to open the viewer.
+          <button
+            type="button"
+            onClick={() => setLightboxIndex(0)}
+            aria-label="View image full screen"
+            className="group relative mt-3 flex w-full cursor-zoom-in justify-center overflow-hidden rounded-xl bg-neutral-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-indigo-500 dark:bg-neutral-800"
+          >
             <Image
               src={post.images[0]}
               alt={currentPost.title}
@@ -113,17 +121,24 @@ function QuestionCard({ post }: { post: Post }) {
               unoptimized
               className="h-auto max-h-[32rem] w-auto max-w-full object-contain"
             />
-          </div>
+            <span className="pointer-events-none absolute inset-0 bg-black/0 transition-colors group-hover:bg-black/10" />
+          </button>
         ) : (
-          // Multiple images: uniform tiles, up to 4 shown, "+N" on the last one
+          // Multiple images: uniform tiles, up to 4 shown, "+N" on the last one.
+          // Each tile opens the viewer at that image.
           <div className="mt-3 grid grid-cols-2 gap-2 overflow-hidden rounded-xl">
             {post.images.slice(0, 4).map((src, i) => {
               const extra = post.images!.length - 4;
               const isLast = i === 3 && extra > 0;
               return (
-                <div
+                <button
                   key={i}
-                  className={`relative aspect-[4/3] overflow-hidden bg-neutral-100 dark:bg-neutral-800 ${post.images!.length === 3 && i === 0 ? "col-span-2 aspect-[16/9]" : ""
+                  type="button"
+                  onClick={() => setLightboxIndex(i)}
+                  aria-label={isLast
+                    ? `View all ${post.images!.length} images`
+                    : `View image ${i + 1} of ${post.images!.length}`}
+                  className={`group relative block aspect-[4/3] cursor-zoom-in overflow-hidden bg-neutral-100 focus-visible:outline focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-indigo-500 dark:bg-neutral-800 ${post.images!.length === 3 && i === 0 ? "col-span-2 aspect-[16/9]" : ""
                     }`}
                 >
                   <Image
@@ -132,14 +147,15 @@ function QuestionCard({ post }: { post: Post }) {
                     fill
                     unoptimized
                     sizes="(max-width: 768px) 50vw, 400px"
-                    className="object-cover"
+                    className="object-cover transition-transform duration-300 group-hover:scale-[1.03]"
                   />
+                  <span className="pointer-events-none absolute inset-0 bg-black/0 transition-colors group-hover:bg-black/10" />
                   {isLast && (
                     <div className="absolute inset-0 flex items-center justify-center bg-black/50 text-xl font-semibold text-white">
                       +{extra}
                     </div>
                   )}
-                </div>
+                </button>
               );
             })}
           </div>
@@ -232,6 +248,16 @@ function QuestionCard({ post }: { post: Post }) {
           </div>
         }
       </div>
+
+      {/* Full-screen image viewer */}
+      {lightboxIndex !== null && post.images && post.images.length > 0 && (
+        <ImageLightbox
+          images={post.images}
+          startIndex={lightboxIndex}
+          title={currentPost.title}
+          onClose={() => setLightboxIndex(null)}
+        />
+      )}
     </div>
   );
 }

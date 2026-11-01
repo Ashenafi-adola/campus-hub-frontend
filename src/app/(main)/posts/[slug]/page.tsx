@@ -16,6 +16,7 @@ import { Comment } from "@/libs/types";
 import { CommentNode } from "@/components/main/comment/comment-node";
 import { Composer } from "@/components/main/comment/comment-composer";
 import { addReply } from "@/components/main/comment/comment-thread";
+import ImageLightbox from "@/components/main/posts/image-light-box";
 
 
 const RELATED = [
@@ -35,9 +36,9 @@ function CommunityInfoCard({ post }: { post: Post | null }) {
     const [community, setCommunity] = useState<Community | undefined>(post?.community)
     const [joined, setJoined] = useState(Boolean(community?.is_member));
     const { user } = useContext(AuthContext);
-
+    
     if (!community) return;
-
+    
     return (
         <div className="rounded-2xl border border-neutral-200 bg-white p-5 dark:border-neutral-800 dark:bg-neutral-900">
             <div className="flex items-center gap-3">
@@ -70,7 +71,7 @@ function CommunityInfoCard({ post }: { post: Post | null }) {
                 className={`mt-3 w-full rounded-lg py-2 text-sm font-semibold transition-colors ${joined
                     ? "bg-indigo-50 text-indigo-600 hover:bg-indigo-100 dark:bg-indigo-500/10 dark:text-indigo-300 dark:hover:bg-indigo-500/20"
                     : "bg-indigo-600 text-white hover:bg-indigo-700"
-                    }`}
+                }`}
             >
                 {joined ? (
                     <span className="flex items-center justify-center gap-1.5">
@@ -92,7 +93,7 @@ export default function PostDetailPage() {
     const { slug } = useParams<{ slug: string }>();
     const postId = Number(slug);
     const isInvalidId = Number.isNaN(postId);
-
+    
     const [post, setPost] = useState<Post | null>(null);
     const [failed, setFailed] = useState(false);
     const [comments, setComments] = useState<Comment[]>([]);
@@ -103,8 +104,10 @@ export default function PostDetailPage() {
 
     const [saved, setSaved] = useState(false);
     const [toast, setToast] = useState<string | null>(null);
+    // Index of the image being viewed in the lightbox, or null when it's closed
+    const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
 
-
+    
     useEffect(() => {
         if (isInvalidId) return;
         let cancelled = false;
@@ -226,7 +229,7 @@ export default function PostDetailPage() {
   }
     return (
         <div className="min-h-screen w-full bg-[#f4f6f9] dark:bg-neutral-950">
-            <div className="mx-1 flex max-w-full gap-6 px-0 py-6">
+            <div className="flex max-w-full gap-2 px-0 py-6">
                 {/* Main column */}
                 <main className="min-w-0 flex-1 space-y-4">
                     {/* Back + breadcrumb */}
@@ -302,49 +305,62 @@ export default function PostDetailPage() {
                                 </p>
                             </div>
                             {post.images && post.images.length > 0 && (
-                                post.images.length === 1 ? (
-                                    // Single image: keep the natural aspect ratio, never crop
-                                    <div className="mt-3 flex justify-center overflow-hidden rounded-xl bg-neutral-100 dark:bg-neutral-800">
+                                    post.images.length === 1 ? (
+                                      // Single image: keep the natural aspect ratio, never crop. Click to open the viewer.
+                                      <button
+                                        type="button"
+                                        onClick={() => setLightboxIndex(0)}
+                                        aria-label="View image full screen"
+                                        className="group relative mt-3 flex w-full cursor-zoom-in justify-center overflow-hidden rounded-xl bg-neutral-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-indigo-500 dark:bg-neutral-800"
+                                      >
                                         <Image
-                                            src={post.images[0]}
-                                            alt={post.title}
-                                            width={800}
-                                            height={600}
-                                            unoptimized
-                                            className="h-auto max-h-[32rem] w-auto max-w-full object-contain"
+                                          src={post.images[0]}
+                                          alt={post.title}
+                                          width={800}
+                                          height={600}
+                                          unoptimized
+                                          className="h-auto max-h-[32rem] w-auto max-w-full object-contain"
                                         />
-                                    </div>
-                                ) : (
-                                    // Multiple images: uniform tiles, up to 4 shown, "+N" on the last one
-                                    <div className="mt-3 grid grid-cols-2 gap-2 overflow-hidden rounded-xl">
+                                        <span className="pointer-events-none absolute inset-0 bg-black/0 transition-colors group-hover:bg-black/10" />
+                                      </button>
+                                    ) : (
+                                      // Multiple images: uniform tiles, up to 4 shown, "+N" on the last one.
+                                      // Each tile opens the viewer at that image.
+                                      <div className="mt-3 grid grid-cols-2 gap-2 overflow-hidden rounded-xl">
                                         {post.images.slice(0, 4).map((src, i) => {
-                                            const extra = post.images!.length - 4;
-                                            const isLast = i === 3 && extra > 0;
-                                            return (
-                                                <div
-                                                    key={i}
-                                                    className={`relative aspect-[4/3] overflow-hidden bg-neutral-100 dark:bg-neutral-800 ${post.images!.length === 3 && i === 0 ? "col-span-2 aspect-[16/9]" : ""
-                                                        }`}
-                                                >
-                                                    <Image
-                                                        src={src}
-                                                        alt=""
-                                                        fill
-                                                        unoptimized
-                                                        sizes="(max-width: 768px) 50vw, 400px"
-                                                        className="object-cover"
-                                                    />
-                                                    {isLast && (
-                                                        <div className="absolute inset-0 flex items-center justify-center bg-black/50 text-xl font-semibold text-white">
-                                                            +{extra}
-                                                        </div>
-                                                    )}
+                                          const extra = post.images!.length - 4;
+                                          const isLast = i === 3 && extra > 0;
+                                          return (
+                                            <button
+                                              key={i}
+                                              type="button"
+                                              onClick={() => setLightboxIndex(i)}
+                                              aria-label={isLast
+                                                ? `View all ${post.images!.length} images`
+                                                : `View image ${i + 1} of ${post.images!.length}`}
+                                              className={`group relative block aspect-[4/3] cursor-zoom-in overflow-hidden bg-neutral-100 focus-visible:outline focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-indigo-500 dark:bg-neutral-800 ${post.images!.length === 3 && i === 0 ? "col-span-2 aspect-[16/9]" : ""
+                                                }`}
+                                            >
+                                              <Image
+                                                src={src}
+                                                alt=""
+                                                fill
+                                                unoptimized
+                                                sizes="(max-width: 768px) 50vw, 400px"
+                                                className="object-cover transition-transform duration-300 group-hover:scale-[1.03]"
+                                              />
+                                              <span className="pointer-events-none absolute inset-0 bg-black/0 transition-colors group-hover:bg-black/10" />
+                                              {isLast && (
+                                                <div className="absolute inset-0 flex items-center justify-center bg-black/50 text-xl font-semibold text-white">
+                                                  +{extra}
                                                 </div>
-                                            );
+                                              )}
+                                            </button>
+                                          );
                                         })}
-                                    </div>
-                                )
-                            )}
+                                      </div>
+                                    )
+                                  )}
                             {post.post_type === "poll" && post.polls && <PollBlock options={post.polls} />}
 
                             <div className="mt-4 flex flex-wrap gap-2">
@@ -523,42 +539,54 @@ export default function PostDetailPage() {
                 </main>
 
                 {/* Right sidebar */}
-                <aside className="hidden w-72 shrink-0 space-y-4 self-start xl:sticky xl:top-16 xl:block">
-                    {post && <CommunityInfoCard post={post} />}
+                <aside className="w-0 xl:w-72 transition-all duration-300 shrink-0 self-start xl:sticky xl:top-16 xl:block">
+                    <div className="hidden xl:block space-y-4">
 
-                    <SideCard title="Community Rules">
-                        <ol className="space-y-3">
-                            {post?.community.rules.map((rule, i) => (
-                                <li
-                                    key={rule}
-                                    className="flex gap-2.5 text-sm text-neutral-600 dark:text-neutral-400"
-                                >
-                                    <span className="font-semibold text-neutral-400 dark:text-neutral-500">
-                                        {i + 1}.
-                                    </span>
-                                    {rule}
-                                </li>
-                            ))}
-                        </ol>
-                    </SideCard>
+                        {post && <CommunityInfoCard post={post} />}
 
-                    <SideCard title="Related Questions">
-                        {RELATED.map((q) => (
-                            <div key={q.id}>
-                                <a
-                                    href="#"
-                                    className="text-sm font-semibold text-neutral-800 hover:text-indigo-600 dark:text-neutral-200 dark:hover:text-indigo-400"
-                                >
-                                    {q.title}
-                                </a>
-                                <div className="text-xs text-neutral-400 dark:text-neutral-500">
-                                    {plural(q.answers, "answer", "answers")}
+                        <SideCard title="Community Rules">
+                            <ol className="space-y-3">
+                                {post?.community.rules.map((rule, i) => (
+                                    <li
+                                        key={rule}
+                                        className="flex gap-2.5 text-sm text-neutral-600 dark:text-neutral-400"
+                                    >
+                                        <span className="font-semibold text-neutral-400 dark:text-neutral-500">
+                                            {i + 1}.
+                                        </span>
+                                        {rule}
+                                    </li>
+                                ))}
+                            </ol>
+                        </SideCard>
+
+                        <SideCard title="Related Questions">
+                            {RELATED.map((q) => (
+                                <div key={q.id}>
+                                    <a
+                                        href="#"
+                                        className="text-sm font-semibold text-neutral-800 hover:text-indigo-600 dark:text-neutral-200 dark:hover:text-indigo-400"
+                                    >
+                                        {q.title}
+                                    </a>
+                                    <div className="text-xs text-neutral-400 dark:text-neutral-500">
+                                        {plural(q.answers, "answer", "answers")}
+                                    </div>
                                 </div>
-                            </div>
-                        ))}
-                    </SideCard>
+                            ))}
+                        </SideCard>
+                    </div>
                 </aside>
             </div>
+            {/* Full-screen image viewer */}
+                  { post && lightboxIndex !== null && post.images && post.images.length > 0 && (
+                    <ImageLightbox
+                      images={post.images}
+                      startIndex={lightboxIndex}
+                      title={post.title}
+                      onClose={() => setLightboxIndex(null)}
+                    />
+                  )}
             {toast && (
                 <div className="fixed bottom-6 left-1/2 z-50 flex -translate-x-1/2 items-center gap-2 rounded-xl bg-neutral-900 px-4 py-2.5 text-sm font-medium text-white shadow-lg">
                     <Check className="h-4 w-4 text-emerald-400" strokeWidth={3} />

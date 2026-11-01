@@ -199,50 +199,52 @@ function RightSideBar({ posts, trending, loading }: Props) {
   );
 
   return (
-    <aside className="hidden w-72 shrink-0 space-y-4 self-start xl:sticky xl:top-16 xl:block">
-      <SidebarCard title="Trending Communities">
-        {trendingLoading ? (
-          <TrendingCommunitiesSkeleton count={4} />
-        ) : trending.length > 0 ? (
-          trending.map((c) => <TrendingItem key={c.id} community={c} />)
-        ) : (
-          <EmptyNote>No communities are trending yet.</EmptyNote>
-        )}
-      </SidebarCard>
+    <aside className="w-0 xl:w-72 transition-all duration-300 shrink-0 self-start xl:sticky xl:top-16 xl:block">
+      <div className="hidden xl:block space-y-4">
+        <SidebarCard title="Trending Communities">
+          {trendingLoading ? (
+            <TrendingCommunitiesSkeleton count={4} />
+          ) : trending.length > 0 ? (
+            trending.map((c) => <TrendingItem key={c.id} community={c} />)
+          ) : (
+            <EmptyNote>No communities are trending yet.</EmptyNote>
+          )}
+        </SidebarCard>
 
-      <SidebarCard title="Popular Questions">
-        {postsLoading ? (
-          <PopularPostsSkeleton />
-        ) : popular.length > 0 ? (
-          popular.map((q) => (
-            <QuestionItem
-              key={q.id}
-              href={postHref(q)}
-              title={q.title}
-              meta={plural(q.comment_count, "answer", "answers")}
-            />
-          ))
-        ) : (
-          <EmptyNote>No questions yet.</EmptyNote>
-        )}
-      </SidebarCard>
+        <SidebarCard title="Popular Questions">
+          {postsLoading ? (
+            <PopularPostsSkeleton />
+          ) : popular.length > 0 ? (
+            popular.map((q) => (
+              <QuestionItem
+                key={q.id}
+                href={postHref(q)}
+                title={q.title}
+                meta={plural(q.comment_count, "answer", "answers")}
+              />
+            ))
+          ) : (
+            <EmptyNote>No questions yet.</EmptyNote>
+          )}
+        </SidebarCard>
 
-      <SidebarCard title="Unanswered Questions">
-        {postsLoading ? (
-          <PopularPostsSkeleton />
-        ) : unanswered.length > 0 ? (
-          unanswered.map((q) => (
-            <QuestionItem
-              key={q.id}
-              href={postHref(q)}
-              title={q.title}
-              meta={`Posted ${timeAgo(q.created_at)}`}
-            />
-          ))
-        ) : (
-          <EmptyNote>Every question has an answer. Nice.</EmptyNote>
-        )}
-      </SidebarCard>
+        <SidebarCard title="Unanswered Questions">
+          {postsLoading ? (
+            <PopularPostsSkeleton />
+          ) : unanswered.length > 0 ? (
+            unanswered.map((q) => (
+              <QuestionItem
+                key={q.id}
+                href={postHref(q)}
+                title={q.title}
+                meta={`Posted ${timeAgo(q.created_at)}`}
+              />
+            ))
+          ) : (
+            <EmptyNote>Every question has an answer. Nice.</EmptyNote>
+          )}
+        </SidebarCard>
+      </div>
     </aside>
   );
 }

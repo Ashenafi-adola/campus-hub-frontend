@@ -6,8 +6,8 @@ import {
   Zap,
 } from "lucide-react";
 import QuestionCard from "@/components/main/post-card";
-import { getPosts } from "@/libs/api";
-import { Post } from "@/libs/types";
+import { getPosts, getSavedPosts } from "@/libs/api";
+import { Post, SavedPost } from "@/libs/types";
 import { AuthContext } from "@/context/auth-context";
 import { Avatar } from "@/components/shared/ui";
 
@@ -101,17 +101,19 @@ function EmptyState({ label }: { label: string }) {
 export default function ProfilePage() {
   const [tab, setTab] = useState<TabId>("questions");
   const [posts, setPosts] = useState<Post[]>([]);
+  const [saveds, setSaveds] = useState<SavedPost[]>([])
   const { user } = useContext(AuthContext);
   useEffect(()=>{
     getPosts(undefined, undefined, true)
         .then(res=>{setPosts(res)})
         .catch(error=>console.log(error));
+    getSavedPosts().then(res=>setSaveds(res)).catch(error=>console.log(error))
   },[])
   
 
   return (
     <div className="min-h-screen w-full bg-[#f4f6f9] dark:bg-neutral-950">
-      <div className="mx-auto flex gap-6 px-0 py-6">
+      <div className="mx-auto flex gap-2 px-0 py-6">
         {/* Main */}
         <main className="min-w-0 flex-1 space-y-4">
           {/* Profile card */}
@@ -177,9 +179,9 @@ export default function ProfilePage() {
           {tab === "questions" &&
             posts.map((p) => <QuestionCard key={p.id} post={p} />)}
           {tab === "saved" &&
-            (posts.length > 0 ? (
-              posts.map((p) => (
-                <QuestionCard key={p.id} post={p} />
+            (saveds.length > 0 ? (
+              saveds.map((p) => (
+                <QuestionCard key={p.id} post={p.post} />
               ))
             ) : (
               <EmptyState label="saved posts" />
@@ -189,38 +191,40 @@ export default function ProfilePage() {
         </main>
 
         {/* Right sidebar */}
-        <aside className="hidden w-72 shrink-0 self-start space-y-4 xl:sticky xl:top-16 xl:block">
-          <SideCard title="Badges & Achievements">
-            {BADGES.map(({ id, title, description, icon: Icon, bg, color }) => (
-              <div key={id} className="flex items-center gap-3">
-                <div
-                  className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full ${bg}`}
-                >
-                  <Icon className={`h-5 w-5 ${color}`} />
-                </div>
-                <div>
-                  <div className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">
-                    {title}
+        <aside className="w-0 xl:w-72 transition-all duration-300 shrink-0 self-start xl:sticky xl:top-16 xl:block">
+          <div className="hidden xl:block space-y-4">
+            <SideCard title="Badges & Achievements">
+              {BADGES.map(({ id, title, description, icon: Icon, bg, color }) => (
+                <div key={id} className="flex items-center gap-3">
+                  <div
+                    className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full ${bg}`}
+                  >
+                    <Icon className={`h-5 w-5 ${color}`} />
                   </div>
-                  <div className="text-xs text-neutral-400 dark:text-neutral-500">{description}</div>
+                  <div>
+                    <div className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">
+                      {title}
+                    </div>
+                    <div className="text-xs text-neutral-400 dark:text-neutral-500">{description}</div>
+                  </div>
                 </div>
-              </div>
-            ))}
-          </SideCard>
+              ))}
+            </SideCard>
 
-          <SideCard title="My Communities">
-            {MY_COMMUNITIES.map((c) => (
-              <a key={c.id} href="#" className="flex items-center gap-3">
-                <span className={`h-6 w-6 shrink-0 rounded-md ${c.color}`} />
-                <div>
-                  <div className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">
-                    {c.name}
+            <SideCard title="My Communities">
+              {MY_COMMUNITIES.map((c) => (
+                <a key={c.id} href="#" className="flex items-center gap-3">
+                  <span className={`h-6 w-6 shrink-0 rounded-md ${c.color}`} />
+                  <div>
+                    <div className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">
+                      {c.name}
+                    </div>
+                    <div className="text-xs text-neutral-400 dark:text-neutral-500">{c.members}</div>
                   </div>
-                  <div className="text-xs text-neutral-400 dark:text-neutral-500">{c.members}</div>
-                </div>
-              </a>
-            ))}
-          </SideCard>
+                </a>
+              ))}
+            </SideCard>
+          </div>
         </aside>
       </div>
     </div>
