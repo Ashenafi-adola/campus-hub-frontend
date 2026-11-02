@@ -1,25 +1,22 @@
 "use client";
 
-import React, { useContext, useState } from "react";
+import React, { useState } from "react";
 import { Avatar } from "@/components/shared/ui";
-import { AuthContext } from "@/context/auth-context";
 import {
   MAX_BIO,
   UNIVERSITIES,
   type Draft,
-  type ProfileForm,
   SaveBar,
   SelectField,
   inputCls,
   labelCls,
 } from "./settings-shared";
+import { Profile } from "@/libs/types";
 
-export function ProfileTab({ form, onSaved }: { form: Draft<ProfileForm>; onSaved: () => void }) {
+export function ProfileTab({ form, onSaved }: { form: Draft<Profile>; onSaved: () => void }) {
   const { draft, update } = form;
   const [avatarError, setAvatarError] = useState<string | null>(null);
-
-  const nameValid = draft.displayName.trim().length >= 2;
-  const { user } = useContext(AuthContext);
+  const nameValid = (draft.first_name + " " + draft.last_name).trim().length >= 2;
 
   const onAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -34,7 +31,7 @@ export function ProfileTab({ form, onSaved }: { form: Draft<ProfileForm>; onSave
       return;
     }
     setAvatarError(null);
-    update({ avatarUrl: URL.createObjectURL(file) });
+    update({ avatar: URL.createObjectURL(file) });
   };
 
   return (
@@ -42,7 +39,7 @@ export function ProfileTab({ form, onSaved }: { form: Draft<ProfileForm>; onSave
       <div>
         <label className={labelCls}>Avatar Image</label>
         <div className="flex items-center gap-4">
-          <Avatar user={user} size="h-16 w-16" textSize="text-xl" />
+          <Avatar profile={draft} size="h-16 w-16" textSize="text-xl" />
           <div>
             <div className="flex items-center gap-4">
               <label className="cursor-pointer rounded-lg border border-neutral-200 bg-white px-3.5 py-1.5 text-sm font-semibold text-neutral-700 hover:bg-neutral-50 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-200 dark:hover:bg-neutral-800">
@@ -56,10 +53,10 @@ export function ProfileTab({ form, onSaved }: { form: Draft<ProfileForm>; onSave
               </label>
               <button
                 type="button"
-                disabled={!draft.avatarUrl}
+                disabled={!draft.avatar}
                 onClick={() => {
                   setAvatarError(null);
-                  update({ avatarUrl: null });
+                  update({ avatar: undefined });
                 }}
                 className="text-sm font-semibold text-red-500 hover:underline disabled:cursor-not-allowed disabled:text-neutral-300 disabled:no-underline dark:disabled:text-neutral-600"
               >
@@ -81,9 +78,9 @@ export function ProfileTab({ form, onSaved }: { form: Draft<ProfileForm>; onSave
         <label className={labelCls}>Display Name</label>
         <input
           type="text"
-          value={user?.first_name +" "+user?.last_name}
+          value={draft?.first_name +" "+draft?.last_name}
           maxLength={40}
-          onChange={(e) => update({ displayName: e.target.value })}
+          onChange={(e) => update({ first_name: e.target.value.split(" ")[0], last_name: e.target.value.split(" ")[1] || "" })}
           className={`${inputCls} ${
             nameValid ? "" : "border-red-300 focus:border-red-400 focus:ring-red-500/20"
           }`}
@@ -99,8 +96,8 @@ export function ProfileTab({ form, onSaved }: { form: Draft<ProfileForm>; onSave
         <label className={labelCls}>University</label>
         <SelectField
           value={draft.university}
-          onChange={(v) => update({ university: v })}
           options={UNIVERSITIES}
+          onChange={(e) => {update({ university: e})}}
         />
       </div>
 
@@ -108,7 +105,7 @@ export function ProfileTab({ form, onSaved }: { form: Draft<ProfileForm>; onSave
         <div className="mb-1.5 flex items-center justify-between">
           <label className="text-sm font-semibold text-neutral-800 dark:text-neutral-200">Bio</label>
           <span className="text-xs text-neutral-400 dark:text-neutral-500">
-            {draft.bio.length}/{MAX_BIO}
+            {draft.bio?.length}/{MAX_BIO}
           </span>
         </div>
         <textarea

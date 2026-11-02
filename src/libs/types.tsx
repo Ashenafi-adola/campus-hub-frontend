@@ -98,11 +98,17 @@ export interface User {
     id: number;
     username: string;
     email: string;
+    is_verified: boolean;
+    profile: Profile;
+}
+
+export interface Profile {
+    id?: number;
+    bio: string;
+    avatar?: string | null;
     first_name: string;
     last_name: string;
-    is_verified: boolean;
-    avatar?: string | null;
-    bio?: string;
+    university: string;
 }
 
 export interface Post {

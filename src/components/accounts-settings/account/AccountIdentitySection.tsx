@@ -3,20 +3,18 @@
 import { CheckCircle2, Lock } from "lucide-react";
 
 import {
-  type AccountForm,
   type Draft,
   SaveBar,
   inputCls,
   labelCls,
 } from "../settings-shared";
+import { AuthUser } from "@/libs/auth/types";
 
 export function AccountIdentitySection({
   form,
-  email,
   notify,
 }: {
-  form: Draft<AccountForm>;
-  email: string;
+  form: Draft<AuthUser>;
   notify: (msg: string) => void;
 }) {
   const { draft, update } = form;
@@ -29,16 +27,18 @@ export function AccountIdentitySection({
           <label className="text-sm font-semibold text-neutral-800 dark:text-neutral-200">
             University Email
           </label>
-          <span className="flex items-center gap-1 text-xs font-semibold text-emerald-600">
-            <CheckCircle2 className="h-3.5 w-3.5" />
-            Verified
-          </span>
+          { draft.is_verified &&
+            <span className="flex items-center gap-1 text-xs font-semibold text-emerald-600">
+              <CheckCircle2 className="h-3.5 w-3.5" />
+              Verified
+            </span>
+          }
         </div>
         <div className="relative">
           <Lock className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-neutral-400 dark:text-neutral-500" />
           <input
             type="email"
-            value={email}
+            value={draft?.email}
             readOnly
             className={`${inputCls} cursor-not-allowed bg-neutral-50 pl-10 text-neutral-500 dark:bg-neutral-800 dark:text-neutral-400`}
           />

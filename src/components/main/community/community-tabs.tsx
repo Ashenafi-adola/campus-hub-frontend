@@ -68,10 +68,10 @@ export function AboutTab({ community, posts, members } : {community: Community, 
         <div className="mt-4 space-y-3">
           {members.filter((m)=> m.role === "moderator").map((mod) => (
             <div key={mod.id} className="flex items-center gap-3">
-              <Avatar user={mod.user} />
+              <Avatar profile={mod.user.profile} />
               <div>
                 <div className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">
-                  {mod.user.first_name + " " + mod.user.last_name}
+                  {mod.user.profile.first_name + " " + mod.user.profile.last_name}
                 </div>
                 <div className="text-xs text-neutral-400 dark:text-neutral-500">{mod.role}</div>
               </div>
@@ -121,9 +121,8 @@ function RoleBadge({ role }: { role: string }) {
 
 export function MembersTab({members}:{members: CommunityMemeber[]}) {
   const [query, setQuery] = useState("");
-
-  const filtered = members.filter((m) =>
-    m.user.first_name.toLowerCase().includes(query.toLowerCase())
+  const filtered = members.filter((m) => (m.user.profile?.first_name && m.user.profile?.last_name) &&
+    m.user.profile.first_name.toLowerCase().includes(query.toLowerCase())
   );
   const moderators = filtered.filter((m) => m.role === "moderator");
   const visible = filtered.filter((m) => m.role === "member");
@@ -180,10 +179,10 @@ export function MembersTab({members}:{members: CommunityMemeber[]}) {
 function MemberRow({ member }: { member: CommunityMemeber }) {
   return (
     <div className="flex items-center gap-3 px-4 py-3">
-      <Avatar user={member.user}/>
+      <Avatar profile={member.user.profile}/>
       <div className="min-w-0 flex-1">
         <div className="truncate text-sm font-semibold text-neutral-900 dark:text-neutral-100">
-          {member.user.first_name + " " + member.user.last_name}
+          {member.user.profile.first_name + " " + member.user.profile.last_name}
         </div>
         <div className="truncate text-xs text-neutral-400 dark:text-neutral-500">
           ASTU· Joined {new Date(member.joined_at).toDateString().slice(3,)}

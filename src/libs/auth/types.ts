@@ -1,3 +1,4 @@
+import { Profile } from "../types";
 
 
 export type LoginInfo = {
@@ -16,11 +17,8 @@ export type AuthUser = {
     id: number;
     username: string;
     email: string;
-    first_name: string;
-    last_name?: string;
     is_verified: string;
-    avatar?: string;
-    bio?: string;
+    profile: Profile;
 }
 
 export type LoginInput = {

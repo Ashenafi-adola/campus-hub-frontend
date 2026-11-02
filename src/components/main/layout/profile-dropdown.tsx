@@ -20,7 +20,7 @@ const MENU_ITEMS: MenuItem[] = [
   { id: "/bookmarks", label: "Saved", icon: Bookmark },
   { id: "/u/activity", label: "My Activity", icon: Clock },
   { id: "/u/settings", label: "Settings", icon: Settings },
-  { id: "help", label: "Help & Support", icon: HelpCircle },
+  { id: "/help-and-support", label: "Help & Support", icon: HelpCircle },
 ];
 
 const AVATAR =
@@ -69,7 +69,7 @@ function ProfileDropdown() {
         <Image
           width={32}
           height={32}
-          src={user?.avatar || AVATAR}
+          src={user.profile?.avatar || AVATAR}
           alt={""}
           unoptimized
           className="h-8 w-8 rounded-full object-cover"
@@ -84,20 +84,20 @@ function ProfileDropdown() {
         <div className="absolute right-0 top-full z-80 mt-2 w-64 overflow-hidden rounded-2xl border border-neutral-200 bg-white shadow-2xl shadow-gray-700 dark:border-neutral-700 dark:bg-neutral-900 dark:shadow-indigo-800">
           {/* Identity header */}
           <div className="flex items-center gap-3 border-b border-neutral-100 px-4 py-3.5 dark:border-neutral-700">
-            {user?.avatar ? <Image
+            {user.profile?.avatar ? <Image
               width={32}
               height={32}
-              src={user?.avatar || AVATAR}
+              src={user.profile?.avatar || AVATAR}
               alt={user.username}
               unoptimized
               className="h-10 w-10 shrink-0 rounded-full object-cover"
-            /> : <div>{user.first_name ? user?.first_name.slice(0, 1) : "NN"}</div>}
+            /> : <div>{user.profile?.first_name ? user.profile?.first_name.slice(0, 1) : "NN"}</div>}
             <div className="min-w-0">
               <div className="truncate text-sm font-semibold text-neutral-900 dark:text-neutral-100">
-                {user?.first_name + " " + user?.last_name}
+                {user.profile?.first_name + " " + user.profile?.last_name}
               </div>
               <div className="truncate text-xs text-neutral-400 dark:text-neutral-400">
-                {user?.email}
+                {user.email}
               </div>
             </div>
           </div>

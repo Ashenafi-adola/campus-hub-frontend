@@ -46,7 +46,7 @@ export function Hero({
         <div className="mt-5 flex items-center justify-between border-t border-white/15 pt-4">
           <StatsLine post={post} light />
           <div className="flex items-center gap-2.5">
-            <Avatar user={post.author} />
+            <Avatar profile={post.author.profile} />
           </div>
         </div>
       </div>

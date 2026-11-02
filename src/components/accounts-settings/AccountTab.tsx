@@ -7,14 +7,15 @@ import { AccountIdentitySection } from "./account/AccountIdentitySection";
 import { AccountConnectedAccounts } from "./account/AccountConnectedAccounts";
 import { AccountPasswordSection } from "./account/AccountPasswordSection";
 import { DeleteAccountModal } from "./account/DeleteAccountModal";
-import { type AccountForm, type Draft } from "./settings-shared";
+import { type Draft } from "./settings-shared";
+import { AuthUser } from "@/libs/auth/types";
 
-export function AccountTab({ form, email, notify }: { form: Draft<AccountForm>; email: string; notify: (msg: string) => void }) {
+export function AccountTab({ form, notify }: { form: Draft<AuthUser>;  notify: (msg: string) => void }) {
   const [deleting, setDeleting] = useState(false);
 
   return (
     <div className="space-y-8">
-      <AccountIdentitySection form={form} email={email} notify={notify} />
+      <AccountIdentitySection form={form} notify={notify} />
       <AccountPasswordSection notify={notify} />
       <AccountConnectedAccounts notify={notify} />
 

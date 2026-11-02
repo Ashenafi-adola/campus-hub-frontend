@@ -3,64 +3,16 @@
 import { ArrowBigDown, ArrowBigUp, CheckCircle2, ChevronDown, MessageSquare, Minus, MoreHorizontal, Plus, Share2, Shield } from "lucide-react";
 import { Composer } from "./comment-composer";
 import { useState } from "react";
-import { getInitials, getTimeSince } from "@/libs/format";
-import { Comment, User } from "@/libs/types";
+import { getTimeSince } from "@/libs/format";
+import { Comment } from "@/libs/types";
 import { downvoteComment, upvoteComment } from "@/libs/api";
 import { getAccessToken } from "@/app/actions/post-votes";
-import Image from "next/image";
+import { Avatar } from "@/components/shared/ui";
 
 
 const MAX_DEPTH = 5;
 
-const AVATAR_COLORS = [
-  "bg-indigo-600",
-  "bg-emerald-600",
-  "bg-amber-600",
-  "bg-rose-600",
-  "bg-sky-600",
-  "bg-violet-600",
-];
-
-
-function colorFor(name: string) {
-  let hash = 0;
-  for (const ch of name) hash = (hash * 31 + ch.charCodeAt(0)) >>> 0;
-  return AVATAR_COLORS[hash % AVATAR_COLORS.length];
-}
-
-function Avatar({
-  user,
-  size = "h-8 w-8",
-  dim = false,
-}: {
-  user: User;
-  size?: string;
-  dim?: boolean;
-}) {
-  const full_name = user.first_name + " " + user.last_name;
-  return (
-    <div
-      className={`flex ${size} shrink-0 items-center justify-center rounded-full text-xs font-semibold text-white transition-opacity ${colorFor(
-        full_name
-      )} ${dim ? "opacity-50" : ""}`}
-    >
-      {user.avatar ? <Image
-        src={user.avatar || ""}
-        alt={user.username}
-        width={40}
-        height={40}
-        unoptimized
-        className="h-8 w-9 rounded-full object-cover"
-      /> :
-        <span className="font-semibold text-white">
-          {getInitials(full_name)}
-        </span>
-      }
-    </div>
-  );
-}
-
-
+               
 function countAll(comments: Comment[]): number {
   return comments.reduce((sum, c) => sum + 1 + countAll(c.replies), 0);
 }
@@ -115,7 +67,7 @@ export function CommentNode({
     <div className="flex gap-3">
       {/* Left rail: avatar + clickable thread line */}
       <div className="flex w-8 shrink-0 flex-col items-center">
-        <Avatar user={currentComment.author} dim={collapsed} />
+        <Avatar profile={currentComment.author.profile} dim={collapsed} />
         {!collapsed && (
           <button
             onClick={() => setCollapsed(true)}
@@ -134,7 +86,7 @@ export function CommentNode({
             className={`font-semibold ${collapsed ? "text-neutral-500 dark:text-neutral-400" : "text-neutral-900 dark:text-neutral-100"
               }`}
           >
-            {currentComment.author.first_name}
+            {currentComment.author.profile?.first_name}
           </span>
           {currentComment.isOP && (
             <span className="rounded bg-indigo-50 px-1.5 py-0.5 text-[11px] font-bold text-indigo-600 dark:bg-indigo-950 dark:text-indigo-300">

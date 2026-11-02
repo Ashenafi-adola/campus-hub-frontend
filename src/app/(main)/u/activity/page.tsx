@@ -1,5 +1,5 @@
 "use client"
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useMemo, useState } from "react";
 import {
   Award,
   ShieldCheck,
@@ -103,13 +103,19 @@ export default function ProfilePage() {
   const [posts, setPosts] = useState<Post[]>([]);
   const [saveds, setSaveds] = useState<SavedPost[]>([])
   const { user } = useContext(AuthContext);
+
+  const profile = useMemo(()=>{
+    return user.profile
+  },[user.profile])
+
   useEffect(()=>{
     getPosts(undefined, undefined, true)
-        .then(res=>{setPosts(res)})
+        .then(res=>{setPosts(res); })
         .catch(error=>console.log(error));
     getSavedPosts().then(res=>setSaveds(res)).catch(error=>console.log(error))
   },[])
   
+
 
   return (
     <div className="min-h-screen w-full bg-[#f4f6f9] dark:bg-neutral-950">
@@ -119,17 +125,17 @@ export default function ProfilePage() {
           {/* Profile card */}
           <div className="rounded-2xl border border-neutral-200 bg-white p-6 dark:border-neutral-800 dark:bg-neutral-900">
             <div className="flex items-center gap-5">
-              <Avatar
-                user={user}
+              {profile && <Avatar
+                profile={profile}
                 size="h-20 w-20"
                 textSize="text-2xl"
-              />
+              />}
               <div>
                 <h1 className="text-2xl font-bold text-neutral-900 dark:text-neutral-100">
-                  {user?.first_name + " " + user?.last_name}
+                  {profile?.first_name + " " + profile?.last_name}
                 </h1>
                 <p className="mt-0.5 text-[15px] text-neutral-600 dark:text-neutral-300">
-                  Adama Science and Technology University
+                  {profile?.university}
                 </p>
                 <p className="mt-0.5 text-sm text-neutral-400 dark:text-neutral-500">
                   Joined {USER.joined}
@@ -138,7 +144,7 @@ export default function ProfilePage() {
             </div>
 
             <p className="mt-4 text-sm leading-relaxed text-neutral-600 dark:text-neutral-300">
-              {USER.bio}
+              {profile?.bio}
             </p>
 
             <div className="mt-5 grid grid-cols-2 gap-4 border-t border-neutral-100 pt-5 sm:grid-cols-4 dark:border-neutral-800">

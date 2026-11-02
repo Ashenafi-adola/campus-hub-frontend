@@ -14,11 +14,11 @@ import {
   type AppearanceForm,
   type NotifForm,
   type PrivacyForm,
-  type ProfileForm,
   useDraft,
   useScrollEdges,
 } from "../../../../components/accounts-settings/settings-shared";
 import { AuthContext } from "@/context/auth-context";
+import { Profile } from "@/libs/types";
 import { AuthUser } from "@/libs/auth/types";
 
 export default function SettingsPage() {
@@ -28,13 +28,7 @@ export default function SettingsPage() {
   
   const { user } = useContext(AuthContext)
   const account = useDraft<AuthUser>(user);
-
-  const profile = useDraft<ProfileForm>({
-    displayName: "Alex Johnson",
-    university: "Stanford University",
-    bio: "CS junior passionate about algorithms and open source. Always happy to help with study advice or graph theory puzzles!",
-    avatarUrl: null,
-  });
+  const profile = useDraft<Profile>(user.profile)
 
   
   const notifications = useDraft<NotifForm>({
@@ -86,9 +80,9 @@ export default function SettingsPage() {
   
   return (
     <div className="min-h-screen w-full bg-[#f4f6f9] dark:bg-neutral-950">
-      <div className="mx-auto flex w-full gap-6 px-6 py-6">
+      <div className="mx-auto flex w-full gap-2 px-2 py-6">
         <main className="min-w-0 flex-1">
-          <div className="rounded-2xl border border-neutral-200 bg-white p-4 sm:p-6 dark:border-neutral-800 dark:bg-neutral-900">
+          <div className="rounded-2xl border border-neutral-200 bg-white p-3 sm:p-6 dark:border-neutral-800 dark:bg-neutral-900">
             <h1 className="text-2xl font-bold text-neutral-900 dark:text-neutral-100">Settings</h1>
             <div className="mt-4 border-t border-neutral-100 pt-5 dark:border-neutral-800">
               <div className="flex flex-col gap-5 md:flex-row md:gap-8">
@@ -149,7 +143,7 @@ export default function SettingsPage() {
 
                 <div className="min-w-0 flex-1">
                   {tab === "profile" && (
-                    <ProfileTab form={account} onSaved={() => setToast("Profile updated")} />
+                    <ProfileTab form={profile} onSaved={() => setToast("Profile updated")} />
                   )}
                   {tab === "account" && (
                     <AccountTab form={account} notify={setToast} />

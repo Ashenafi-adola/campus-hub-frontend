@@ -1,7 +1,6 @@
 import { getPollVotes, votePoll } from "@/libs/api";
-import { AuthUser } from "@/libs/auth/types";
-import { colorFor, getInitials, plural } from "@/libs/format";
-import { PollOption, User } from "@/libs/types";
+import { getInitials, plural } from "@/libs/format";
+import { PollOption, Profile } from "@/libs/types";
 import Image from "next/image";
 import { useState } from "react";
 
@@ -94,37 +93,52 @@ export function PageHeader({
     </div>
   );
 }
+const AVATAR_COLORS = [
+  "bg-indigo-600",
+  "bg-emerald-600",
+  "bg-amber-600",
+  "bg-rose-600",
+  "bg-sky-600",
+  "bg-violet-600",
+];
+       
 
+function colorFor(name: string) {
+  let hash = 0;
+  for (const ch of name) hash = (hash * 31 + ch.charCodeAt(0)) >>> 0;
+  return AVATAR_COLORS[hash % AVATAR_COLORS.length];
+}
 
 export function Avatar({
-  user,
-  size = "h-10 w-10",
-  textSize = "text-xs",
+  profile,
+  size = "h-8 w-8",
+  dim = false,
+  textSize = "text-xs"
 }: {
-  user: AuthUser | null | User;
+  profile: Profile;
   size?: string;
+  dim?: boolean;
   textSize?: string;
 }) {
-  const fullName = user?.first_name + " " + user?.last_name;
+  const full_name = profile?.first_name + " " + profile?.last_name;
   return (
     <div
-      className={`flex ${size} shrink-0 items-center justify-center rounded-full font-semibold text-white ${textSize} ${colorFor(
-        fullName
-      )}`}
+      className={`flex ${size} shrink-0 items-center justify-center rounded-full ${textSize} font-semibold text-white transition-opacity ${colorFor(
+        full_name
+      )} ${dim ? "opacity-50" : ""}`}
     >
-      {user?.avatar ? <Image
-        src={user.avatar || ""}
-        alt={user.username}
-        width={100}
-        height={100}
+      {profile?.avatar ? <Image
+        src={profile.avatar || ""}
+        alt={profile.first_name}
+        width={40}
+        height={40}
         unoptimized
-        className="h-full w-full rounded-full object-cover"
+        className="h-8 w-9 rounded-full object-cover"
       /> :
-        <div className="h-10 w-10 rounded-full bg-blue-600 flex items-center justify-center">
-          <span className="font-semibold text-white">
-            {getInitials(fullName)}
-          </span>
-        </div>}
+        <span className="font-semibold text-white">
+          {getInitials(full_name)}
+        </span>
+      }
     </div>
   );
 }

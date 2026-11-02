@@ -3,12 +3,12 @@ import React, { useState } from 'react';
 import Image from "next/image";
 import { Post } from '@/libs/types';
 import { ArrowBigDown, ArrowBigUp, Bookmark, MessageSquare, Share2 } from 'lucide-react';
-import { getInitials, getTimeSince } from '@/libs/format';
+import { getTimeSince } from '@/libs/format';
 import { downvotePostForCurrentUser, upvotePostForCurrentUser } from '@/app/actions/post-votes';
 import { PostActionsMenu } from './post-actions';
 import Link from 'next/link';
 import { CommentThread } from './comment/comment-thread';
-import { PollBlock } from '../shared/ui';
+import { Avatar, PollBlock } from '../shared/ui';
 import { saveUnsave } from '@/libs/api';
 import ImageLightbox from './posts/image-light-box';
 
@@ -55,24 +55,10 @@ function QuestionCard({ post }: { post: Post }) {
     <div className="flex flex-col rounded-2xl border border-neutral-200 bg-white p-5 dark:border-neutral-800 dark:bg-neutral-900">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2.5">
-          {currentPost.author.avatar ?
-            <Image
-              src={currentPost.author.avatar || ""}
-              alt={currentPost.author.username}
-              width={40}
-              height={40}
-              unoptimized
-              className="h-9 w-9 rounded-full object-cover"
-            /> :
-            <div className="h-10 w-10 rounded-full bg-blue-600 flex items-center justify-center">
-              <span className="font-semibold text-white">
-                {getInitials(currentPost.author.first_name + " " + currentPost.author.last_name)}
-              </span>
-            </div>
-          }
+          <Avatar profile={currentPost.author.profile}/>
           <div className="text-sm">
             <span className="font-semibold text-neutral-900 dark:text-neutral-100">
-              {currentPost.author.first_name}
+              {currentPost.author.profile?.first_name}
             </span>
             <span className="text-neutral-400 dark:text-neutral-500"> · {currentPost.post_type}</span>{" "}
             <span className="text-neutral-400 dark:text-neutral-500">in</span>{" "}
@@ -210,15 +196,22 @@ function QuestionCard({ post }: { post: Post }) {
         </div>
 
         <div className="flex items-center gap-4 text-sm text-neutral-500 dark:text-neutral-400">
-          <button
-            onClick={() => {
-              setOpen((wasOpen) => !wasOpen);
-              setHasOpenedComments(true);
-            }}
-            className="flex items-center gap-1.5 hover:text-neutral-800 dark:hover:text-neutral-100">
-            <MessageSquare className="h-4 w-4" />
-            {post.comment_count} answers
-          </button>
+          {post.comment_count > 5 ?
+            <Link href={`/posts/${post.id}`}
+              className="flex items-center gap-1.5 hover:text-neutral-800 dark:hover:text-neutral-100">
+              <MessageSquare className="h-4 w-4" />
+              {post.comment_count} answers
+            </Link> :
+            <button
+              onClick={() => {
+                setOpen((wasOpen) => !wasOpen);
+                setHasOpenedComments(true);
+              }}
+              className="flex items-center gap-1.5 hover:text-neutral-800 dark:hover:text-neutral-100">
+              <MessageSquare className="h-4 w-4" />
+              {post.comment_count} answers
+            </button>
+          }
           <button className="flex items-center gap-1.5 hover:text-neutral-800 dark:hover:text-neutral-100">
             <Share2 className="h-4 w-4" />
             Share
