@@ -2,7 +2,7 @@ import { getPollVotes, votePoll } from "@/libs/api";
 import { getInitials, plural } from "@/libs/format";
 import { PollOption, Profile } from "@/libs/types";
 import Image from "next/image";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 
 export function EmptyState({
@@ -111,29 +111,52 @@ function colorFor(name: string) {
 
 export function Avatar({
   profile,
-  size = "h-8 w-8",
+  size = "h-10 w-10",
   dim = false,
   textSize = "text-xs"
 }: {
-  profile: Profile;
+  profile: Profile | null | undefined;
   size?: string;
   dim?: boolean;
   textSize?: string;
 }) {
-  const full_name = profile?.first_name + " " + profile?.last_name;
+  const full_name = `${profile?.first_name ?? ""} ${profile?.last_name ?? ""}`;
+  const avatar = profile?.avatar;
+  const [avatarPreview, setAvatarPreview] = useState<{
+    file: File;
+    src: string;
+  } | null>(null);
+
+  useEffect(() => {
+    if (!(avatar instanceof File)) return;
+
+    const objectUrl = URL.createObjectURL(avatar);
+    // Store the URL so it can be revoked when this file is replaced or unmounted.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setAvatarPreview({ file: avatar, src: objectUrl });
+    return () => URL.revokeObjectURL(objectUrl);
+  }, [avatar]);
+
+  const avatarSrc =
+    typeof avatar === "string"
+      ? avatar
+      : avatarPreview && avatarPreview.file === avatar
+        ? avatarPreview.src
+        : null;
+
   return (
     <div
       className={`flex ${size} shrink-0 items-center justify-center rounded-full ${textSize} font-semibold text-white transition-opacity ${colorFor(
         full_name
       )} ${dim ? "opacity-50" : ""}`}
     >
-      {profile?.avatar ? <Image
-        src={profile.avatar || ""}
-        alt={profile.first_name}
+      {avatarSrc ? <Image
+        src={avatarSrc}
+        alt={profile?.first_name ?? ""}
         width={40}
         height={40}
         unoptimized
-        className="h-8 w-9 rounded-full object-cover"
+        className={`${size} rounded-full object-cover`}
       /> :
         <span className="font-semibold text-white">
           {getInitials(full_name)}

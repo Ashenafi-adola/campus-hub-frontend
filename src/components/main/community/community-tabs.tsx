@@ -112,6 +112,14 @@ function RoleBadge({ role }: { role: string }) {
       </span>
     );
   }
+  if (role === "admin") {
+    return (
+      <span className="flex items-center gap-1 rounded-full bg-green-50 px-2.5 py-1 text-xs font-semibold text-green-600 dark:bg-green-950 dark:text-green-300">
+        <Shield className="h-3 w-3" />
+        Admin
+      </span>
+    );
+  }
   return (
     <span className="rounded-full bg-neutral-100 px-2.5 py-1 text-xs font-medium text-neutral-500 dark:bg-neutral-800 dark:text-neutral-400">
       Member
@@ -124,7 +132,7 @@ export function MembersTab({members}:{members: CommunityMemeber[]}) {
   const filtered = members.filter((m) => (m.user.profile?.first_name && m.user.profile?.last_name) &&
     m.user.profile.first_name.toLowerCase().includes(query.toLowerCase())
   );
-  const moderators = filtered.filter((m) => m.role === "moderator");
+  const moderators = filtered.filter((m) => m.role === "moderator" || m.role === "admin");
   const visible = filtered.filter((m) => m.role === "member");
 
   return (
@@ -185,7 +193,7 @@ function MemberRow({ member }: { member: CommunityMemeber }) {
           {member.user.profile.first_name + " " + member.user.profile.last_name}
         </div>
         <div className="truncate text-xs text-neutral-400 dark:text-neutral-500">
-          ASTU· Joined {new Date(member.joined_at).toDateString().slice(3,)}
+          <span className="w-10 truncate">{member.user.profile.university}</span> Joined {new Date(member.joined_at).toDateString().slice(3,)}
         </div>
       </div>
       <RoleBadge role={member.role} />

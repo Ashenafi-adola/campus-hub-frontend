@@ -64,7 +64,7 @@ export function CommentNode({
   };
 
   return (
-    <div className="flex gap-3">
+    <div className="flex gap-3 px-2">
       {/* Left rail: avatar + clickable thread line */}
       <div className="flex w-8 shrink-0 flex-col items-center">
         <Avatar profile={currentComment.author.profile} dim={collapsed} />

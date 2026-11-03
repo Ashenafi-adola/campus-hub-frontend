@@ -105,7 +105,7 @@ export interface User {
 export interface Profile {
     id?: number;
     bio: string;
-    avatar?: string | null;
+    avatar?: string | File | null;
     first_name: string;
     last_name: string;
     university: string;

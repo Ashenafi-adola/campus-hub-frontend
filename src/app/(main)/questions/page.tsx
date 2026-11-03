@@ -46,7 +46,7 @@ export default function QuestionsPage() {
   ];
 
   return (
-    <div className="space-y-4 w-full">
+    <div className="space-y-4 w-full pb-18 pt-3 md:pb-5">
       <PageHeader
         icon={HelpCircle}
         title="Questions"

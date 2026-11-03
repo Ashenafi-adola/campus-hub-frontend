@@ -7,6 +7,7 @@ import {
     NewCommunity,
     NewPost,
     Post,
+    Profile,
     SavedPost,
     UserRegistrationData,
 } from "./types";
@@ -400,4 +401,21 @@ export function saveUnsave(isSaved: boolean, postId: number) {
         body: formData,
         errorMessage: "Couldn't save the post",
     });
+}
+
+export async function saveProfile(payload: Profile): Promise<Profile> {
+    const formData = new FormData();
+    formData.append("first_name", payload.first_name);
+    formData.append("last_name", payload.last_name);
+    if (typeof File !== "undefined" && payload.avatar instanceof File) {
+        formData.append("avatar", payload.avatar);
+    }
+    formData.append("university", payload.university);
+    formData.append("bio", payload.bio);
+
+    return request(`/auth/profile/${payload.id}/`, {
+        method: "PATCH",
+        body: formData,
+        errorMessage: "Couldn't update profile"
+    })
 }

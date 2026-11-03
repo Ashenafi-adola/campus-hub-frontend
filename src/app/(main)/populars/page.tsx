@@ -105,7 +105,7 @@ export default function PopularPage() {
   console.log(first)
 
   return (
-    <div className="min-w-0 flex-1 space-y-4">
+    <div className="min-w-0 flex-1 space-y-4 pb-20 md:pb-5">
       <div className="mx-auto flex w-full gap-2 px-0 py-1">
         {/* Main */}
         <main className="min-w-0 flex-1 space-y-4">

@@ -495,7 +495,7 @@ export default function SavedPostsPage() {
   /* ---- render ---- */
   return (
     <>
-      <main className="min-w-0 flex-1 space-y-4 pb-20">
+      <main className="min-w-0 flex-1 space-y-4 pb-20 md:pb-5 pt-5">
         {/* Header card */}
         <div className="rounded-2xl border border-neutral-200 bg-white p-4 sm:p-5 dark:border-neutral-800 dark:bg-neutral-900">
           <div className="flex flex-wrap items-center justify-between gap-3">

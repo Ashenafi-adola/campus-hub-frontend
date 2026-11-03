@@ -70,7 +70,7 @@ export default function CreatePostPage() {
   const [type, setType] = useState<PostType>("question");
   
   return (
-    <div className="space-y-4 w-full">
+    <div className="space-y-4 w-full pb-20 md:pb-5 pt-3">
       <div>
         <h1 className="text-2xl font-bold text-neutral-900 dark:text-neutral-100">Create a post</h1>
         <p className="mt-1 text-sm text-neutral-500 dark:text-neutral-400">

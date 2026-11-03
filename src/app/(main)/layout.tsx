@@ -1,3 +1,4 @@
+import MobileFooter from '@/components/main/layout/mobile-footer'
 import SideBar from '@/components/main/layout/side-bar'
 import SiteHeader from '@/components/main/layout/site-header'
 import { AuthProvider } from '@/context/auth-context'
@@ -24,6 +25,7 @@ async function Layout({ children }: Props) {
                     </div>
                     {children}
                 </div>
+                <MobileFooter/>
             </div>
         </AuthProvider>
     )

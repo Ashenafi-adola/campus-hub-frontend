@@ -99,7 +99,7 @@ export function CommentThread({
   }, [comments, sort]);
 
   return (
-    <div className="p-0">
+    <div className="p-0 mt-5 dark:bg-neutral-900">
       <Composer
         placeholder="Share your answer or ask a follow-up..."
         onSubmit={handleAdd}
@@ -143,7 +143,7 @@ export function CommentThread({
 
       <div className="mt-5">
         {sorted.length === 0 ? (
-          <p className="py-6 text-center text-sm text-neutral-400 dark:text-neutral-500">
+          <p className="py-6 text-center text-sm text-neutral-400 dark:text-neutral-900">
             No answers yet. Be the first to help.
           </p>
         ) : (

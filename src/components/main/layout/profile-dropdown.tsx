@@ -1,4 +1,5 @@
 "use client"
+import { Avatar } from "@/components/shared/ui";
 import { AuthContext } from "@/context/auth-context";
 import { ThemeContext } from "@/context/theme-context";
 import { Bookmark, ChevronDown, Clock, HelpCircle, LogOut, Moon, Settings, User } from "lucide-react";
@@ -15,7 +16,7 @@ interface MenuItem {
   danger?: boolean;
 }
 
-const MENU_ITEMS: MenuItem[] = [
+export const MENU_ITEMS: MenuItem[] = [
   { id: "/u/profile", label: "View Profile", icon: User },
   { id: "/bookmarks", label: "Saved", icon: Bookmark },
   { id: "/u/activity", label: "My Activity", icon: Clock },
@@ -35,6 +36,9 @@ function ProfileDropdown() {
   const themeContext = useContext(ThemeContext);
   if (!themeContext) throw new Error("ProfileDropdown must be inside ThemeProvider");
   const [isDark, toggleTheme] = themeContext;
+  const avatarUrl = user.profile?.avatar;
+  const hasAvatar = typeof avatarUrl === "string" && avatarUrl.length > 0;
+  const avatar = hasAvatar ? avatarUrl : AVATAR;
 
   useEffect(() => {
     function handleClickOutside(e: MouseEvent) {
@@ -66,14 +70,7 @@ function ProfileDropdown() {
         aria-expanded={open}
         className="flex items-center gap-1.5 rounded-full py-1 pl-1 pr-2 hover:bg-neutral-100 dark:bg-neutral-900 dark:hover:bg-neutral-800"
       >
-        <Image
-          width={32}
-          height={32}
-          src={user.profile?.avatar || AVATAR}
-          alt={""}
-          unoptimized
-          className="h-8 w-8 rounded-full object-cover"
-        />
+        <Avatar profile={user.profile} size="h-8 w-8"/>
         <ChevronDown
           className={`h-4 w-4 text-neutral-400 transition-transform dark:text-neutral-500 ${open ? "rotate-180" : ""
             }`}
@@ -84,10 +81,10 @@ function ProfileDropdown() {
         <div className="absolute right-0 top-full z-80 mt-2 w-64 overflow-hidden rounded-2xl border border-neutral-200 bg-white shadow-2xl shadow-gray-700 dark:border-neutral-700 dark:bg-neutral-900 dark:shadow-indigo-800">
           {/* Identity header */}
           <div className="flex items-center gap-3 border-b border-neutral-100 px-4 py-3.5 dark:border-neutral-700">
-            {user.profile?.avatar ? <Image
+            {hasAvatar ? <Image
               width={32}
               height={32}
-              src={user.profile?.avatar || AVATAR}
+              src={avatar}
               alt={user.username}
               unoptimized
               className="h-10 w-10 shrink-0 rounded-full object-cover"

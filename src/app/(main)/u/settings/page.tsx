@@ -79,7 +79,7 @@ export default function SettingsPage() {
   }, [toast]);
   
   return (
-    <div className="min-h-screen w-full bg-[#f4f6f9] dark:bg-neutral-950">
+    <div className="min-h-screen w-full bg-[#f4f6f9] dark:bg-neutral-950 pb-20 md:pb-5 pt-4">
       <div className="mx-auto flex w-full gap-2 px-2 py-6">
         <main className="min-w-0 flex-1">
           <div className="rounded-2xl border border-neutral-200 bg-white p-3 sm:p-6 dark:border-neutral-800 dark:bg-neutral-900">

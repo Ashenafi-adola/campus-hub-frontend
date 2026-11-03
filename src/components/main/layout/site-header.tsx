@@ -1,26 +1,33 @@
 "use client"
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
 import { Bell, Plus, Search } from 'lucide-react'
 import ProfileDropdown from './profile-dropdown'
 import Link from 'next/link'
 import SideBar from './side-bar'
+import { Avatar } from '@/components/shared/ui'
+import { AuthContext } from '@/context/auth-context'
 
 
 function SiteHeader() {
     const [openSideBar, setOpenSideBar] = useState(false)
-
+    const { user } = useContext(AuthContext)
     const closeSideBar = () => setOpenSideBar(false)
 
     return (
-        <header className="sticky top-0 z-80 flex items-center gap-6 border-b border-neutral-200 bg-white px-6 py-3 dark:border-neutral-800 dark:bg-neutral-900">
+        <header className="sticky top-0 z-80 flex items-center md:gap-6 gap-3 border-b border-neutral-200 bg-white px-6 py-3 dark:border-neutral-800 dark:bg-neutral-900">
             <div
                 onClick={closeSideBar}
                 className={`fixed inset-x-0 top-16 bottom-0 z-40 bg-black/10 backdrop-blur-[2px] transition-all duration-300 lg:hidden ${!openSideBar ? "hidden" : "block"}`}
             >
                 <SideBar mobile onClose={closeSideBar} />
             </div>
-
-            <div className="flex items-center gap-2">
+            <button 
+            onClick={()=>setOpenSideBar(prev=>!prev)}
+                className="md:hidden"
+            >
+                <Avatar profile={user.profile} size='h-8 w-8'/>
+            </button>
+            <div className="md:flex items-center gap-2 hidden">
                 <div className="lg:flex h-9 w-9 items-center justify-center rounded-xl bg-indigo-600 hidden">
                     <svg viewBox="0 0 24 24" className="h-4 w-4 text-white" fill="none">
                         <path
@@ -58,10 +65,13 @@ function SiteHeader() {
                     <Plus className="h-4 w-4" />
                     Ask Question
                 </Link>
-                <button aria-label="Notifications" className="text-neutral-500 hover:text-neutral-800 dark:text-neutral-400 dark:hover:text-neutral-100">
+                <button aria-label="Notifications" className="text-neutral-500 border rounded-full p-1.5 border-gray-300 dark:border-neutral-700 hover:text-neutral-800 dark:text-neutral-400 dark:hover:text-neutral-100">
                     <Bell className="h-5 w-5" />
                 </button>
-                <ProfileDropdown/>
+
+                <div className="hidden md:block">
+                    <ProfileDropdown/>
+                </div>
             </div>
         </header>
     )

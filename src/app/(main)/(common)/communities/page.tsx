@@ -64,9 +64,9 @@ export default function CommunitiesPage() {
   }
 
   return (
-    <main className="min-w-0 flex-1 space-y-4">
+    <main className="min-w-0 flex-1 space-y-4 pb-20 md:pb-5">
       {/* Header + filter chips */}
-      <div className="sticky top-0 z-10 rounded-2xl border border-neutral-200 bg-white p-4 sm:p-6 dark:border-neutral-800 dark:bg-neutral-900">
+      <div className="sticky top-3 z-10 rounded-2xl border border-neutral-200 bg-white p-4 sm:p-6 dark:border-neutral-800 dark:bg-neutral-900">
         <h1 className="text-xl font-bold text-neutral-900 sm:text-2xl dark:text-neutral-100">
           Explore Communities
         </h1>

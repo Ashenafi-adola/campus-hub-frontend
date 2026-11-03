@@ -12,6 +12,7 @@ import {
   labelCls,
 } from "./settings-shared";
 import { Profile } from "@/libs/types";
+import { saveProfile } from "@/libs/api";
 
 export function ProfileTab({ form, onSaved }: { form: Draft<Profile>; onSaved: () => void }) {
   const { draft, update } = form;
@@ -31,8 +32,13 @@ export function ProfileTab({ form, onSaved }: { form: Draft<Profile>; onSaved: (
       return;
     }
     setAvatarError(null);
-    update({ avatar: URL.createObjectURL(file) });
+    update({ avatar: file });
   };
+
+  const save = async () => {
+    await saveProfile(draft);
+  }
+
 
   return (
     <div className="space-y-5">
@@ -123,6 +129,7 @@ export function ProfileTab({ form, onSaved }: { form: Draft<Profile>; onSaved: (
         onSave={() => {
           form.save();
           onSaved();
+          save()
         }}
         onDiscard={form.discard}
       />

@@ -199,7 +199,7 @@ function RightSideBar({ posts, trending, loading }: Props) {
   );
 
   return (
-    <aside className="w-0 xl:w-72 transition-all duration-300 shrink-0 self-start xl:sticky xl:top-16 xl:block">
+    <aside className="w-0 xl:w-72 transition-all duration-300 shrink-0 self-start xl:sticky xl:top-16">
       <div className="hidden xl:block space-y-4">
         <SidebarCard title="Trending Communities">
           {trendingLoading ? (
