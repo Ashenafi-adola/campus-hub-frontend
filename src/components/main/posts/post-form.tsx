@@ -80,8 +80,8 @@ function Switch({
   );
 }
 
-function PostForm({type, setType}:{ type: PostType, setType: (a: PostType) => void}) {
-  const [communityId, setCommunityId] = useState<number | null>(null);
+function PostForm({type, setType, slug}:{ type: PostType, setType: (a: PostType) => void, slug?: string}) {
+  const [communityId, setCommunityId] = useState<string | undefined>(slug);
   const [commOpen, setCommOpen] = useState(false);
   const [title, setTitle] = useState("");
   const [body, setBody] = useState("");
@@ -95,7 +95,7 @@ function PostForm({type, setType}:{ type: PostType, setType: (a: PostType) => vo
 
   const { communities } = useCommunities();
 
-  const community = communities.find((c) => c.id === communityId) ?? null;
+  const community = communities.find((c) => c.slug === communityId) ?? null;
   const filledOptions = pollOptions.filter((o) => o.trim());
 
   const missing: string[] = [];
@@ -228,7 +228,8 @@ function PostForm({type, setType}:{ type: PostType, setType: (a: PostType) => vo
 
           {/* Main fields */}
           <div className="space-y-5 rounded-2xl border border-neutral-200 bg-white p-5 dark:border-neutral-800 dark:bg-neutral-900">
-            {/* Community */}
+          {/* Community */}
+          {!slug &&
             <div>
               <label className="mb-1.5 block text-sm font-semibold text-neutral-800 dark:text-neutral-200">
                 Community
@@ -264,7 +265,7 @@ function PostForm({type, setType}:{ type: PostType, setType: (a: PostType) => vo
                           key={c.id}
                           type="button"
                           onClick={() => {
-                            setCommunityId(c.id);
+                            setCommunityId(c.slug);
                             setCommOpen(false);
                           }}
                           className="flex w-full items-center justify-between px-3.5 py-2.5 text-left text-sm font-medium text-neutral-700 hover:bg-neutral-50 dark:text-neutral-200 dark:hover:bg-neutral-800"
@@ -278,7 +279,7 @@ function PostForm({type, setType}:{ type: PostType, setType: (a: PostType) => vo
                               </span>
                             )}
                           </span>
-                          {c.id === communityId && (
+                          {c.slug === communityId && (
                             <Check
                               className="h-4 w-4 text-indigo-600"
                               strokeWidth={3}
@@ -291,6 +292,7 @@ function PostForm({type, setType}:{ type: PostType, setType: (a: PostType) => vo
                 )}
               </div>
             </div>
+          }
 
             {/* Title */}
             <div>

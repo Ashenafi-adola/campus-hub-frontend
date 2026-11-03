@@ -2,6 +2,9 @@
 import React, { useContext, useEffect, useMemo, useState } from "react";
 import {
   Award,
+  CircleQuestionMark,
+  Clock,
+  File,
   ShieldCheck,
   Zap,
 } from "lucide-react";
@@ -9,7 +12,8 @@ import QuestionCard from "@/components/main/post-card";
 import { getPosts, getSavedPosts } from "@/libs/api";
 import { Post, SavedPost } from "@/libs/types";
 import { AuthContext } from "@/context/auth-context";
-import { Avatar } from "@/components/shared/ui";
+import { Avatar, EmptyState } from "@/components/shared/ui";
+import { SideCard } from "@/components/shared/side-card";
 
 
 type TabId = "questions" | "answers" | "saved" | "activity";
@@ -30,9 +34,9 @@ const STATS = [
 
 
 const MY_COMMUNITIES = [
-  { id: "cs", name: "r/ComputerScience", members: "12.4k members", color: "bg-indigo-500" },
-  { id: "study", name: "r/StudyTips", members: "8.9k members", color: "bg-emerald-500" },
-  { id: "life", name: "r/CampusLife", members: "4.5k members", color: "bg-amber-500" },
+  { id: "cs", name: "c/ComputerScience", members: "12.4k members", color: "bg-indigo-500" },
+  { id: "study", name: "c/StudyTips", members: "8.9k members", color: "bg-emerald-500" },
+  { id: "life", name: "c/CampusLife", members: "4.5k members", color: "bg-amber-500" },
 ];
 
 const BADGES = [
@@ -70,29 +74,6 @@ const TABS: { id: TabId; label: string }[] = [
 ];
 
 
-function SideCard({
-  title,
-  children,
-}: {
-  title: string;
-  children: React.ReactNode;
-}) {
-  return (
-    <div className="rounded-2xl border border-neutral-200 bg-white p-5 dark:border-neutral-800 dark:bg-neutral-900">
-      <h3 className="font-semibold text-neutral-900 dark:text-neutral-100">{title}</h3>
-      <div className="mt-4 space-y-4">{children}</div>
-    </div>
-  );
-}
-
-
-function EmptyState({ label }: { label: string }) {
-  return (
-    <div className="rounded-2xl border border-neutral-200 bg-white p-10 text-center text-sm text-neutral-400 dark:border-neutral-800 dark:bg-neutral-900 dark:text-neutral-500">
-      No {label} to show yet.
-    </div>
-  );
-}
 
 /* ----------------------------------------------------------------- */
 /*  Page                                                             */
@@ -190,10 +171,10 @@ export default function ProfilePage() {
                 <QuestionCard key={p.id} post={p.post} />
               ))
             ) : (
-              <EmptyState label="saved posts" />
+              <EmptyState title="saved posts" icon={CircleQuestionMark} text={""} />
             ))}
-          {tab === "answers" && <EmptyState label="answers" />}
-          {tab === "activity" && <EmptyState label="recent activity" />}
+          {tab === "answers" && <EmptyState title="no answers" icon={File} text={"text"} />}
+          {tab === "activity" && <EmptyState title="recent activity" icon={Clock} text={""} />}
         </main>
 
         {/* Right sidebar */}

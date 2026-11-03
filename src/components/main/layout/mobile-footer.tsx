@@ -15,7 +15,7 @@ function MobileFooter() {
     const [active, setActive] = useState<string | null>(null)
     return (
         <div className="fixed w-full md:h-0 bottom-0 z-80 flex items-center gap-6 transition-all duration-300 border-t border-neutral-200 bg-white px-6 py-1 dark:border-neutral-700 dark:bg-neutral-900">
-            <nav className="flex items-center justify-evenly w-full md:hidden">
+            <nav className="flex items-center justify-between w-full md:hidden">
                 {
                     NAV_ITEMS.map(({ id, label, icon: Icon, href }) => {
                         const isActive = active === id;
