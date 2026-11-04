@@ -419,3 +419,11 @@ export async function saveProfile(payload: Profile): Promise<Profile> {
         errorMessage: "Couldn't update profile"
     })
 }
+
+export async function ChangePassword(payload:{old_password: string, new_password: string}) {
+    return request("/auth/change-password/",  {
+        method: "POST",
+        body: payload,
+        errorMessage: "Couldn't change password"
+    })
+}
