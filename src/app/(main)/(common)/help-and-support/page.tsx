@@ -597,7 +597,7 @@ export default function HelpSupportPage({
   };
 
   return (
-    <div className="mx-auto max-w-5xl space-y-10 pb-16 dark:bg-neutral-800">
+    <div className="mx-auto w-full space-y-10 pb-16 px-5 dark:bg-neural-950">
       {/* ------------------------------ Hero ------------------------------ */}
       <section className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-indigo-600 to-indigo-900 px-5 py-10 text-center text-white sm:px-10 sm:py-14">
         <div
