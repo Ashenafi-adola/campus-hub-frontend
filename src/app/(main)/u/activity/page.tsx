@@ -25,13 +25,6 @@ const USER = {
   bio: "CS junior passionate about algorithms and open source. Always happy to help with study advice or graph theory puzzles!",
 };
 
-const STATS = [
-  { label: "Questions Asked", value: "24" },
-  { label: "Answers Given", value: "87" },
-  { label: "Helpful Answers", value: "42" },
-  { label: "Reputation", value: "1,250" },
-];
-
 
 const MY_COMMUNITIES = [
   { id: "cs", name: "c/ComputerScience", members: "12.4k members", color: "bg-indigo-500" },
@@ -84,19 +77,24 @@ export default function ProfilePage() {
   const [posts, setPosts] = useState<Post[]>([]);
   const [saveds, setSaveds] = useState<SavedPost[]>([])
   const { user } = useContext(AuthContext);
-
+  
   const profile = useMemo(()=>{
     return user.profile
   },[user.profile])
-
+  
   useEffect(()=>{
     getPosts(undefined, undefined, true)
-        .then(res=>{setPosts(res); })
-        .catch(error=>console.log(error));
+    .then(res=>{setPosts(res); })
+    .catch(error=>console.log(error));
     getSavedPosts().then(res=>setSaveds(res)).catch(error=>console.log(error))
   },[])
   
-
+  const STATS = [
+    { label: "Questions Asked", value: posts.length },
+    { label: "Answers Given", value: "87" },
+    { label: "Helpful Answers", value: "42" },
+    { label: "Reputation", value: "1,250" },
+  ];
 
   return (
     <div className="min-h-screen w-full bg-[#f4f6f9] dark:bg-neutral-950">

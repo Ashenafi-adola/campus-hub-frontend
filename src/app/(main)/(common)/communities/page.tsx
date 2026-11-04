@@ -55,7 +55,7 @@ export default function CommunitiesPage() {
     );
   } else {
     content = (
-      <div className="grid max-w-full grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
+      <div className="grid max-w-full grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3 overflow-hidden px-0.5">
         {visibleCommunities.map((community) => (
           <CommunityCard key={community.id} community={community} />
         ))}

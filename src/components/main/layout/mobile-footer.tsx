@@ -1,6 +1,7 @@
 "use client";
 import { Bookmark, Home, Plus, TrendingUp, Users } from 'lucide-react';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import React, { useState } from 'react'
 
 const NAV_ITEMS = [
@@ -12,20 +13,21 @@ const NAV_ITEMS = [
 ];
 
 function MobileFooter() {
-    const [active, setActive] = useState<string | null>(null)
+    const pathname = usePathname()
+    const [active, setActive] = useState<string | null>(pathname)
     return (
-        <div className="fixed w-full md:h-0 bottom-0 z-80 flex items-center gap-6 transition-all duration-300 border-t border-neutral-200 bg-white px-6 py-1 dark:border-neutral-700 dark:bg-neutral-900">
+        <div className="fixed w-full md:h-0 bottom-0 z-80 flex items-center gap-6 transition-all duration-300 border-t border-neutral-800 bg-white px-0 py-0 dark:border-neutral-700 dark:bg-neutral-900">
             <nav className="flex items-center justify-between w-full md:hidden">
                 {
                     NAV_ITEMS.map(({ id, label, icon: Icon, href }) => {
-                        const isActive = active === id;
+                        const isActive = active === href;
                         return (
                             <Link
                                 href={href}
                                 key={id}
-                                onClick={() => setActive(id)}
-                                className={`flex-row w-full text-center items-center justify-center rounded-xl px-3 py-2.5 text-xs font-medium transition-colors ${isActive
-                                    ? "bg-indigo-50 text-indigo-700 dark:bg-indigo-950/50 dark:text-indigo-300"
+                                onClick={() => setActive(href)}
+                                className={`flex-row w-full text-center items-center justify-center px-3 py-2.5 text-xs font-medium transition-colors ${isActive
+                                    ? "bg-indigo-50 text-indigo-700 border-t-4 border-gray-500 dark:border-gray-200 dark:bg-indigo-950/50 dark:text-indigo-300"
                                     : "text-neutral-600 hover:bg-neutral-100 dark:text-neutral-300 dark:hover:bg-neutral-800"
                                     }`}
                             >

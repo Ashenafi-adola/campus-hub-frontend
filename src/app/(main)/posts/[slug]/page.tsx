@@ -228,7 +228,7 @@ export default function PostDetailPage() {
     }
   }
     return (
-        <div className="min-h-screen w-full bg-[#f4f6f9] dark:bg-neutral-950">
+        <div className="min-h-screen w-full bg-[#f4f6f9] dark:bg-neutral-950 pb-6">
             <div className="flex max-w-full gap-2 px-0 py-6">
                 {/* Main column */}
                 <main className="min-w-0 flex-1 space-y-4">
