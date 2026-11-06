@@ -1,5 +1,5 @@
 "use client"
-import QuestionCard from "@/components/main/post-card";
+import QuestionCard from "@/components/main/posts/post-card";
 import { Chip, EmptyState, PageHeader } from "@/components/shared/ui";
 import { usePosts } from "@/hooks/use-posts";
 import { HelpCircle, Plus } from "lucide-react";

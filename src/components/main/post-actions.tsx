@@ -12,6 +12,8 @@ import {
 } from "lucide-react";
 import { Post } from "@/libs/types";
 import { AuthContext } from "@/context/auth-context";
+import DeletePostModal from "./posts/delete-modal";
+import Link from "next/link";
 
 interface MenuAction {
   id: string;
@@ -38,6 +40,7 @@ const DELETE_ACTION: MenuAction = { id: "delete", label: "Delete post", icon: Tr
 
 export function PostActionsMenu({ post }: { post: Post }) {
   const [open, setOpen] = useState(false);
+  const [openModal, setOpenModal] = useState(false)
   const [copied, setCopied] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
   const { user } = useContext(AuthContext)
@@ -55,6 +58,9 @@ export function PostActionsMenu({ post }: { post: Post }) {
   }, []);
 
   const handleAction = (id: string) => {
+    if (id === "delete") {
+      setOpenModal(true);
+    }
     if (id === "copy-link") {
       setCopied(true);
       setTimeout(() => setCopied(false), 1500);
@@ -65,6 +71,7 @@ export function PostActionsMenu({ post }: { post: Post }) {
 
   return (
     <div className="relative" ref={ref}>
+      <DeletePostModal open={openModal} post={post} onClose={() => setOpenModal(false)}/>
       <button
         onClick={() => setOpen((v) => !v)}
         className={`rounded-lg p-1.5 transition-colors ${
@@ -79,7 +86,7 @@ export function PostActionsMenu({ post }: { post: Post }) {
           {isOwner && (
             <>
               {OWNER_ACTIONS.map((action) => (
-                <ActionRow key={action.id} action={action} onClick={handleAction} />
+                <ActionRow key={action.id} action={action} onClick={handleAction} post={post}/>
               ))}
               <div className="my-1.5 border-t border-neutral-100 dark:border-neutral-800" />
             </>
@@ -115,11 +122,26 @@ export function PostActionsMenu({ post }: { post: Post }) {
 export function ActionRow({
   action,
   onClick,
+  post,
 }: {
   action: MenuAction;
   onClick: (id: string) => void;
+  post?: Post;
 }) {
   const Icon = action.icon;
+  if (action.id === "edit" && post) {
+    return (
+      <Link
+        href={`/posts/${post.id}`}
+        onClick={() => onClick(action.id)}
+        className={`flex w-full items-center gap-2.5 px-3.5 py-2 text-left text-sm font-medium hover:bg-neutral-50 dark:hover:bg-neutral-800 ${action.danger ? "text-red-600 dark:text-red-400" : "text-neutral-700 dark:text-neutral-200"
+          }`}
+      >
+        <Icon className={`h-4 w-4 ${action.danger ? "text-red-500 dark:text-red-400" : "text-neutral-400 dark:text-neutral-500"}`} />
+        {action.label}
+      </Link>
+    )
+  }
   return (
     <button
       onClick={() => onClick(action.id)}
