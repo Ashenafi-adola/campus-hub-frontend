@@ -1,5 +1,5 @@
 "use client"
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useId, useState } from "react";
 import {
     Plus,
     Users,
@@ -8,6 +8,8 @@ import {
     Globe,
     Lock,
     ShieldCheck,
+    Check,
+    ChevronDown,
 } from "lucide-react";
 import { createCommunity, getCategories } from "@/libs/api";
 import { getAccessToken } from "@/app/actions/post-votes";
@@ -42,10 +44,114 @@ const isPrivate_OPTIONS: {
 const MAX_NAME = 30;
 const MAX_DESCRIPTION = 200;
 
+
+function CategorySelector({
+  categories,
+  selected,
+  setSelected,
+}: {
+  categories: Category[];
+  selected: Category | null;
+  setSelected: (category: Category | null) => void;
+}) {
+  const [open, setOpen] = useState(false);
+  const labelId = useId();
+  const listId = useId();
+
+  useEffect(() => {
+    if (!open) return;
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setOpen(false);
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [open]);
+
+  return (
+    <div>
+      <span id={labelId} className={`${""} mb-1.5 block`}>
+        Category
+      </span>
+      <div className="relative">
+        <button
+          type="button"
+          aria-haspopup="listbox"
+          aria-expanded={open}
+          aria-controls={listId}
+          aria-labelledby={labelId}
+          onClick={() => setOpen((v) => !v)}
+          className="flex w-full items-center justify-between rounded-xl border border-neutral-200 bg-white px-3.5 py-2.5 text-sm hover:bg-neutral-50 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-200 dark:hover:bg-neutral-700"
+        >
+          {selected ? (
+            <span className="flex items-center gap-2 font-medium text-neutral-800 dark:text-neutral-200">
+              <span className={`h-3 w-3 rounded ${selected}`} />
+              {selected.name}
+            </span>
+          ) : (
+            <span className="text-neutral-400 dark:text-neutral-500">
+              Choose a Category
+            </span>
+          )}
+          <ChevronDown
+            className={`h-4 w-4 text-neutral-400 transition-transform dark:text-neutral-500 ${
+              open ? "rotate-180" : ""
+            }`}
+          />
+        </button>
+
+        {open && (
+          <>
+            <div
+              className="fixed inset-0 z-10"
+              aria-hidden="true"
+              onClick={() => setOpen(false)}
+            />
+            <div
+              id={listId}
+              role="listbox"
+              className="scrollbar-thumb-brand-100 absolute left-0 right-0 top-full z-20 mt-1 max-h-60 overflow-y-auto rounded-xl border border-neutral-200 bg-white py-1 shadow-lg dark:border-neutral-700 dark:bg-neutral-900"
+            >
+              {categories.length === 0 && (
+                <div className="px-3.5 py-2.5 text-sm text-neutral-400 dark:text-neutral-500">
+                  No categories available
+                </div>
+              )}
+              {categories.map((c) => {
+                const isSelected = c.id === selected?.id;
+                return (
+                  <button
+                    key={c.id}
+                    type="button"
+                    role="option"
+                    aria-selected={isSelected}
+                    onClick={() => {
+                      setSelected(c);
+                      setOpen(false);
+                    }}
+                    className="flex w-full items-center justify-between px-3.5 py-2.5 text-left text-sm font-medium text-neutral-700 hover:bg-neutral-50 dark:text-neutral-200 dark:hover:bg-neutral-800"
+                  >
+                    {c.name}
+                    {isSelected && (
+                      <Check
+                        className="h-4 w-4 text-indigo-600 dark:text-indigo-400"
+                        strokeWidth={3}
+                      />
+                    )}
+                  </button>
+                );
+              })}
+            </div>
+          </>
+        )}
+      </div>
+    </div>
+  );
+}
+
 export default function CreateCommunityPage() {
     const [name, setName] = useState("");
     const [description, setDescription] = useState("");
-    const [category, setCategory] = useState<Category | null>(null);
+    const [selected, setSelected] = useState<Category | null>(null);
     const [categories, setCategories] = useState<Category[]>([]);
     const [isPrivate, setIsPrivate] = useState<boolean>(false);
     const [visiblity, setVisiblity] = useState<string>("public")
@@ -69,14 +175,14 @@ export default function CreateCommunityPage() {
     const removeRule = (index: number) =>
         setRules((prev) => prev.filter((_, i) => i !== index));
 
-    const canSubmit = name.trim().length >= 3 && category !== null;
+    const canSubmit = name.trim().length >= 3 && selected !== null;
 
     const submit = async () => {
-        if (category){
+        if (selected){
             const token = await getAccessToken();
             createCommunity({
                 name: name,
-                category_id: category.id,
+                category_id: selected.id,
                 description: description,
                 is_private: isPrivate,
                 banner: banner,
@@ -178,7 +284,8 @@ export default function CreateCommunityPage() {
 
                 {/* Category */}
                 <div>
-                    <label className="mb-2 block text-sm font-semibold text-neutral-800 dark:text-neutral-200">
+                    <CategorySelector categories={categories} selected={selected} setSelected={setSelected}/>
+                    {/* <label className="mb-2 block text-sm font-semibold text-neutral-800 dark:text-neutral-200">
                         Category
                     </label>
                     <div className="flex flex-wrap gap-2">
@@ -198,7 +305,7 @@ export default function CreateCommunityPage() {
                                 </button>
                             );
                         })}
-                    </div>
+                    </div> */}
                 </div>
 
                 {/* Banner + icon upload */}
