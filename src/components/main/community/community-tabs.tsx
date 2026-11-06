@@ -11,7 +11,7 @@ import {
 } from "lucide-react";
 import { Community, CommunityMemeber, Post } from "@/libs/types";
 import { PostFeedSkeleton } from "../laoding-skeletons";
-import QuestionCard from "../post-card";
+import QuestionCard from "../posts/post-card";
 import { Avatar, EmptyState } from "@/components/shared/ui";
 
 

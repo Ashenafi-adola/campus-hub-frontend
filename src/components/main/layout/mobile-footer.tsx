@@ -1,45 +1,130 @@
 "use client";
-import { Bookmark, Home, Plus, TrendingUp, Users } from 'lucide-react';
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
-import React, { useState } from 'react'
 
-const NAV_ITEMS = [
+import { Bookmark, Home, Plus, TrendingUp, Users } from "lucide-react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import React from "react";
+
+type Tab = {
+    id: string;
+    label: string;
+    icon: React.ComponentType<{ className?: string; strokeWidth?: number }>;
+    href: string;
+    /** The centre action gets its own look */
+    primary?: boolean;
+};
+
+const TABS: Tab[] = [
     { id: "home", label: "Home", icon: Home, href: "/" },
     { id: "communities", label: "Communities", icon: Users, href: "/communities" },
-    { id: "new community", label: "New", icon: Plus, href: "/posts/new" },
+    { id: "new", label: "New", icon: Plus, href: "/posts/new", primary: true },
     { id: "popular", label: "Popular", icon: TrendingUp, href: "/populars" },
     { id: "saved", label: "Saved", icon: Bookmark, href: "/bookmarks" },
 ];
 
-function MobileFooter() {
-    const pathname = usePathname()
-    const [active, setActive] = useState<string | null>(pathname)
-    return (
-        <div className="fixed w-full md:h-0 bottom-0 z-80 flex items-center gap-6 transition-all duration-300 border-t border-neutral-800 bg-white px-0 py-0 dark:border-neutral-700 dark:bg-neutral-900">
-            <nav className="flex items-center justify-between w-full md:hidden">
-                {
-                    NAV_ITEMS.map(({ id, label, icon: Icon, href }) => {
-                        const isActive = active === href;
-                        return (
-                            <Link
-                                href={href}
-                                key={id}
-                                onClick={() => setActive(href)}
-                                className={`flex-row w-full text-center items-center justify-center px-3 py-2.5 text-xs font-medium transition-colors ${isActive
-                                    ? "bg-indigo-50 text-indigo-700 border-t-4 border-gray-500 dark:border-gray-200 dark:bg-indigo-950/50 dark:text-indigo-300"
-                                    : "text-neutral-600 hover:bg-neutral-100 dark:text-neutral-300 dark:hover:bg-neutral-800"
-                                    }`}
-                            >
-                                    <Icon className="flex mx-auto"/>
-                                    <span className="text-xs">{label}</span>
-                            </Link>
-                        )
-                    })
-                }
-            </nav>
-        </div>
-    )
+type Props = {
+    /**
+     * Open the create-post modal instead of navigating to /posts/new.
+     * When omitted, the centre button is a normal link.
+     */
+    onCreatePost?: () => void;
+    /** Routes where the bar is hidden, e.g. full-screen forms */
+    hideOn?: string[];
+};
+
+/** Active state comes from the URL, so it survives refreshes and back/forward. */
+function isActive(pathname: string, href: string) {
+    if (href === "/") return pathname === "/";
+    return pathname === href || pathname.startsWith(href + "/");
 }
 
-export default MobileFooter
+const focusRing =
+    "focus-visible:outline focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-indigo-500";
+
+function MobileFooter({ onCreatePost, hideOn = ["/posts/new"] }: Props) {
+    const pathname = usePathname();
+
+    if (hideOn.some((p) => pathname === p || pathname.startsWith(p + "/"))) {
+        return null;
+    }
+
+    return (
+        // lg:hidden matches the desktop sidebar breakpoint, so tablets always have navigation
+        <nav
+            aria-label="Primary"
+            className="fixed inset-x-0 bottom-0 z-40 border-t border-neutral-200 bg-white/95 pb-[env(safe-area-inset-bottom)] backdrop-blur supports-[backdrop-filter]:bg-white/80 lg:hidden dark:border-neutral-800 dark:bg-neutral-950/95 dark:supports-[backdrop-filter]:bg-neutral-950/80"
+        >
+            <ul className="mx-auto grid max-w-md grid-cols-5">
+                {TABS.map((tab) => {
+                    const { id, label, icon: Icon, href, primary } = tab;
+                    const active = !primary && isActive(pathname, href);
+
+                    if (primary) {
+                        const inner = (
+                            <>
+                                <span className="flex h-9 w-9 items-center justify-center rounded-full bg-indigo-600 text-white shadow-md shadow-indigo-600/30 transition-transform group-active:scale-90">
+                                    <Icon className="h-5 w-5" strokeWidth={2.5} />
+                                </span>
+                                <span className="text-[11px] font-medium text-neutral-600 dark:text-neutral-300">
+                                    {label}
+                                </span>
+                            </>
+                        );
+                        const cls = `group flex min-h-14 w-full flex-col items-center justify-center gap-0.5 ${focusRing}`;
+
+                        return (
+                            <li key={id} className="flex">
+                                {onCreatePost ? (
+                                    <button
+                                        type="button"
+                                        onClick={onCreatePost}
+                                        aria-label="Create a post"
+                                        className={cls}
+                                    >
+                                        {inner}
+                                    </button>
+                                ) : (
+                                    <Link href={href} aria-label="Create a post" className={cls}>
+                                        {inner}
+                                    </Link>
+                                )}
+                            </li>
+                        );
+                    }
+
+                    return (
+                        <li key={id} className="flex">
+                            <Link
+                                href={href}
+                                aria-current={active ? "page" : undefined}
+                                className={`group relative flex min-h-14 w-full flex-col items-center justify-center gap-0.5 transition-colors active:bg-neutral-100 dark:active:bg-neutral-900 ${focusRing} ${
+                                    active
+                                        ? "text-indigo-600 dark:text-indigo-400"
+                                        : "text-neutral-500 dark:text-neutral-400"
+                                }`}
+                            >
+                                {/* LinkedIn-style indicator on the top edge */}
+                                {active && (
+                                    <span className="absolute inset-x-4 top-0 h-0.5 rounded-b-full bg-indigo-600 dark:bg-indigo-400" />
+                                )}
+                                <Icon
+                                    className="h-6 w-6 transition-transform group-active:scale-90"
+                                    strokeWidth={active ? 2.5 : 2}
+                                />
+                                <span
+                                    className={`max-w-full truncate px-0.5 text-[11px] leading-tight ${
+                                        active ? "font-semibold" : "font-medium"
+                                    }`}
+                                >
+                                    {label}
+                                </span>
+                            </Link>
+                        </li>
+                    );
+                })}
+            </ul>
+        </nav>
+    );
+}
+
+export default MobileFooter;

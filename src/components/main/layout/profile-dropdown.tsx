@@ -17,15 +17,13 @@ interface MenuItem {
 }
 
 export const MENU_ITEMS: MenuItem[] = [
-  { id: "/u/profile", label: "View Profile", icon: User },
+  { id: "/u/activity/me", label: "View Profile", icon: User },
   { id: "/bookmarks", label: "Saved", icon: Bookmark },
-  { id: "/u/activity", label: "My Activity", icon: Clock },
+  { id: "/u/activity/me/", label: "My Activity", icon: Clock },
   { id: "/u/settings", label: "Settings", icon: Settings },
   { id: "/help-and-support", label: "Help & Support", icon: HelpCircle },
 ];
 
-const AVATAR =
-  "https://images.unsplash.com/photo-1517841905240-472988babdf9?w=64&h=64&fit=crop&crop=faces";
 
 
 function ProfileDropdown() {
@@ -38,7 +36,7 @@ function ProfileDropdown() {
   const [isDark, toggleTheme] = themeContext;
   const avatarUrl = user.profile?.avatar;
   const hasAvatar = typeof avatarUrl === "string" && avatarUrl.length > 0;
-  const avatar = hasAvatar ? avatarUrl : AVATAR;
+  const avatar = hasAvatar ? avatarUrl : "";
 
   useEffect(() => {
     function handleClickOutside(e: MouseEvent) {

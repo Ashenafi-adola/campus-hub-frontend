@@ -250,6 +250,45 @@ export function createPost(payload: NewPost): Promise<Post> {
     });
 }
 
+export function updatePost(payload: NewPost, id: number): Promise<Post> {
+    const formData = new FormData();
+    formData.append("content", payload.content);
+    formData.append("title", payload.title);
+    formData.append("post_type", payload.post_type);
+    formData.append("community_id", String(payload.community_id));
+    appendIndexed(formData, "tags", payload.tags);
+
+    if (payload.post_type === "image") {
+        payload.images?.forEach((image, index) => formData.append(`image${index + 1}`, image));
+    }
+
+    if (payload.post_type === "poll") {
+        formData.append("poll_length", String(payload.poll_length));
+        appendIndexed(formData, "polls", payload.polls);
+    }
+
+    return request<Post>(`/posts/${id}/`, {
+        method: "PUT",
+        body: formData,
+        errorMessage: "Couldn't update the post",
+    });
+}
+
+export function deletePost(id: number) {
+    return request(`/posts/${id}/`, {
+        method: "DELETE",
+    })
+}
+
+export function getUserPosts(username: string): Promise<Post[]> {
+    return request(`/posts/user-posts/${username}/`, {
+        method: "GET"
+    })
+}
+export function getUserProfile(username: string): Promise<Profile> {
+    return request(`/auth/profile/${username}/`)
+}
+
 export function upvotePost(id: number, access: string) {
     return request(`/posts/${id}/upvote/`, {
         method: "POST",

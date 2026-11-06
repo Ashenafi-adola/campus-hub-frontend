@@ -37,7 +37,7 @@ export const NAV_ITEMS: NavItem[] = [
     { id: "questions", label: "Questions", icon: HelpCircle, href: "/questions" },
     { id: "communities", label: "Communities", icon: Users, href: "/communities" },
     { id: "saved", label: "Saved", icon: Bookmark, href: "/bookmarks" },
-    { id: "activity", label: "My Activity", icon: Clock, href: "/u/activity" },
+    { id: "activity", label: "My Activity", icon: Clock, href: "/u/activity/me" },
 ];
 
 // Account links shown in the mobile drawer. Profile is the header card and
@@ -450,7 +450,7 @@ function MobileDrawerContent({ onClose }: { onClose?: () => void }) {
             </div>
 
             {/* Sign out */}
-            <div className="shrink-0 mb-14 border-t border-neutral-200 px-4 pb-[max(0.75rem,env(safe-area-inset-bottom))] pt-3 dark:border-neutral-800">
+            <div className="shrink-0 border-t border-neutral-200 px-4 pb-[max(0.75rem,env(safe-area-inset-bottom))] pt-3 dark:border-neutral-800">
                 <button
                     onClick={handleLogout}
                     className="flex w-full items-center justify-center gap-2 rounded-xl border border-neutral-200 py-2.5 text-sm font-semibold text-red-600 transition-colors hover:bg-red-50 dark:border-neutral-700 dark:text-red-400 dark:hover:bg-red-500/10"
