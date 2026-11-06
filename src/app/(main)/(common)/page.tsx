@@ -1,7 +1,7 @@
 "use client";
 
 import { PostFeedSkeleton } from "@/components/main/laoding-skeletons";
-import QuestionCard from "@/components/main/post-card";
+import QuestionCard from "@/components/main/posts/post-card";
 import { usePosts } from "@/hooks/use-posts";
 
 

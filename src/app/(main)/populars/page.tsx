@@ -1,5 +1,5 @@
 "use client"
-import QuestionCard from "@/components/main/post-card";
+import QuestionCard from "@/components/main/posts/post-card";
 import { SortId, SORTS, TYPE_META } from "@/components/popular/constants";
 import { Hero } from "@/components/popular/hero";
 import { SideCard } from "@/components/shared/side-card";

@@ -20,7 +20,7 @@ import {
 } from "lucide-react";
 import { getSavedPosts } from "@/libs/api";
 import { SavedPost } from "@/libs/types";
-import QuestionCard from "@/components/main/post-card";
+import QuestionCard from "@/components/main/posts/post-card";
 import { plural } from "@/libs/format";
 
 /* ================================================================= */
