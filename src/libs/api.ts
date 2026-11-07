@@ -442,7 +442,7 @@ export function saveUnsave(isSaved: boolean, postId: number) {
     });
 }
 
-export async function saveProfile(payload: Profile): Promise<Profile> {
+export async function saveProfile(payload: Profile, username: string): Promise<Profile> {
     const formData = new FormData();
     formData.append("first_name", payload.first_name);
     formData.append("last_name", payload.last_name);
@@ -452,7 +452,7 @@ export async function saveProfile(payload: Profile): Promise<Profile> {
     formData.append("university", payload.university);
     formData.append("bio", payload.bio);
 
-    return request(`/auth/profile/${payload.id}/`, {
+    return request(`/auth/profile/${username}/`, {
         method: "PATCH",
         body: formData,
         errorMessage: "Couldn't update profile"

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useMemo, useState } from "react";
+import React, { useContext, useMemo, useState } from "react";
 import Link from "next/link";
 import { joinLeaveCommunity } from "@/libs/api";
 import { Community, Post } from "@/libs/types";
@@ -8,6 +8,7 @@ import {
   PopularPostsSkeleton,
   TrendingCommunitiesSkeleton,
 } from "../laoding-skeletons";
+import { AuthContext } from "@/context/auth-context";
 
 type Props = {
   posts: Post[];
@@ -29,7 +30,7 @@ const compact = new Intl.NumberFormat("en", {
 });
 
 // Adjust to your real post route
-const postHref = (p: Post) => `/posts/${p.id}`;
+const postHref = (p: Post) => `/posts/detail/${p.id}`;
 
 const plural = (n: number, one: string, many: string) =>
   `${n} ${n === 1 ? one : many}`;
@@ -51,7 +52,7 @@ function timeAgo(iso: string) {
 /*  Building blocks                                                    */
 /* ------------------------------------------------------------------ */
 
-function SidebarCard({
+export function SidebarCard({
   title,
   children,
 }: {
@@ -68,7 +69,7 @@ function SidebarCard({
   );
 }
 
-function EmptyNote({ children }: { children: React.ReactNode }) {
+export function EmptyNote({ children }: { children: React.ReactNode }) {
   return (
     <p className="text-sm text-neutral-400 dark:text-neutral-500">{children}</p>
   );
@@ -102,11 +103,11 @@ function QuestionItem({
   );
 }
 
-function TrendingItem({ community }: { community: Community }) {
+export function TrendingItem({ community }: { community: Community }) {
   const [joined, setJoined] = useState(Boolean(community.is_member));
   const [members, setMembers] = useState(Number(community.member_count) || 0);
   const [pending, setPending] = useState(false);
-
+  const { user } = useContext(AuthContext)
   const toggle = async () => {
     if (pending) return;
     const wasJoined = joined;
@@ -143,7 +144,7 @@ function TrendingItem({ community }: { community: Community }) {
 
       <button
         onClick={toggle}
-        disabled={pending}
+        disabled={community.creator?.username === user.username}
         aria-pressed={joined}
         aria-label={`${joined ? "Leave" : "Join"} ${community.name}`}
         className={`group min-w-[4.5rem] shrink-0 rounded-lg px-3.5 py-2 text-sm font-semibold transition-colors disabled:cursor-not-allowed disabled:opacity-60 ${
@@ -152,7 +153,7 @@ function TrendingItem({ community }: { community: Community }) {
             : "bg-indigo-50 text-indigo-600 hover:bg-indigo-100 dark:bg-indigo-950 dark:text-indigo-300 dark:hover:bg-indigo-900"
         }`}
       >
-        {joined ? (
+        {(joined && community.creator.email !== user.username )? (
           <>
             <span className="group-hover:hidden">Joined</span>
             <span className="hidden group-hover:inline">Leave</span>

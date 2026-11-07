@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { Avatar } from "@/components/shared/ui";
 import {
   MAX_BIO,
@@ -13,11 +13,13 @@ import {
 } from "./settings-shared";
 import { Profile } from "@/libs/types";
 import { saveProfile } from "@/libs/api";
+import { AuthContext } from "@/context/auth-context";
 
 export function ProfileTab({ form, onSaved }: { form: Draft<Profile>; onSaved: () => void }) {
   const { draft, update } = form;
   const [avatarError, setAvatarError] = useState<string | null>(null);
   const nameValid = (draft.first_name + " " + draft.last_name).trim().length >= 2;
+  const { user } = useContext(AuthContext);
 
   const onAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -36,7 +38,7 @@ export function ProfileTab({ form, onSaved }: { form: Draft<Profile>; onSaved: (
   };
 
   const save = async () => {
-    await saveProfile(draft);
+    await saveProfile(draft, user.username);
   }
 
 

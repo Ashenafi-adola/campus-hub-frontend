@@ -47,7 +47,7 @@ export interface Community {
   category: Category;
   icon: string | null | File;
   banner: string | null | File;
-  creator?: User;
+  creator: User;
   created_at?: string;
   updated_at?: string;
   is_private: boolean;

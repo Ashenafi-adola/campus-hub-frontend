@@ -363,7 +363,7 @@ function MobileDrawerContent({ onClose }: { onClose?: () => void }) {
         className="flex h-full w-80 flex-col bg-white dark:bg-neutral-950">
             {/* Profile card */}
             <Link
-                href="/u/profile"
+                href="/u/activity/me"
                 onClick={onClose}
                 className="flex items-center gap-3.5 px-4 pb-4 pt-[max(1.25rem,env(safe-area-inset-top))]"
             >

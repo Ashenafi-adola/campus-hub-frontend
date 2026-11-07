@@ -1,12 +1,14 @@
 "use client"
+import { PopularPostsSkeleton, TrendingCommunitiesSkeleton } from "@/components/main/laoding-skeletons";
+import { EmptyNote, SidebarCard, TrendingItem } from "@/components/main/layout/right-side-bar";
 import QuestionCard from "@/components/main/posts/post-card";
 import { SortId, SORTS, TYPE_META } from "@/components/popular/constants";
 import { Hero } from "@/components/popular/hero";
 import { SideCard } from "@/components/shared/side-card";
 import { Chip, } from "@/components/shared/ui";
 import { usePosts } from "@/hooks/use-posts";
-import { Post, PostType } from "@/libs/types";
-import { Check, ChevronDown, ChevronUp, Flame, TrendingUp } from "lucide-react";
+import { Community, Post, PostType } from "@/libs/types";
+import { Check, ChevronDown, ChevronUp, Flame } from "lucide-react";
 import { useMemo, useState } from "react";
 
 const RANGES = [
@@ -28,8 +30,6 @@ export default function PopularPage() {
   const [sort, setSort] = useState<SortId>("hot");
   const [typeFilter, setTypeFilter] = useState<PostType | "all">("all");
   const [community, setCommunity] = useState("all");
-  // const [savedIds, setSavedIds] = useState<Set<string>>(new Set(["p4"]));
-  const [joined, setJoined] = useState<Set<string>>(new Set());
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [toast, setToast] = useState<string | null>(null);
 
@@ -90,9 +90,9 @@ export default function PopularPage() {
   }, [inRange])
 
   const trendingCommunities = useMemo(() => {
-    const map = new Map<string, number>();
+    const map = new Map<Community, number>();
     inRange.forEach((p) =>
-      map.set(p.community.name, (map.get(p.community.name) ?? 0) + p.upvote)
+      map.set(p.community, (map.get(p.community) ?? 0) + p.upvote)
     );
     return Array.from(map.entries())
       .sort((a, b) => b[1] - a[1])
@@ -292,7 +292,6 @@ export default function PopularPage() {
         {/* Right sidebar */}
         <aside className="w-0 xl:w-72 transition-all duration-300 shrink-0 self-start xl:sticky xl:top-16 xl:block">
           <div className="hidden xl:block space-y-4">
-
             <SideCard title="Trending tags" subtitle={`Most upvoted ${rangeLabel}`}>
               {topTags.length === 0 ? (
                 <p className="text-sm text-neutral-400 dark:text-neutral-500">No tags yet.</p>
@@ -319,64 +318,39 @@ export default function PopularPage() {
                 <p className="text-sm text-neutral-400 dark:text-neutral-500">No activity yet.</p>
               ) : (
                 <div className="space-y-3">
-                  {contributors.map((c, i) => (
-                    <div key={c.name} className="flex items-center gap-3">
-                      <span className="w-4 text-sm font-bold text-neutral-300 dark:text-neutral-600">
-                        {i + 1}
-                      </span>
-                      <div className="min-w-0 flex-1">
-                        <div className="truncate text-sm font-semibold text-neutral-900 dark:text-neutral-100">
-                          {c.name}
+                  { !posts ? <PopularPostsSkeleton /> : (
+                    contributors.map((c, i) => (
+                      <div key={c.name} className="flex items-center gap-3">
+                        <span className="w-4 text-sm font-bold text-neutral-300 dark:text-neutral-600">
+                          {i + 1}
+                        </span>
+                        <div className="min-w-0 flex-1">
+                          <div className="truncate text-sm font-semibold text-neutral-900 dark:text-neutral-100">
+                            {c.name}
+                          </div>
+                          <div className="truncate text-xs text-neutral-400 dark:text-neutral-500">
+                            {c.school}
+                          </div>
                         </div>
-                        <div className="truncate text-xs text-neutral-400 dark:text-neutral-500">
-                          {c.school}
-                        </div>
+                        <span className="flex items-center gap-0.5 text-sm font-bold text-indigo-600">
+                          <ChevronUp className="h-4 w-4" />
+                          {c.points}
+                        </span>
                       </div>
-                      <span className="flex items-center gap-0.5 text-sm font-bold text-indigo-600">
-                        <ChevronUp className="h-4 w-4" />
-                        {c.points}
-                      </span>
-                    </div>
-                  ))}
+                    )))}
                 </div>
               )}
             </SideCard>
 
-            <SideCard title="Trending communities" subtitle="Gaining the most votes today">
-              <div className="space-y-3">
-                {trendingCommunities.map(([name, votes]) => {
-                  const isJoined = joined.has(name);
-                  return (
-                    <div key={name} className="flex items-center justify-between">
-                      <div>
-                        <div className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">
-                          {name}
-                        </div>
-                        <div className="flex items-center gap-0.5 text-xs font-semibold text-emerald-600">
-                          <TrendingUp className="h-3 w-3" />+{votes} today
-                        </div>
-                      </div>
-                      <button
-                        onClick={() =>
-                          setJoined((prev) => {
-                            const next = new Set(prev);
-                            // eslint-disable-next-line @typescript-eslint/no-unused-expressions
-                            next.has(name) ? next.delete(name) : next.add(name);
-                            return next;
-                          })
-                        }
-                        className={`rounded-lg px-3.5 py-1.5 text-xs font-semibold transition-colors ${isJoined
-                            ? "bg-indigo-600 text-white hover:bg-indigo-700"
-                            : "bg-indigo-50 text-indigo-600 hover:bg-indigo-100 dark:bg-indigo-950 dark:text-indigo-300 dark:hover:bg-indigo-900"
-                          }`}
-                      >
-                        {isJoined ? "Joined" : "Join"}
-                      </button>
-                    </div>
-                  );
-                })}
-              </div>
-            </SideCard>
+            <SidebarCard title="Trending Communities">
+              {trendingCommunities.length === 0 ? (
+                <TrendingCommunitiesSkeleton count={4} />
+              ) : trendingCommunities.length > 0 ? (
+                trendingCommunities.map((c, i) => <TrendingItem key={i} community={c[0]} />)
+              ) : (
+                <EmptyNote>No communities are trending yet.</EmptyNote>
+              )}
+            </SidebarCard>
           </div>
         </aside>
       </div>
