@@ -4,9 +4,10 @@ import React, { useRef, useState, useEffect } from "react";
 import { Mail, RotateCw } from "lucide-react";
 import { ApiError, verifyEmail } from "@/libs/api";
 import { redirect } from "next/navigation";
+import Link from "next/link";
 
 const CODE_LENGTH = 6;
-const RESEND_SECONDS = 45;
+const RESEND_SECONDS = 60;
 
 export default function VerifyEmailForm({email}:{email: string}) {
   const [code, setCode] = useState<string[]>(Array(CODE_LENGTH).fill(""));
@@ -141,9 +142,9 @@ export default function VerifyEmailForm({email}:{email: string}) {
 
         <p className="mt-8 text-sm text-neutral-500">
           Wrong email?{" "}
-          <a href="#" className="font-semibold text-indigo-600 hover:underline">
+          <Link href="/signup" className="font-semibold text-indigo-600 hover:underline">
             Go back
-          </a>
+          </Link>
         </p>
       </div>
     </div>
