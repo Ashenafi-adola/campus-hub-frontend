@@ -48,7 +48,7 @@ function SignUpForm() {
             setLoading(true);
             await postRegistrationData(formData);
             document.cookie = `signup_redirect=${encodeURIComponent(formData.email)}; path=/verify; max-age=30; secure; samesite=lax`;
-            router.push('/verify');
+            router.push('/signin');
         } catch (error) {
             setLoading(false)
             if (error instanceof ApiError) {
