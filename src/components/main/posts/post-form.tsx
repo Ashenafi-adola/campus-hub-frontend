@@ -22,7 +22,9 @@ import { getAccessToken } from "@/app/actions/post-votes";
 import { Chip } from "@/components/shared/ui";
 import { useCommunities } from "@/hooks/use-communities";
 import { createPost, getPost, updatePost } from "@/libs/api";
-import type { NewPost, PostType } from "@/libs/types";
+import { Post, type NewPost, type PostType } from "@/libs/types";
+import PostStatusModal, { PostingState } from "./post-status-modal";
+import { redirect } from "next/navigation";
 
 /* -------------------------------------------------------------------------- */
 /*  Constants                                                                 */
@@ -710,6 +712,8 @@ function PostForm({
   const [loading, setLoading] = useState(isEditing);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [state, setState] = useState<PostingState | null>(null);
+  const [post, setPost] = useState<Post | null>(null);
 
   const titleId = useId();
   const bodyId = useId();
@@ -840,11 +844,26 @@ function PostForm({
 
     try {
       // TODO: `notify` is collected but not part of NewPost yet.
-      if (isEditing) await updatePost(payload, postId);
-      else await createPost(payload);
+      if (isEditing) { 
+        setState({ phase: "posting", mode: "updated" })
+        const res = await updatePost(payload, postId); 
+        setPost(res)
+        setState({ phase: "success", mode: "updated" })
+      }
+      else { 
+        setState({ phase: "posting", mode: "created" }) 
+        const res = await createPost(payload); 
+        setPost(res)
+        setState({ phase: "success", mode: "created" }) 
+      };
       onSuccess?.();
-    } catch (err) {
-      console.error(err);
+    } catch {
+      if ( isEditing ) {
+        setState({ phase: "error", mode: "created", message: "We couldn't update your post. Please try again." }) 
+      }
+      else {
+        setState({ phase: "error", mode: "created", message: "We couldn't publish your post. Please try again." }) 
+      }
       setError(
         isEditing
           ? "We couldn't update your post. Please try again."
@@ -858,105 +877,118 @@ function PostForm({
   const copy = COPY[type];
 
   return (
-    <div className="space-y-4">
-      <PostTypeSelector value={type} onChange={setType} disabled={isEditing} />
+    <>
+    {state && <PostStatusModal
+        state={state} 
+        onDismiss={()=>setSubmitting(false)}
+        postTitle={post?.title}
+        hasImages={post?.post_type === "image"}
+        viewHref={post ? `/posts/detail/${post.id}`: undefined}
+        onRetry={async ()=> await submit()}
+        onCreateAnother={()=> redirect("/posts/new")}
+        onContinueEditing={ ()=>post && redirect(`/posts/${post.id}`)}
+        onGoHome={()=>redirect("/")}
+      />}
+      <div className="space-y-4">
+        <PostTypeSelector value={type} onChange={setType} disabled={isEditing} />
 
-      <div className={`${CARD} space-y-5`}>
-        {!slug && (
-          <CommunityPicker
-            communities={communities}
-            selected={community}
-            onSelect={setCommunitySlug}
-          />
-        )}
+        <div className={`${CARD} space-y-5`}>
+          {!slug && (
+            <CommunityPicker
+              communities={communities}
+              selected={community}
+              onSelect={setCommunitySlug}
+            />
+          )}
 
-        <Field label="Title" htmlFor={titleId} counter={`${title.length}/${MAX_TITLE}`}>
-          <input
-            id={titleId}
-            type="text"
-            value={title}
-            maxLength={MAX_TITLE}
-            onChange={(e) => setTitle(e.target.value)}
-            placeholder={copy.titlePlaceholder}
-            className={INPUT}
-          />
-        </Field>
+          <Field label="Title" htmlFor={titleId} counter={`${title.length}/${MAX_TITLE}`}>
+            <input
+              id={titleId}
+              type="text"
+              value={title}
+              maxLength={MAX_TITLE}
+              onChange={(e) => setTitle(e.target.value)}
+              placeholder={copy.titlePlaceholder}
+              className={INPUT}
+            />
+          </Field>
 
-        {type === "image" && (
-          <ImageUploader items={images} onAdd={addImages} onRemove={removeImage} />
-        )}
+          {type === "image" && (
+            <ImageUploader items={images} onAdd={addImages} onRemove={removeImage} />
+          )}
 
-        {type === "poll" && (
-          <PollEditor
-            options={pollOptions}
-            duration={pollDuration}
-            onOptionsChange={setPollOptions}
-            onDurationChange={setPollDuration}
-          />
-        )}
+          {type === "poll" && (
+            <PollEditor
+              options={pollOptions}
+              duration={pollDuration}
+              onOptionsChange={setPollOptions}
+              onDurationChange={setPollDuration}
+            />
+          )}
 
-        <Field label={copy.bodyLabel} htmlFor={bodyId}>
-          <textarea
-            id={bodyId}
-            value={body}
-            onChange={(e) => setBody(e.target.value)}
-            placeholder={copy.bodyPlaceholder}
-            rows={copy.bodyRows}
-            className={`${INPUT} resize-y`}
-          />
-        </Field>
+          <Field label={copy.bodyLabel} htmlFor={bodyId}>
+            <textarea
+              id={bodyId}
+              value={body}
+              onChange={(e) => setBody(e.target.value)}
+              placeholder={copy.bodyPlaceholder}
+              rows={copy.bodyRows}
+              className={`${INPUT} resize-y`}
+            />
+          </Field>
 
-        <TagInput tags={tags} onChange={setTags} />
+          <TagInput tags={tags} onChange={setTags} />
 
-        {type === "question" && (
-          <div className="flex items-center justify-between gap-4 rounded-xl bg-neutral-50 px-4 py-3 dark:bg-neutral-800">
-            <div>
-              <div className={LABEL}>Notify me about answers</div>
-              <div className="text-xs text-neutral-500 dark:text-neutral-400">
-                Get a notification when someone answers this question
+          {type === "question" && (
+            <div className="flex items-center justify-between gap-4 rounded-xl bg-neutral-50 px-4 py-3 dark:bg-neutral-800">
+              <div>
+                <div className={LABEL}>Notify me about answers</div>
+                <div className="text-xs text-neutral-500 dark:text-neutral-400">
+                  Get a notification when someone answers this question
+                </div>
               </div>
+              <Switch checked={notify} onChange={setNotify} label="Notify me about answers" />
             </div>
-            <Switch checked={notify} onChange={setNotify} label="Notify me about answers" />
-          </div>
-        )}
-      </div>
+          )}
+        </div>
 
-      <div className="flex flex-wrap items-center justify-between gap-3 pb-4">
-        <p
-          role={error ? "alert" : "status"}
-          className={`text-xs ${
-            error ? "text-red-600 dark:text-red-400" : "text-neutral-400 dark:text-neutral-500"
-          }`}
-        >
-          {statusText}
-        </p>
-        <div className="flex items-center gap-3">
-          <button
-            type="button"
-            onClick={onCancel}
-            className="rounded-xl px-4 py-2.5 text-sm font-semibold text-neutral-600 hover:bg-neutral-100 dark:text-neutral-300 dark:hover:bg-neutral-800"
+        <div className="flex flex-wrap items-center justify-between gap-3 pb-4">
+          <p
+            role={error ? "alert" : "status"}
+            className={`text-xs ${
+              error ? "text-red-600 dark:text-red-400" : "text-neutral-400 dark:text-neutral-500"
+            }`}
           >
-            Cancel
-          </button>
-          <button
-            type="button"
-            disabled
-            title="Drafts aren't available yet"
-            className="rounded-xl border border-neutral-200 bg-white px-4 py-2.5 text-sm font-semibold text-neutral-700 hover:bg-neutral-50 disabled:cursor-not-allowed disabled:opacity-50 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-200 dark:hover:bg-neutral-800"
-          >
-            Save draft
-          </button>
-          <button
-            type="button"
-            onClick={submit}
-            disabled={!canPost}
-            className="rounded-xl bg-indigo-600 px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-indigo-700 disabled:cursor-not-allowed disabled:bg-neutral-200 disabled:text-neutral-400 dark:disabled:bg-neutral-700 dark:disabled:text-neutral-500"
-          >
-            {submitLabel}
-          </button>
+            {statusText}
+          </p>
+          <div className="flex items-center gap-3">
+            <button
+              type="button"
+              onClick={onCancel}
+              className="rounded-xl px-4 py-2.5 text-sm font-semibold text-neutral-600 hover:bg-neutral-100 dark:text-neutral-300 dark:hover:bg-neutral-800"
+            >
+              Cancel
+            </button>
+            <button
+              type="button"
+              disabled
+              title="Drafts aren't available yet"
+              className="rounded-xl border border-neutral-200 bg-white px-4 py-2.5 text-sm font-semibold text-neutral-700 hover:bg-neutral-50 disabled:cursor-not-allowed disabled:opacity-50 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-200 dark:hover:bg-neutral-800"
+            >
+              Save draft
+            </button>
+            <button
+              type="button"
+              onClick={submit}
+              disabled={!canPost}
+              className="rounded-xl bg-indigo-600 px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-indigo-700 disabled:cursor-not-allowed disabled:bg-neutral-200 disabled:text-neutral-400 dark:disabled:bg-neutral-700 dark:disabled:text-neutral-500"
+            >
+              {submitLabel}
+            </button>
+          </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }
 
