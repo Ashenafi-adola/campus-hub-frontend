@@ -1,10 +1,10 @@
 "use client"
+import { PostFeedSkeleton } from "@/components/main/laoding-skeletons";
 import QuestionCard from "@/components/main/posts/post-card";
 import { Chip, EmptyState, PageHeader } from "@/components/shared/ui";
 import { usePosts } from "@/hooks/use-posts";
 import { HelpCircle, Plus } from "lucide-react";
-import { useMemo, useState } from "react";
-
+import { useEffect, useMemo, useState } from "react";
 
 type QFilter = "all" | "unanswered" | "answered";
 type QSort = "newest" | "votes" | "answers";
@@ -13,6 +13,12 @@ export default function QuestionsPage() {
   const [filter, setFilter] = useState<QFilter>("all");
   const [sort, setSort] = useState<QSort>("newest");
   const { posts } = usePosts();
+  const [waited, setWaited] = useState(false);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setWaited(true), 1500); // 1.5s, adjust as needed
+    return () => clearTimeout(timer);
+  }, []);
 
   const questions = useMemo(
     () => posts.filter((p) => p.post_type === "question"),
@@ -102,18 +108,21 @@ export default function QuestionsPage() {
       </PageHeader>
 
       {visible.length === 0 ? (
-        <EmptyState
-          icon={HelpCircle}
-          title="No questions here"
-          text="Nothing matches this filter right now."
-        />
-      ) : (
-        visible.map((p) => (
-          <QuestionCard
-            key={p.id}
-            post={p}
+        waited ? (
+          <EmptyState
+            icon={HelpCircle}
+            title="No questions found"
+            text={
+              filter === "all"
+                ? "Be the first to ask a question."
+                : `No ${filter} questions right now.`
+            }
           />
-        ))
+        ) : (
+          <PostFeedSkeleton />
+        )
+      ) : (
+        visible.map((p) => <QuestionCard key={p.id} post={p} />)
       )}
     </div>
   );

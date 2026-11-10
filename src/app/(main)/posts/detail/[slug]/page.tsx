@@ -267,7 +267,7 @@ export default function PostDetailPage() {
                                     <Avatar profile={post?.author.profile} size="h-10 w-10" />
                                     <div className="text-sm">
                                         <span className="font-semibold text-neutral-900 dark:text-neutral-100">
-                                            {post?.author.profile.last_name}
+                                            {post?.author.profile.first_name}
                                         </span>
                                         <span className="text-neutral-400 dark:text-neutral-500"> · {post?.community.name}</span>
                                         <div className="text-xs text-neutral-400 dark:text-neutral-500">

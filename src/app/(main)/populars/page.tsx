@@ -1,15 +1,15 @@
 "use client"
-import { PopularPostsSkeleton, TrendingCommunitiesSkeleton } from "@/components/main/laoding-skeletons";
+import { PopularPostsSkeleton, PostFeedSkeleton, TrendingCommunitiesSkeleton } from "@/components/main/laoding-skeletons";
 import { EmptyNote, SidebarCard, TrendingItem } from "@/components/main/layout/right-side-bar";
 import QuestionCard from "@/components/main/posts/post-card";
 import { SortId, SORTS, TYPE_META } from "@/components/popular/constants";
 import { Hero } from "@/components/popular/hero";
 import { SideCard } from "@/components/shared/side-card";
-import { Chip, } from "@/components/shared/ui";
+import { Chip, EmptyState, } from "@/components/shared/ui";
 import { usePosts } from "@/hooks/use-posts";
 import { Community, Post, PostType } from "@/libs/types";
 import { Check, ChevronDown, ChevronUp, Flame } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 
 const RANGES = [
   { id: "day", label: "Today", hours: 24 },
@@ -34,6 +34,12 @@ export default function PopularPage() {
   const [toast, setToast] = useState<string | null>(null);
 
   const { posts } = usePosts();
+  const [waited, setWaited] = useState(false);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setWaited(true), 1500); // 1.5s, adjust as needed
+    return () => clearTimeout(timer);
+  }, []);
 
 
   const activeRanage = RANGES.find((r) => r.id === range);
@@ -131,11 +137,10 @@ export default function PopularPage() {
                     key={id}
                     onClick={() => setSort(id)}
                     aria-pressed={sort === id}
-                    className={`flex items-center gap-1.5 rounded-lg px-3.5 py-1.5 text-sm font-semibold transition-colors ${
-                      sort === id
+                    className={`flex items-center gap-1.5 rounded-lg px-3.5 py-1.5 text-sm font-semibold transition-colors ${sort === id
                         ? "bg-white text-indigo-600 shadow-sm dark:bg-neutral-700"
                         : "text-neutral-500 hover:text-neutral-800 dark:text-neutral-400 dark:hover:text-neutral-200"
-                    }`}
+                      }`}
                   >
                     <Icon className="h-3.5 w-3.5" />
                     {label}
@@ -179,11 +184,10 @@ export default function PopularPage() {
             <div className="mt-3 flex flex-wrap items-center gap-2">
               <button
                 onClick={() => setTypeFilter("all")}
-                className={`rounded-lg px-3 py-1 text-xs font-semibold transition-colors ${
-                  typeFilter === "all"
+                className={`rounded-lg px-3 py-1 text-xs font-semibold transition-colors ${typeFilter === "all"
                     ? "bg-neutral-900 text-white"
                     : "text-neutral-500 hover:bg-neutral-100 dark:text-neutral-400 dark:hover:bg-neutral-800"
-                }`}
+                  }`}
               >
                 All types
               </button>
@@ -191,11 +195,10 @@ export default function PopularPage() {
                 <button
                   key={t}
                   onClick={() => setTypeFilter(t)}
-                  className={`rounded-lg px-3 py-1 text-xs font-semibold transition-colors ${
-                    typeFilter === t
+                  className={`rounded-lg px-3 py-1 text-xs font-semibold transition-colors ${typeFilter === t
                       ? "bg-neutral-900 text-white"
                       : "text-neutral-500 hover:bg-neutral-100 dark:text-neutral-400 dark:hover:bg-neutral-800"
-                  }`}
+                    }`}
                 >
                   {TYPE_META[t].label}
                 </button>
@@ -234,57 +237,28 @@ export default function PopularPage() {
 
           {/* Results */}
           {!first ? (
-            <div className="rounded-2xl border border-neutral-200 bg-white px-6 py-16 text-center dark:border-neutral-800 dark:bg-neutral-900">
-              <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-indigo-50 dark:bg-indigo-950">
-                <Flame className="h-6 w-6 text-indigo-600" />
-              </div>
-              <h3 className="mt-4 text-lg font-semibold text-neutral-900 dark:text-neutral-100">
-                Nothing popular here yet
-              </h3>
-              <p className="mx-auto mt-1 max-w-xs text-sm text-neutral-500 dark:text-neutral-400">
-                No posts match this range and filters. Try a wider time range.
-              </p>
-              <button
-                onClick={() => {
-                  setRange("all");
-                  setTypeFilter("all");
-                  setCommunity("all");
-                }}
-                className="mt-5 rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-700"
-              >
-                Show all time
-              </button>
-            </div>
+            waited ? (
+              <EmptyState
+                icon={Flame}
+                title="No questions found"
+                text={"Nothing popular here yet"}
+              />
+            ) : (
+              <PostFeedSkeleton />
+            )
           ) : (
             <>
-              <Hero
-                post={first}
-              />
-
+              <Hero post={first} />
               {podium.length > 0 && (
                 <div className="grid gap-4 md:grid-cols-2">
                   {podium.map((p) => (
-                    <QuestionCard
-                      key={p.id}
-                      post={p}
-                    />
+                    <QuestionCard key={p.id} post={p} />
                   ))}
                 </div>
               )}
-
-              {rest.length > 0 && (
-                <>
-                  <h2 className="px-1 pt-2 text-sm font-semibold uppercase tracking-wide text-neutral-400 dark:text-neutral-500">
-                    More popular posts
-                  </h2>
-                  {rest.map((p) => (
-                    <QuestionCard
-                      key={p.id}
-                      post={p}
-                    />
-                  ))}
-                </>
-              )}
+              {
+                rest.map((p)=><QuestionCard key={p.id} post={p}/>)
+              }
             </>
           )}
         </main>
@@ -318,7 +292,7 @@ export default function PopularPage() {
                 <p className="text-sm text-neutral-400 dark:text-neutral-500">No activity yet.</p>
               ) : (
                 <div className="space-y-3">
-                  { !posts ? <PopularPostsSkeleton /> : (
+                  {!posts ? <PopularPostsSkeleton /> : (
                     contributors.map((c, i) => (
                       <div key={c.name} className="flex items-center gap-3">
                         <span className="w-4 text-sm font-bold text-neutral-300 dark:text-neutral-600">
