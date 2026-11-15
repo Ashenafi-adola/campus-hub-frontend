@@ -201,3 +201,23 @@ export interface Category {
 }
 
 export type PostType = "question" | "discussion" | "image" | "poll";
+
+export interface PostQuery {
+    page?: number;
+    pageSize?: number;
+    search?: string;
+    ordering?: string;      // "-score" | "-created_at"
+    postType?: string;
+    community?: string;     // community slug
+    answered?: boolean;
+    myPosts?: boolean;
+    // in PostQuery
+    createdAfter?: string;
+}
+
+export interface Paginated<T> {
+    count: number;
+    next: string | null;
+    previous: string | null;
+    results: T[];
+}

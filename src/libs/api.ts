@@ -6,7 +6,9 @@ import {
     NewComment,
     NewCommunity,
     NewPost,
+    Paginated,
     Post,
+    PostQuery,
     Profile,
     SavedPost,
     UserRegistrationData,
@@ -208,6 +210,42 @@ export function resetPasswordRequest(payload: Record<string, string>) {
 /* -------------------------------------------------------------------------- */
 /*  Posts                                                                     */
 /* -------------------------------------------------------------------------- */
+
+
+
+export async function getPostsPage(
+    params: PostQuery = {},
+    signal?: AbortSignal,
+    access?: string
+): Promise<Paginated<Post>> {
+    const data = await request<Post[] | Paginated<Post>>("/posts/", {
+        signal,
+        token: access,
+        query: {
+            page: params.page,
+            page_size: params.pageSize,
+            search: params.search,
+            ordering: params.ordering,
+            post_type: params.postType,
+            community: params.community,
+            answered: params.answered,
+            my_posts: params.myPosts ? true : undefined,
+        },
+        errorMessage: "Failed to load posts",
+    });
+
+    // Backend not paginated yet: treat the array as a single, final page.
+    if (Array.isArray(data)) return { count: data.length, next: null, previous: null, results: data };
+    return data;
+}
+
+export function getPopularPosts(signal?: AbortSignal, access?: string): Promise<Paginated<Post>> {
+    return request<Paginated<Post>>("/posts/popular/", {
+        signal,
+        token: access,
+        errorMessage: "Failed to load popular posts",
+    });
+}
 
 export function getPosts(signal?: AbortSignal, access?: string, myPosts?: boolean): Promise<Post[]> {
     return request<Post[]>("/posts/", {
