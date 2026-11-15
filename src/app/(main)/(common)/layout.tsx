@@ -1,6 +1,6 @@
 "use client"
 import RightSideBar from "@/components/main/layout/right-side-bar";
-import { usePosts } from "@/hooks/use-posts";
+import { usePopularPosts } from "@/hooks/use-posts";
 import { getCommunities } from "@/libs/api";
 import { Community } from "@/libs/types";
 import { usePathname } from "next/navigation";
@@ -17,7 +17,9 @@ export default function SharedLaout({
     getCommunities()
       .then(res => setTrending(res.length > 4 ? res.sort((a, b) => b.member_count - a.member_count).slice(0, 4) : res.sort((a, b) => b.member_count - a.member_count)))
   }, [])
-  const { posts } = usePosts();
+
+  const { posts } = usePopularPosts();
+
   const pathname = usePathname();
     return (
         <>

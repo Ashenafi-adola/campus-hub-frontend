@@ -1,58 +1,30 @@
 "use client"
+import { Suspense } from "react";
 import { PostFeedSkeleton } from "@/components/main/laoding-skeletons";
-import QuestionCard from "@/components/main/posts/post-card";
+import { PostFilterOptions, PostSort, usePostFilters } from "@/components/main/posts/filter";
+import { PostList } from "@/components/main/posts/post-list";
 import { Chip, EmptyState, PageHeader } from "@/components/shared/ui";
 import { usePosts } from "@/hooks/use-posts";
 import { HelpCircle, Plus } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
 
-type QFilter = "all" | "unanswered" | "answered";
-type QSort = "newest" | "votes" | "answers";
+// Module-level so the reference stays stable between renders.
+const FILTER_OPTIONS: PostFilterOptions = {
+  defaults: { sort: "new" },
+  fixed: { type: "question" }, // this page only ever shows questions
+};
 
-export default function QuestionsPage() {
-  const [filter, setFilter] = useState<QFilter>("all");
-  const [sort, setSort] = useState<QSort>("newest");
-  const { posts } = usePosts();
-  const [waited, setWaited] = useState(false);
+const SORTS: { id: PostSort; label: string }[] = [
+  { id: "new", label: "Newest" },
+  { id: "votes", label: "Most votes" },
+  { id: "answers", label: "Most answers" },
+];
 
-  useEffect(() => {
-    const timer = setTimeout(() => setWaited(true), 1500); // 1.5s, adjust as needed
-    return () => clearTimeout(timer);
-  }, []);
-
-  const questions = useMemo(
-    () => posts.filter((p) => p.post_type === "question"),
-    [posts]
-  );
-
-  const counts = {
-    all: questions.length,
-    unanswered: questions.filter((q) => q.comment_count === 0).length,
-    answered: questions.filter((q) => q.comment_count > 0).length,
-  };
-
-  const visible = useMemo(() => {
-    const list = questions.filter((q) =>
-      filter === "all"
-        ? true
-        : filter === "unanswered"
-        ? q.comment_count === 0
-        : q.comment_count > 0
-    );
-    if (sort === "newest") list.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
-    if (sort === "votes") list.sort((a, b) => b.upvote - a.upvote);
-    if (sort === "answers") list.sort((a, b) => b.comment_count - a.comment_count);
-    return list;
-  }, [questions, filter, sort]);
-
-  const SORTS: { id: QSort; label: string }[] = [
-    { id: "newest", label: "Newest" },
-    { id: "votes", label: "Most votes" },
-    { id: "answers", label: "Most answers" },
-  ];
+function QuestionsContent() {
+  const { filters, setFilters } = usePostFilters(FILTER_OPTIONS);
+  const { posts, loading, loadingMore, error, hasMore, loadMore, retry } = usePosts(filters);
 
   return (
-    <div className="space-y-4 w-full pb-18 pt-3 md:pb-5">
+    <>
       <PageHeader
         icon={HelpCircle}
         title="Questions"
@@ -67,25 +39,13 @@ export default function QuestionsPage() {
         }
       >
         <div className="flex flex-wrap gap-2">
-          <Chip
-            active={filter === "all"}
-            onClick={() => setFilter("all")}
-            count={counts.all}
-          >
+          <Chip active={filters.answered === "all"} onClick={() => setFilters({ answered: "all" })}>
             All
           </Chip>
-          <Chip
-            active={filter === "unanswered"}
-            onClick={() => setFilter("unanswered")}
-            count={counts.unanswered}
-          >
+          <Chip active={filters.answered === "unanswered"} onClick={() => setFilters({ answered: "unanswered" })}>
             Unanswered
           </Chip>
-          <Chip
-            active={filter === "answered"}
-            onClick={() => setFilter("answered")}
-            count={counts.answered}
-          >
+          <Chip active={filters.answered === "answered"} onClick={() => setFilters({ answered: "answered" })}>
             Answered
           </Chip>
         </div>
@@ -94,9 +54,9 @@ export default function QuestionsPage() {
           {SORTS.map((s) => (
             <button
               key={s.id}
-              onClick={() => setSort(s.id)}
+              onClick={() => setFilters({ sort: s.id })}
               className={`rounded-md px-3 py-1.5 text-xs font-semibold transition-colors ${
-                sort === s.id
+                filters.sort === s.id
                   ? "bg-white text-neutral-900 shadow-sm dark:bg-neutral-700 dark:text-neutral-100"
                   : "text-neutral-500 hover:text-neutral-800 dark:text-neutral-400 dark:hover:text-neutral-100"
               }`}
@@ -107,23 +67,37 @@ export default function QuestionsPage() {
         </div>
       </PageHeader>
 
-      {visible.length === 0 ? (
-        waited ? (
+      <PostList
+        posts={posts}
+        loading={loading}
+        loadingMore={loadingMore}
+        error={error}
+        hasMore={hasMore}
+        onLoadMore={loadMore}
+        onRetry={retry}
+        emptyState={
           <EmptyState
             icon={HelpCircle}
             title="No questions found"
             text={
-              filter === "all"
+              filters.answered === "all"
                 ? "Be the first to ask a question."
-                : `No ${filter} questions right now.`
+                : `No ${filters.answered} questions right now.`
             }
           />
-        ) : (
-          <PostFeedSkeleton />
-        )
-      ) : (
-        visible.map((p) => <QuestionCard key={p.id} post={p} />)
-      )}
+        }
+      />
+    </>
+  );
+}
+
+export default function QuestionsPage() {
+  return (
+    <div className="space-y-4 w-full pb-18 pt-3 md:pb-5">
+      {/* useSearchParams (inside usePostFilters) requires a Suspense boundary */}
+      <Suspense fallback={<PostFeedSkeleton />}>
+        <QuestionsContent />
+      </Suspense>
     </div>
   );
 }

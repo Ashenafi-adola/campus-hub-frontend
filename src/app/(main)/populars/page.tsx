@@ -1,114 +1,111 @@
 "use client"
 import { PopularPostsSkeleton, PostFeedSkeleton, TrendingCommunitiesSkeleton } from "@/components/main/laoding-skeletons";
 import { EmptyNote, SidebarCard, TrendingItem } from "@/components/main/layout/right-side-bar";
+import { PostFilterOptions, PostRange, usePostFilters } from "@/components/main/posts/filter";
+import { PostList } from "@/components/main/posts/post-list";
 import QuestionCard from "@/components/main/posts/post-card";
-import { SortId, SORTS, TYPE_META } from "@/components/popular/constants";
+import { SORTS, TYPE_META } from "@/components/popular/constants";
 import { Hero } from "@/components/popular/hero";
 import { SideCard } from "@/components/shared/side-card";
-import { Chip, EmptyState, } from "@/components/shared/ui";
+import { Chip, EmptyState } from "@/components/shared/ui";
 import { usePosts } from "@/hooks/use-posts";
+import { getCommunities } from "@/libs/api";
 import { Community, Post, PostType } from "@/libs/types";
 import { Check, ChevronDown, ChevronUp, Flame } from "lucide-react";
-import { useMemo, useState, useEffect } from "react";
+import { Suspense, useEffect, useMemo, useState } from "react";
 
-const RANGES = [
-  { id: "day", label: "Today", hours: 24 },
-  { id: "week", label: "This week", hours: 168 },
-  { id: "month", label: "This month", hours: 720 },
-  { id: "all", label: "All time", hours: Number.POSITIVE_INFINITY },
+const RANGES: { id: PostRange; label: string }[] = [
+  { id: "day", label: "Today" },
+  { id: "week", label: "This week" },
+  { id: "month", label: "This month" },
+  { id: "all", label: "All time" },
 ];
 
-const ageHour = (time: string) => {
-  const now = Date.now()
-  const difference = new Date(now).getTime() - new Date(time).getTime();
-  return Math.floor(difference / 3_600_000);
-}
 const POST_TYPES: PostType[] = ["question", "discussion", "image", "poll"];
 
-export default function PopularPage() {
-  const [range, setRange] = useState("week");
-  const [sort, setSort] = useState<SortId>("hot");
-  const [typeFilter, setTypeFilter] = useState<PostType | "all">("all");
-  const [community, setCommunity] = useState("all");
+// Module-level so the reference stays stable between renders.
+const FILTER_OPTIONS: PostFilterOptions = { defaults: { sort: "hot", range: "week" } };
+
+/** Hero + podium for the first three posts, then the rest of the loaded pages. */
+function renderPopular(list: Post[]) {
+  const [first, second, third, ...rest] = list;
+  const podium = [second, third].filter(Boolean) as Post[];
+  return (
+    <>
+      <Hero post={first} />
+      {podium.length > 0 && (
+        <div className="grid gap-4 md:grid-cols-2">
+          {podium.map((p) => (
+            <QuestionCard key={p.id} post={p} />
+          ))}
+        </div>
+      )}
+      {rest.map((p) => (
+        <QuestionCard key={p.id} post={p} />
+      ))}
+    </>
+  );
+}
+
+function PopularContent() {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [toast, setToast] = useState<string | null>(null);
+  const [communityOptions, setCommunityOptions] = useState<Community[]>([]);
 
-  const { posts } = usePosts();
-  const [waited, setWaited] = useState(false);
+  const { filters, setFilters } = usePostFilters(FILTER_OPTIONS);
+  const { posts, loading, loadingMore, error, hasMore, loadMore, retry } = usePosts(filters);
 
+  // Dropdown options come from the API, not from the (filtered) posts,
+  // otherwise picking a community would shrink the list to just that community.
   useEffect(() => {
-    const timer = setTimeout(() => setWaited(true), 1500); // 1.5s, adjust as needed
-    return () => clearTimeout(timer);
+    const controller = new AbortController();
+    getCommunities(controller.signal)
+      .then((data) => {
+        if (!controller.signal.aborted) setCommunityOptions(data);
+      })
+      .catch(() => {});
+    return () => controller.abort();
   }, []);
 
+  const rangeLabel = RANGES.find((r) => r.id === filters.range)?.label.toLowerCase();
+  const activeSort = SORTS.find((s) => s.id === filters.sort);
+  const hasFilters = filters.type !== "all" || filters.community !== "";
 
-  const activeRanage = RANGES.find((r) => r.id === range);
-  const rangeLabel = activeRanage?.label.toLowerCase();
-  const activeSort = SORTS.find((s) => s.id === sort);
-
-  const inRange = useMemo(
-    () => activeRanage ? posts.filter((p) => ageHour(p.created_at) <= activeRanage?.hours) : [],
-    [activeRanage, posts]
-  );
-
-  const communities = useMemo(
-    () => Array.from(new Set(posts.map((p) => p.community.name))),
-    [posts]
-  )
-
-  const ranked = useMemo(
-    () =>
-      inRange
-        .filter(
-          (p) =>
-            (typeFilter === "all" || p.post_type === typeFilter) &&
-            (community === "all" || p.community.name === community)
-        )
-        .sort((a, b) => a.score - b.score),
-    [inRange, typeFilter, community]
-  )
-
-  const presentTypes = POST_TYPES.filter((t) =>
-    inRange.some((p) => p.post_type === t)
-  );
+  // Sidebar stats are computed from the posts loaded so far.
   const topTags = useMemo(() => {
     const map = new Map<string, number>();
-    inRange.forEach((p) =>
-      p.tags?.forEach((t) => map.set(t, (map.get(t) ?? 0) + p.upvote))
-    );
+    posts.forEach((p) => p.tags?.forEach((t) => map.set(t, (map.get(t) ?? 0) + p.upvote)));
     return Array.from(map.entries())
       .sort((a, b) => b[1] - a[1])
       .slice(0, 8);
-  }, [inRange]);
+  }, [posts]);
 
   const contributors = useMemo(() => {
     const map = new Map<string, { school: string; points: number }>();
-    inRange.forEach((p) => {
+    posts.forEach((p) => {
       const cur = map.get(p.author.username) ?? { school: p.community.name, points: 0 };
       cur.points += p.upvote;
       map.set(p.author.username, cur);
-    })
-
+    });
     return Array.from(map.entries())
       .map(([name, v]) => ({ name, ...v }))
       .sort((a, b) => b.points - a.points)
       .slice(0, 4);
-  }, [inRange])
+  }, [posts]);
 
+  // Keyed by community id: each post carries its own community object,
+  // so keying by the object itself never grouped anything.
   const trendingCommunities = useMemo(() => {
-    const map = new Map<Community, number>();
-    inRange.forEach((p) =>
-      map.set(p.community, (map.get(p.community) ?? 0) + p.upvote)
-    );
-    return Array.from(map.entries())
-      .sort((a, b) => b[1] - a[1])
+    const map = new Map<number, { community: Community; points: number }>();
+    posts.forEach((p) => {
+      const cur = map.get(p.community.id) ?? { community: p.community, points: 0 };
+      cur.points += p.upvote;
+      map.set(p.community.id, cur);
+    });
+    return Array.from(map.values())
+      .sort((a, b) => b.points - a.points)
       .slice(0, 3);
-  }, [inRange]);
-
-  const [first, second, third, ...rest] = ranked;
-  const podium = [second, third].filter(Boolean) as Post[];
-  const hasFilters = typeFilter !== "all" || community !== "all";
-  console.log(first)
+  }, [posts]);
 
   return (
     <div className="min-w-0 flex-1 space-y-4 pb-20 md:pb-5">
@@ -135,9 +132,9 @@ export default function PopularPage() {
                 {SORTS.map(({ id, label, icon: Icon }) => (
                   <button
                     key={id}
-                    onClick={() => setSort(id)}
-                    aria-pressed={sort === id}
-                    className={`flex items-center gap-1.5 rounded-lg px-3.5 py-1.5 text-sm font-semibold transition-colors ${sort === id
+                    onClick={() => setFilters({ sort: id })}
+                    aria-pressed={filters.sort === id}
+                    className={`flex items-center gap-1.5 rounded-lg px-3.5 py-1.5 text-sm font-semibold transition-colors ${filters.sort === id
                         ? "bg-white text-indigo-600 shadow-sm dark:bg-neutral-700"
                         : "text-neutral-500 hover:text-neutral-800 dark:text-neutral-400 dark:hover:text-neutral-200"
                       }`}
@@ -155,8 +152,8 @@ export default function PopularPage() {
                 {RANGES.map((r) => (
                   <Chip
                     key={r.id}
-                    active={range === r.id}
-                    onClick={() => setRange(r.id)}
+                    active={filters.range === r.id}
+                    onClick={() => setFilters({ range: r.id })}
                   >
                     {r.label}
                   </Chip>
@@ -165,15 +162,15 @@ export default function PopularPage() {
 
               <div className="relative">
                 <select
-                  value={community}
-                  onChange={(e) => setCommunity(e.target.value)}
+                  value={filters.community}
+                  onChange={(e) => setFilters({ community: e.target.value })}
                   aria-label="Filter by community"
                   className="appearance-none rounded-xl border border-neutral-200 bg-white py-2 pl-3.5 pr-9 text-sm font-medium text-neutral-700 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-200"
                 >
-                  <option value="all">All communities</option>
-                  {communities.map((c) => (
-                    <option key={c} value={c}>
-                      {c}
+                  <option value="">All communities</option>
+                  {communityOptions.map((c) => (
+                    <option key={c.id} value={c.slug}>
+                      {c.name}
                     </option>
                   ))}
                 </select>
@@ -183,19 +180,19 @@ export default function PopularPage() {
 
             <div className="mt-3 flex flex-wrap items-center gap-2">
               <button
-                onClick={() => setTypeFilter("all")}
-                className={`rounded-lg px-3 py-1 text-xs font-semibold transition-colors ${typeFilter === "all"
+                onClick={() => setFilters({ type: "all" })}
+                className={`rounded-lg px-3 py-1 text-xs font-semibold transition-colors ${filters.type === "all"
                     ? "bg-neutral-900 text-white"
                     : "text-neutral-500 hover:bg-neutral-100 dark:text-neutral-400 dark:hover:bg-neutral-800"
                   }`}
               >
                 All types
               </button>
-              {presentTypes.map((t) => (
+              {POST_TYPES.map((t) => (
                 <button
                   key={t}
-                  onClick={() => setTypeFilter(t)}
-                  className={`rounded-lg px-3 py-1 text-xs font-semibold transition-colors ${typeFilter === t
+                  onClick={() => setFilters({ type: t })}
+                  className={`rounded-lg px-3 py-1 text-xs font-semibold transition-colors ${filters.type === t
                       ? "bg-neutral-900 text-white"
                       : "text-neutral-500 hover:bg-neutral-100 dark:text-neutral-400 dark:hover:bg-neutral-800"
                     }`}
@@ -205,10 +202,7 @@ export default function PopularPage() {
               ))}
               {hasFilters && (
                 <button
-                  onClick={() => {
-                    setTypeFilter("all");
-                    setCommunity("all");
-                  }}
+                  onClick={() => setFilters({ type: "all", community: "" })}
                   className="ml-auto text-xs font-semibold text-indigo-600 hover:underline"
                 >
                   Clear filters
@@ -236,31 +230,19 @@ export default function PopularPage() {
           )}
 
           {/* Results */}
-          {!first ? (
-            waited ? (
-              <EmptyState
-                icon={Flame}
-                title="No questions found"
-                text={"Nothing popular here yet"}
-              />
-            ) : (
-              <PostFeedSkeleton />
-            )
-          ) : (
-            <>
-              <Hero post={first} />
-              {podium.length > 0 && (
-                <div className="grid gap-4 md:grid-cols-2">
-                  {podium.map((p) => (
-                    <QuestionCard key={p.id} post={p} />
-                  ))}
-                </div>
-              )}
-              {
-                rest.map((p)=><QuestionCard key={p.id} post={p}/>)
-              }
-            </>
-          )}
+          <PostList
+            posts={posts}
+            loading={loading}
+            loadingMore={loadingMore}
+            error={error}
+            hasMore={hasMore}
+            onLoadMore={loadMore}
+            onRetry={retry}
+            renderPosts={renderPopular}
+            emptyState={
+              <EmptyState icon={Flame} title="No questions found" text="Nothing popular here yet" />
+            }
+          />
         </main>
 
         {/* Right sidebar */}
@@ -289,40 +271,45 @@ export default function PopularPage() {
 
             <SideCard title="Top contributors" subtitle={`Most upvotes ${rangeLabel}`}>
               {contributors.length === 0 ? (
-                <p className="text-sm text-neutral-400 dark:text-neutral-500">No activity yet.</p>
+                loading ? (
+                  <PopularPostsSkeleton />
+                ) : (
+                  <p className="text-sm text-neutral-400 dark:text-neutral-500">No activity yet.</p>
+                )
               ) : (
                 <div className="space-y-3">
-                  {!posts ? <PopularPostsSkeleton /> : (
-                    contributors.map((c, i) => (
-                      <div key={c.name} className="flex items-center gap-3">
-                        <span className="w-4 text-sm font-bold text-neutral-300 dark:text-neutral-600">
-                          {i + 1}
-                        </span>
-                        <div className="min-w-0 flex-1">
-                          <div className="truncate text-sm font-semibold text-neutral-900 dark:text-neutral-100">
-                            {c.name}
-                          </div>
-                          <div className="truncate text-xs text-neutral-400 dark:text-neutral-500">
-                            {c.school}
-                          </div>
+                  {contributors.map((c, i) => (
+                    <div key={c.name} className="flex items-center gap-3">
+                      <span className="w-4 text-sm font-bold text-neutral-300 dark:text-neutral-600">
+                        {i + 1}
+                      </span>
+                      <div className="min-w-0 flex-1">
+                        <div className="truncate text-sm font-semibold text-neutral-900 dark:text-neutral-100">
+                          {c.name}
                         </div>
-                        <span className="flex items-center gap-0.5 text-sm font-bold text-indigo-600">
-                          <ChevronUp className="h-4 w-4" />
-                          {c.points}
-                        </span>
+                        <div className="truncate text-xs text-neutral-400 dark:text-neutral-500">
+                          {c.school}
+                        </div>
                       </div>
-                    )))}
+                      <span className="flex items-center gap-0.5 text-sm font-bold text-indigo-600">
+                        <ChevronUp className="h-4 w-4" />
+                        {c.points}
+                      </span>
+                    </div>
+                  ))}
                 </div>
               )}
             </SideCard>
 
             <SidebarCard title="Trending Communities">
               {trendingCommunities.length === 0 ? (
-                <TrendingCommunitiesSkeleton count={4} />
-              ) : trendingCommunities.length > 0 ? (
-                trendingCommunities.map((c, i) => <TrendingItem key={i} community={c[0]} />)
+                loading ? (
+                  <TrendingCommunitiesSkeleton count={4} />
+                ) : (
+                  <EmptyNote>No communities are trending yet.</EmptyNote>
+                )
               ) : (
-                <EmptyNote>No communities are trending yet.</EmptyNote>
+                trendingCommunities.map((c) => <TrendingItem key={c.community.id} community={c.community} />)
               )}
             </SidebarCard>
           </div>
@@ -336,5 +323,14 @@ export default function PopularPage() {
         </div>
       )}
     </div>
+  );
+}
+
+export default function PopularPage() {
+  // useSearchParams (inside usePostFilters) requires a Suspense boundary
+  return (
+    <Suspense fallback={<PostFeedSkeleton />}>
+      <PopularContent />
+    </Suspense>
   );
 }
