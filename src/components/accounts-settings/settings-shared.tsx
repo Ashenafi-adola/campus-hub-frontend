@@ -14,15 +14,22 @@ export const TABS: { id: TabId; label: string }[] = [
 ];
 
 export const UNIVERSITIES = [
-  "Stanford University",
-  "MIT",
-  "UC Berkeley",
-  "UCLA",
-  "Harvard University",
-  "Carnegie Mellon University",
-  "Georgia Tech",
-  "UT Austin",
-  "NYU",
+  "Addis Ababa University",
+  "Adama Science and Technology University",
+  "Bahir Dar University",
+  "University of Gondar",
+  "Jimma University",
+  "Hawassa University",
+  "Mekelle University",
+  "Haramaya University",
+  "Arba Minch University",
+  "Debre Markos University",
+  "Dire Dawa University",
+  "Wollo University",
+  "Wolaita Sodo University",
+  "Ambo University",
+  "Addis Ababa Science and Technology University",
+  "Ethiopian Civil Service University",
   "Other",
 ];
 
